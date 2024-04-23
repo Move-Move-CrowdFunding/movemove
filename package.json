@@ -1,17 +1,12 @@
 {
   "name": "movemove",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "format": "prettier . --write",
-    "stylelint-scss-check": "stylelint-config-prettier-scss-check"
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
     "nuxt": "^3.11.2",

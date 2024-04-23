@@ -18,6 +18,7 @@ module.exports = {
 		'stylelint-order'
 	],
 	rules: {
+		"prettier/prettier": true,
 		'scss/at-rule-no-unknown': [
 			true,
 			{

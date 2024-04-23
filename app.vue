@@ -1,14 +1,14 @@
 <template>
   <div>
-    <h1 class="text-3xl font-bold underline">Hello world!</h1>
+    <h1 class=" flex text-3xl font-bold underline absolute">Hello world!</h1>
     <NuxtWelcome />
   </div>
 </template>
 <script setup></script>
 <style lang="scss">
 .box {
-  position: absolute;
   top: 50%;
-  padding: 0;
+  position: absolute;
+  padding: 0px;
 }
 </style>
