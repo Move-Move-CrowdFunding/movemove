@@ -4,7 +4,9 @@
     <NuxtWelcome />
   </div>
 </template>
-<script setup></script>
+<script setup lang="ts">
+  const num: number = '123';
+</script>
 <style lang="scss">
 .box {
   top: 50%;
