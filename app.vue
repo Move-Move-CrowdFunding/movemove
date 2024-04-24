@@ -12,5 +12,6 @@ const num: number = '123'
   position: absolute;
   top: 50%;
   padding: 0;
+  background-color: #fff;
 }
 </style>
