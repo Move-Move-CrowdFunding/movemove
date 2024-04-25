@@ -14,17 +14,15 @@ module.exports = {
 		},
 	],
 	plugins: [
-		'stylelint-scss',
 		'stylelint-order'
 	],
 	rules: {
-		"prettier/prettier": true,
 		'scss/at-rule-no-unknown': [
 			true,
 			{
-			  ignoreAtRules: ['tailwind', 'apply', 'layer', 'function', 'if', 'each', 'include', 'mixin', 'for', 'import'],
+				ignoreAtRules: ['tailwind', 'apply', 'layer', 'function', 'if', 'each', 'include', 'mixin', 'for', 'import'],
 			},
-		  ],
+		],
 		'selector-no-qualifying-type': null,
 		'color-named': null,
 		'font-family-name-quotes': null,

@@ -6,6 +6,7 @@
 </template>
 <script setup lang="ts">
 const num: number = '123'
+const a = 'e'
 </script>
 <style lang="scss">
 .box {
