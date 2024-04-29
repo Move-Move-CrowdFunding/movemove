@@ -17,6 +17,6 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  css: ["~/assets/style/root.css"]
+  css: ["~/assets/style/root.scss"]
 
 })

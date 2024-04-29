@@ -1,4 +1,4 @@
-const colors = require('./assets/styles/colors.ts')
+const colors = require('./tailwindcss/colors')
 module.exports = {
   content: [
     './components/**/*.{js,vue,ts}',
