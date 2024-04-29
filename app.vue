@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1 class="absolute flex text-3xl font-bold underline text-primary-1">Hello world!</h1>
-    <div class="box"></div>
-    <NuxtWelcome />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>
 <script lang="ts" setup>
