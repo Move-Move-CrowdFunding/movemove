@@ -16,5 +16,7 @@ export default defineNuxtConfig({
       tailwindcss: {},
       autoprefixer: {}
     }
-  }
+  },
+  css: ["~/assets/styles/root.css"]
+
 })
