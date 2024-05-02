@@ -1,13 +1,9 @@
 <template>
-  <div>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-  </div>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
-<script lang="ts" setup>
-console.log('hello')
-</script>
+<script lang="ts" setup></script>
 <style lang="scss">
 .box {
   position: absolute;
