@@ -12,7 +12,6 @@ module.exports = {
     extend: {
       colors
     }
-
   },
   plugins: []
 }
