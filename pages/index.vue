@@ -3,13 +3,16 @@
     <section>banner</section>
     <!-- bg-group -->
     <div class="bg-group-1 bg-right-bottom bg-no-repeat px-3">
-      <section
-        class="h-[584px] bg-[url('~/assets/images/index/bg/bg-circle.png')] bg-right bg-no-repeat py-10 sm:py-20"
-      >
-        <h2>熱門提案</h2>
+      <section class="py-10 sm:pt-20">
+        <div class="mb-6 flex h-[54px] items-center justify-between sm:mb-10">
+          <h2 class="text-3xl sm:text-4xl">熱門提案</h2>
+          <NuxtLink>查看更多</NuxtLink>
+        </div>
+        <div class="h-[490px]"></div>
+        <div class="mt-6 h-2"></div>
       </section>
       <section class="container grid gap-6 py-40 sm:grid-cols-4">
-        <h2>提案類別</h2>
+        <h2 class="text-3xl sm:text-4xl">提案類別</h2>
         <div class="col-span-3">
           <ul class="grid grid-cols-2 gap-6 sm:grid-cols-3">
             <li
@@ -83,7 +86,7 @@
       </section>
     </div>
 
-    <section>
+    <section class="bg-secondary-5">
       <h2>推薦提案</h2>
     </section>
     <section
@@ -111,11 +114,28 @@
       </div>
     </section>
 
-    <div class="bg-group-2 bg-cover bg-top bg-no-repeat">
-      <section class="pb-10 pt-20 sm:py-20">
-        <h2 class="mb-6 text-3xl sm:mb-10 sm:text-4xl">成功案例</h2>
+    <div class="bg-group-2 bg-top bg-no-repeat">
+      <section class="container pb-10 pt-20 sm:pb-20 sm:pt-40">
+        <div class="mb-6 flex h-[54px] items-center justify-between sm:mb-10">
+          <h2 class="text-3xl sm:text-4xl">成功案例</h2>
+          <NuxtLink>查看更多</NuxtLink>
+        </div>
+        <ul class="grid gap-6 sm:grid-cols-2 sm:gap-y-9">
+          <li>
+            <NuxtLink class="block h-[222px]"></NuxtLink>
+          </li>
+          <li>
+            <NuxtLink class="block h-[222px]"></NuxtLink>
+          </li>
+          <li>
+            <NuxtLink class="block h-[222px]"></NuxtLink>
+          </li>
+          <li>
+            <NuxtLink class="block h-[222px]"></NuxtLink>
+          </li>
+        </ul>
       </section>
-      <section class="py-10 sm:py-20">
+      <section class="py-10 sm:pb-40 sm:pt-20">
         <h2 class="container text-center text-3xl sm:text-4xl">信任承諾</h2>
         <p class="container my-6 text-center sm:my-10">
           所有提案經過嚴格的審核流程，以確保提案的合法性和真實性。
@@ -157,13 +177,19 @@
 }
 .bg-group-1 {
   background-image: url('~/assets/images/index/bg/bg-category.png'),
+    url('~/assets/images/index/bg/bg-circle.png');
+  background-position:
+    right bottom,
+    right top 80px;
+  background-size: contain, auto;
+}
+.bg-group-2 {
+  background-image: url('~/assets/images/index/bg/bg-success.png'),
     url('~/assets/images/index/bg/bg-arc.png'), url('~/assets/images/index/bg/bg-heart.png');
   background-position:
     center top,
     left bottom,
-    right bottom;
-}
-.bg-group-2 {
-  background-image: url('~/assets/images/index/bg/bg-success.png');
+    right 140px bottom 384px;
+  background-size: contain, auto, auto;
 }
 </style>
