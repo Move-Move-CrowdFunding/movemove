@@ -1,40 +1,88 @@
 <template>
   <div>
     <section>banner</section>
-    <section>
-      <h2>熱門提案</h2>
-    </section>
-    <section class="container grid gap-6 sm:grid-cols-4">
-      <h2>提案類別</h2>
-      <div class="col-span-3">
-        <ul class="grid grid-cols-2 sm:grid-cols-3">
-          <li>
-            <img src="" alt="" />
-            <p>教育</p>
-          </li>
-          <li>
-            <img src="" alt="" />
-            <p>弱勢救助</p>
-          </li>
-          <li>
-            <img src="" alt="" />
-            <p>國際支援</p>
-          </li>
-          <li>
-            <img src="" alt="" />
-            <p>兒少福利</p>
-          </li>
-          <li>
-            <img src="" alt="" />
-            <p>長者</p>
-          </li>
-          <li>
-            <img src="" alt="" />
-            <p>婦女</p>
-          </li>
-        </ul>
-      </div>
-    </section>
+    <!-- bg-group -->
+    <div class="bg-group-1 bg-right-bottom bg-no-repeat px-3">
+      <section
+        class="h-[584px] bg-[url('~/assets/images/index/bg/bg-circle.png')] bg-right bg-no-repeat py-10 sm:py-20"
+      >
+        <h2>熱門提案</h2>
+      </section>
+      <section class="container grid gap-6 py-40 sm:grid-cols-4">
+        <h2>提案類別</h2>
+        <div class="col-span-3">
+          <ul class="grid grid-cols-2 gap-6 sm:grid-cols-3">
+            <li
+              class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
+            >
+              <img src="~/assets/images/index/category/mobile-1.png" alt="" class="sm:hidden" />
+              <img
+                src="~/assets/images/index/category/desktop-1.png"
+                alt=""
+                class="hidden sm:block"
+              />
+              <p>教育</p>
+            </li>
+            <li
+              class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
+            >
+              <img src="~/assets/images/index/category/mobile-2.png" alt="" class="sm:hidden" />
+              <img
+                src="~/assets/images/index/category/desktop-2.png"
+                alt=""
+                class="hidden sm:block"
+              />
+              <p>弱勢救助</p>
+            </li>
+            <li
+              class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
+            >
+              <img src="~/assets/images/index/category/mobile-3.png" alt="" class="sm:hidden" />
+              <img
+                src="~/assets/images/index/category/desktop-3.png"
+                alt=""
+                class="hidden sm:block"
+              />
+              <p>國際支援</p>
+            </li>
+            <li
+              class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
+            >
+              <img src="~/assets/images/index/category/mobile-4.png" alt="" class="sm:hidden" />
+              <img
+                src="~/assets/images/index/category/desktop-4.png"
+                alt=""
+                class="hidden sm:block"
+              />
+              <p>兒少福利</p>
+            </li>
+            <li
+              class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
+            >
+              <img src="~/assets/images/index/category/mobile-5.png" alt="" class="sm:hidden" />
+              <img
+                src="~/assets/images/index/category/desktop-5.png"
+                alt=""
+                class="hidden sm:block"
+              />
+              <p>長者</p>
+            </li>
+            <li
+              class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
+            >
+              <img src="~/assets/images/index/category/mobile-6.png" alt="" class="sm:hidden" />
+              <img
+                src="~/assets/images/index/category/desktop-6.png"
+                alt=""
+                class="hidden sm:block"
+              />
+              <p>婦女</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
     <section>
       <h2>推薦提案</h2>
     </section>
@@ -62,44 +110,60 @@
         </p>
       </div>
     </section>
-    <section>
-      <h2>成功案例</h2>
-    </section>
-    <section>
-      <h2 class="container text-center">信任承諾</h2>
-      <p class="container text-center">所有提案經過嚴格的審核流程，以確保提案的合法性和真實性。</p>
-      <ul class="container grid grid-cols-2 text-center sm:grid-cols-6">
-        <li>
-          <img class="mx-auto block" src="~/assets/images/index/trust/1.png" alt="" />
-          <p>個人資料保護</p>
-        </li>
-        <li>
-          <img class="mx-auto block" src="~/assets/images/index/trust/2.png" alt="" />
-          <p>多元募資項目</p>
-        </li>
-        <li>
-          <img class="mx-auto block" src="~/assets/images/index/trust/3.png" alt="" />
-          <p>即時專案追蹤</p>
-        </li>
-        <li>
-          <img class="mx-auto block" src="~/assets/images/index/trust/4.png" alt="" />
-          <p>精準搜尋功能</p>
-        </li>
-        <li>
-          <img class="mx-auto block" src="~/assets/images/index/trust/5.png" alt="" />
-          <p>安心支持流程</p>
-        </li>
-        <li>
-          <img class="mx-auto block" src="~/assets/images/index/trust/6.png" alt="" />
-          <p>精準風險評估</p>
-        </li>
-      </ul>
-    </section>
+
+    <div class="bg-group-2 bg-cover bg-top bg-no-repeat">
+      <section class="pb-10 pt-20 sm:py-20">
+        <h2 class="mb-6 text-3xl sm:mb-10 sm:text-4xl">成功案例</h2>
+      </section>
+      <section class="py-10 sm:py-20">
+        <h2 class="container text-center text-3xl sm:text-4xl">信任承諾</h2>
+        <p class="container my-6 text-center sm:my-10">
+          所有提案經過嚴格的審核流程，以確保提案的合法性和真實性。
+        </p>
+        <ul class="container grid grid-cols-2 gap-6 text-center sm:grid-cols-6">
+          <li>
+            <img class="mx-auto mb-6 block" src="~/assets/images/index/trust/1.png" alt="" />
+            <p>個人資料保護</p>
+          </li>
+          <li>
+            <img class="mx-auto mb-6 block" src="~/assets/images/index/trust/2.png" alt="" />
+            <p>多元募資項目</p>
+          </li>
+          <li>
+            <img class="mx-auto mb-6 block" src="~/assets/images/index/trust/3.png" alt="" />
+            <p>即時專案追蹤</p>
+          </li>
+          <li>
+            <img class="mx-auto mb-6 block" src="~/assets/images/index/trust/4.png" alt="" />
+            <p>精準搜尋功能</p>
+          </li>
+          <li>
+            <img class="mx-auto mb-6 block" src="~/assets/images/index/trust/5.png" alt="" />
+            <p>安心支持流程</p>
+          </li>
+          <li>
+            <img class="mx-auto mb-6 block" src="~/assets/images/index/trust/6.png" alt="" />
+            <p>精準風險評估</p>
+          </li>
+        </ul>
+      </section>
+    </div>
   </div>
 </template>
 
 <style scoped>
 * {
   outline: 1px solid #0a0;
+}
+.bg-group-1 {
+  background-image: url('~/assets/images/index/bg/bg-category.png'),
+    url('~/assets/images/index/bg/bg-arc.png'), url('~/assets/images/index/bg/bg-heart.png');
+  background-position:
+    center top,
+    left bottom,
+    right bottom;
+}
+.bg-group-2 {
+  background-image: url('~/assets/images/index/bg/bg-success.png');
 }
 </style>
