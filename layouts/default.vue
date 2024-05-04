@@ -1,6 +1,15 @@
 <template>
   <div class="relative flex h-full flex-1 flex-col">
     <Header />
-    <slot />
+    <MobileMenu />
+    <div class="container mx-auto flex h-full flex-1 flex-col">
+      <slot />
+    </div>
+    <Footer />
   </div>
 </template>
+<style lang="scss" scope>
+#__nuxt {
+  @apply h-full;
+}
+</style>
