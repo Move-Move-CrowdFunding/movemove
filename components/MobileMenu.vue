@@ -1,9 +1,13 @@
 <template>
   <div
-    class="fixed bottom-0 left-0 right-0 top-14 z-10 flex hidden w-full flex-1 flex-col overflow-y-auto overflow-x-hidden bg-neutral-100"
+    class="fixed bottom-0 left-0 right-0 top-[72px] flex w-full flex-1 translate-y-[calc(-72px_+_-100%)] flex-col overflow-y-auto overflow-x-hidden bg-neutral-100 transition-all duration-300 ease-in-out lg:hidden"
+    :class="{ '-translate-y-0': modelValue }"
   >
     <div class="flex flex-1 flex-col overflow-hidden">
-      <div class="flex items-center space-x-6 border-b border-neutral-100 bg-neutral-50 px-3 py-4">
+      <div
+        v-if="isLogin"
+        class="peer flex items-center space-x-6 border-b border-neutral-100 bg-neutral-50 px-3 py-4"
+      >
         <Avatar
           :src="userInfo.avatar"
           class="h-[60px] w-[60px] flex-shrink-0 overflow-hidden rounded-full object-cover"
@@ -14,7 +18,7 @@
         </div>
       </div>
       <div class="flex flex-1 flex-col overflow-y-auto">
-        <div class="bg-neutral-50 py-4">
+        <div v-if="isLogin" class="peer bg-neutral-50 py-4 peer-[&]:mt-2">
           <ul>
             <li v-for="item in menuMapList" :key="item.name">
               <NuxtLink
@@ -25,7 +29,7 @@
             </li>
           </ul>
         </div>
-        <div class="mt-2 bg-neutral-50 py-4">
+        <div class="peer bg-neutral-50 py-4 peer-[&]:mt-2">
           <h3 class="px-3 pb-4 text-neutral-900">提案類別</h3>
           <ul>
             <li v-for="item in categoryMenuList" :key="item.name">
@@ -37,7 +41,7 @@
             </li>
           </ul>
         </div>
-        <div class="mt-2 bg-neutral-50">
+        <div class="bg-neutral-50 peer-[&]:mt-2">
           <BaseButton
             v-if="!isLogin"
             class="flex flex-shrink-0 items-center space-x-2 px-3 py-6 text-neutral-600"
@@ -76,6 +80,8 @@ const categoryMenuList = ref(
     }
   })
 )
+
+const modelValue = defineModel()
 
 const isLogin = ref(false)
 const userInfo = ref({

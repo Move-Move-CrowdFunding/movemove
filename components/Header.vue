@@ -1,11 +1,11 @@
 <template>
   <header
-    class="sticky left-0 right-0 top-0 flex items-center justify-between bg-neutral-50 shadow-md md:shadow-none"
+    class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between bg-neutral-50 shadow-md md:shadow-none"
   >
-    <div class="container mx-auto py-4">
+    <div class="container relative z-10 mx-auto px-3 py-4">
       <div class="flex items-center justify-between space-x-4">
         <BaseLogo
-          class="h-[40px] w-[227px] overflow-hidden whitespace-nowrap bg-secondary-1 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+          class="h-[24px] w-[135px] overflow-hidden whitespace-nowrap bg-secondary-1 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] md:h-[40px] md:w-[227px]"
         />
         <div class="hidden flex-1 items-center justify-end space-x-6 lg:flex">
           <div
@@ -72,13 +72,21 @@
             />
           </div>
         </div>
-        <div class="block p-2 lg:hidden">
-          <div
-            class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/menu.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
-          ></div>
+        <div class="flex space-x-4">
+          <div class="block p-2 lg:hidden">
+            <div
+              class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/search.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+            ></div>
+          </div>
+          <div class="block p-2 lg:hidden" @click="mobileMenuIsShow = !mobileMenuIsShow">
+            <div
+              class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/menu.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
+    <MobileMenu v-model="mobileMenuIsShow" />
   </header>
 </template>
 <script setup lang="ts">
@@ -94,6 +102,7 @@ const toggleMenu = () => {
     menuIsShow.value = !menuIsShow.value
   }
 }
+const mobileMenuIsShow = ref(false)
 onClickOutside(dropdown, () => {
   menuIsShow.value = false
 })
