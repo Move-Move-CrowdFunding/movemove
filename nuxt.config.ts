@@ -1,7 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ['@nuxtjs/stylelint-module', '@nuxtjs/tailwindcss'],
+  app: {
+    head: {
+      title: 'movemove 募募',
+      viewport: 'width=device-width, initial-scale=1'
+    }
+  },
+  modules: ['@nuxtjs/stylelint-module', '@nuxtjs/tailwindcss', '@vueuse/nuxt'],
   typescript: {
     typeCheck: true
   },
@@ -17,6 +23,5 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  css: ["~/assets/style/root.scss"]
-
+  css: ['~/assets/style/root.scss']
 })
