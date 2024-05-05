@@ -6,7 +6,7 @@
     <NuxtLink to="/" class="block px-6 py-2">登出</NuxtLink>
   </div>
 </template>
-<script lang="ts" setup>
+<script setup lang="ts">
 // import type { MenuItem } from '~/types/menuItem'
 import { menuMapList } from '@/utils/menuMaps'
 

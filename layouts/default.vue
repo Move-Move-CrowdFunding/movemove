@@ -9,6 +9,9 @@
   </div>
 </template>
 <style lang="scss" scope>
+// * {
+//   border: 1px solid red;
+// }
 #__nuxt {
   @apply h-full;
 }
