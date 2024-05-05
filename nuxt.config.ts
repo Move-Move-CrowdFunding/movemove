@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ['@nuxtjs/stylelint-module', '@nuxtjs/tailwindcss'],
+  modules: ['@nuxtjs/stylelint-module', '@nuxtjs/tailwindcss', 'nuxt-swiper'],
   typescript: {
     typeCheck: true
   },
@@ -17,6 +17,5 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  css: ["~/assets/style/root.scss"]
-
+  css: ['~/assets/style/root.scss']
 })

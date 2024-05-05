@@ -1,6 +1,12 @@
 <template>
   <div>
-    <section>banner</section>
+    <section>
+      <Swiper>
+        <SwiperSlide>1</SwiperSlide>
+        <SwiperSlide>2</SwiperSlide>
+        <SwiperSlide>3</SwiperSlide>
+      </Swiper>
+    </section>
     <!-- bg-group -->
     <div class="bg-group-1 bg-right-bottom bg-no-repeat px-3">
       <section class="py-10 sm:pt-20">
