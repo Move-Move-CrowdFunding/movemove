@@ -1,7 +1,16 @@
+<script setup>
+const pagination = {
+  clickable: true
+  // bulletActiveClass: 'hot-swiper-pagination-bullet-active'
+  // renderBullet: function (index, className) {
+  //   return '<span class="' + className + '">' + (classname) + '</span>'
+  // }
+}
+</script>
 <template>
   <div>
     <section>
-      <Swiper>
+      <Swiper id="banner-swiper" :modules="[SwiperNavigation, SwiperPagination]" :loop="true">
         <SwiperSlide>1</SwiperSlide>
         <SwiperSlide>2</SwiperSlide>
         <SwiperSlide>3</SwiperSlide>
@@ -14,8 +23,32 @@
           <h2 class="text-3xl sm:text-4xl">熱門提案</h2>
           <NuxtLink to="/" class="hover:text-primary-1 active:text-secondary-1">查看更多</NuxtLink>
         </div>
-        <div class="h-[490px]"></div>
-        <div class="mt-6 h-2"></div>
+        <div class="">
+          <Swiper
+            id="hot-swiper"
+            :modules="[SwiperNavigation, SwiperPagination]"
+            :loop="true"
+            :slides-per-view="1.3"
+            :space-between="24"
+            :navigation="true"
+            :pagination="pagination"
+            :breakpoints="{
+              '640': {
+                slidesPerView: 2.3
+              },
+              '1024': {
+                slidesPerView: 3
+              }
+            }"
+          >
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+          </Swiper>
+        </div>
       </section>
       <section
         class="bg-secondary-5 bg-[url('~/assets/images/index/bg/bg-sketch.png')] bg-no-repeat lg:bg-transparent lg:bg-none"
@@ -232,9 +265,9 @@
 </template>
 
 <style scoped>
-/* * {
+* {
   outline: 1px solid #0a0;
-} */
+}
 
 @media (width >= 1024px) {
   .bg-group-1 {
@@ -262,5 +295,9 @@
 .bg-results {
   background-image: linear-gradient(#4d3b2fcc, #4d3b2fcc),
     url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+}
+
+#hot-swiper {
+  padding-bottom: 48px !important;
 }
 </style>
