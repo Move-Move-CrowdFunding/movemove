@@ -1,19 +1,23 @@
 <template>
-  <footer class="border-t-4 border-primary-1 bg-secondary-2 py-[60px]">
-    <div class="container mx-auto">
-      <div class="flex flex-col md:flex-row md:justify-between">
+  <footer class="border-t-4 border-primary-1 bg-secondary-2 py-11 md:py-[60px]">
+    <div class="container">
+      <div class="flex flex-col items-center md:flex-row md:justify-between">
         <div class="flex flex-col">
           <BaseLogo
-            class="h-[40px] w-[227px] overflow-hidden whitespace-nowrap bg-neutral-50 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+            class="mx-auto h-[40px] w-[227px] overflow-hidden whitespace-nowrap bg-neutral-50 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] md:mx-0"
           />
-          <ul class="flex flex-col justify-start md:flex-row md:space-x-4 md:[&:last-child]:pt-6">
-            <li v-for="item in menuList" :key="item.name">
-              <NuxtLink class="block text-neutral-50" :to="item.url">{{ item.name }}</NuxtLink>
+          <ul
+            class="flex max-w-[300px] flex-row flex-wrap justify-center md:max-w-none md:flex-nowrap md:justify-start [&:last-child]:pt-4"
+          >
+            <li v-for="item in menuList" :key="item.name" class="[width:max-content]">
+              <NuxtLink class="block p-2 text-center text-neutral-50" :to="item.url">{{
+                item.name
+              }}</NuxtLink>
             </li>
           </ul>
         </div>
-        <div class="flex flex-col items-end">
-          <ul class="flex space-x-4">
+        <div class="flex flex-col items-end [&:last-child]:pt-4 md:[&:last-child]:pt-0">
+          <ul class="mx-auto flex flex-row justify-center space-x-4 md:mx-0">
             <li>
               <NuxtLink class="block" title="Facebook" to="/">
                 <img src="~/assets/icons/fb.svg" alt="" />
@@ -30,7 +34,7 @@
               </NuxtLink>
             </li>
           </ul>
-          <p class="text-sm text-secondary-5 [&:last-child]:pt-6">
+          <p class="text-center text-sm text-secondary-5 md:text-right [&:last-child]:pt-6">
             Copyright © 2024 Move Move All rights reserved.
           </p>
         </div>

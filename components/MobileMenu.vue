@@ -1,7 +1,7 @@
 <template>
   <div
     class="fixed bottom-0 left-0 right-0 top-[72px] flex w-full flex-1 translate-y-[calc(-72px_+_-100%)] flex-col overflow-y-auto overflow-x-hidden bg-neutral-100 transition-all duration-300 ease-in-out lg:hidden"
-    :class="{ '-translate-y-0': modelValue }"
+    :class="{ 'translate-y-0': modelValue }"
   >
     <div class="flex flex-1 flex-col overflow-hidden">
       <div
@@ -46,7 +46,7 @@
             v-if="!isLogin"
             class="flex flex-shrink-0 items-center space-x-2 px-3 py-6 text-neutral-600"
             tag="nuxtLink"
-            to="/"
+            to="/login"
           >
             <span>登入/註冊</span>
           </BaseButton>
@@ -72,6 +72,13 @@
 import type { CategoryKeys } from '~/types/categoryKeys'
 import { menuMapList } from '@/utils/menuMaps'
 
+defineProps({
+  isLogin: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const categoryMenuList = ref(
   categoryKeys.map((item: CategoryKeys) => {
     return {
@@ -83,7 +90,6 @@ const categoryMenuList = ref(
 
 const modelValue = defineModel()
 
-const isLogin = ref(false)
 const userInfo = ref({
   name: 'Claire',
   email: 'Claire09983@gmail.com.tw',
