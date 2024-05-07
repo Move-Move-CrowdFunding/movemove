@@ -6,7 +6,7 @@
           <BaseLogo
             class="h-[24px] w-[135px] flex-shrink-0 overflow-hidden whitespace-nowrap bg-secondary-1 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] md:h-[40px] md:w-[227px]"
           />
-          <div class="hidden flex-1 items-center justify-end space-x-6 lg:flex">
+          <div class="hidden flex-1 items-center justify-end space-x-6 md:flex">
             <div
               class="flex max-w-[608px] flex-1 items-center overflow-hidden rounded-lg border border-neutral-400"
             >
@@ -17,7 +17,10 @@
                 placeholder="搜尋 提案關鍵字"
                 name=""
               />
-              <BaseButton class="flex h-full flex-shrink-0 items-center justify-center p-2">
+              <BaseButton
+                v-show="false"
+                class="flex h-full flex-shrink-0 items-center justify-center p-2"
+              >
                 <div
                   class="h-6 w-6 flex-shrink-0 bg-neutral-900 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                 ></div>
@@ -36,9 +39,10 @@
                 <NuxtLink to="/create" class="block p-2">提案</NuxtLink>
               </div>
               <BaseButton
+                v-if="isLogin"
                 tag="nuxtLink"
                 to="/member/notifications"
-                class="relative flex h-full flex-shrink-0 items-center justify-center p-2"
+                class="relative hidden h-full flex-shrink-0 items-center justify-center p-2 md:flex"
               >
                 <div
                   class="bg-neutral-2 h-6 w-6 flex-shrink-0 overflow-hidden bg-secondary-2 [mask-image:url('~/assets/icons/notifications.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
@@ -51,6 +55,7 @@
               </BaseButton>
             </div>
             <BaseButton
+              v-if="!isLogin"
               class="rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50"
               to="/login"
               tag="nuxtLink"
@@ -59,6 +64,7 @@
             </BaseButton>
             <div class="relative cursor-pointer" @click="toggleMenu">
               <Avatar
+                v-if="isLogin"
                 ref="dropdown"
                 src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
                 class="h-10 w-10 overflow-hidden rounded-full object-cover"
@@ -66,39 +72,43 @@
               <ListMenu
                 ref="dropdownMenu"
                 :class="menuIsShow ? 'block' : 'hidden'"
-                class="absolute right-[50%] top-10 w-[112px] translate-x-1/2 shadow-xl"
+                class="absolute right-[50%] top-[56px] w-[112px] translate-x-1/2 shadow-xl"
                 :menu-list="menuList"
               />
             </div>
           </div>
-          <div class="flex flex-row space-x-4">
+          <div class="flex flex-row">
             <div class="flex flex-row bg-neutral-50">
-              <div
-                v-if="searchIsShow"
-                class="absolute inset-0 z-10 flex flex-1 items-center overflow-hidden rounded-lg border border-neutral-400 bg-neutral-50 pl-2"
-              >
+              <div v-if="searchIsShow" class="absolute inset-0 z-10 flex flex-row">
                 <div
-                  class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/search.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:w-4]"
-                ></div>
-                <input
-                  id=""
-                  class="text-netural-600 placeholder:text-netural-50 w-full py-2 pl-1 outline-none transition-all"
-                  type="text"
-                  placeholder="搜尋 提案關鍵字"
-                  name=""
-                />
-                <BaseButton class="flex h-full flex-shrink-0 items-center justify-center p-2">
+                  class="flex flex-1 items-center overflow-hidden rounded-lg border border-neutral-400 bg-neutral-50 pl-2"
+                >
                   <div
-                    class="h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+                    class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/search.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:w-4]"
+                  ></div>
+                  <input
+                    id=""
+                    class="text-netural-600 placeholder:text-netural-50 peer w-full py-2 pl-1 pr-2 outline-none transition-all"
+                    type="text"
+                    placeholder="搜尋 提案關鍵字"
+                    name=""
+                  />
+                  <BaseButton class="flex h-full flex-shrink-0 items-center justify-center p-2">
+                    <div
+                      class="h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+                    ></div>
+                  </BaseButton>
+                </div>
+                <BaseButton
+                  class="-mr-1 ml-2 flex h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2"
+                  @click="searchIsShow = false"
+                >
+                  <div
+                    class="h-6 w-6 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:_36px]"
                   ></div>
                 </BaseButton>
-                <!-- <BaseButton
-                  class="flex h-full flex-shrink-0 items-center justify-center border-l border-neutral-400 p-2"
-                >
-                  
-                </BaseButton> -->
               </div>
-              <div class="ml-auto block p-2 lg:hidden" @click="searchIsShow = true">
+              <div class="ml-auto block p-2 md:hidden" @click="searchIsShow = true">
                 <div
                   class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/search.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                 ></div>
@@ -108,7 +118,7 @@
               v-if="isLogin"
               tag="nuxtLink"
               to="/member/notifications"
-              class="relative flex h-full flex-shrink-0 items-center justify-center p-2"
+              class="relative flex h-full flex-shrink-0 items-center justify-center p-2 md:hidden"
             >
               <div
                 class="bg-neutral-2 h-6 w-6 flex-shrink-0 overflow-hidden bg-secondary-2 [mask-image:url('~/assets/icons/notifications.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
@@ -119,7 +129,7 @@
                 <p class="scale-[0.5]">99</p>
               </div>
             </BaseButton>
-            <div class="block p-2 lg:hidden" @click="mobileMenuIsShow = !mobileMenuIsShow">
+            <div class="block p-2 md:hidden" @click="mobileMenuIsShow = !mobileMenuIsShow">
               <div
                 class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/menu.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
               ></div>
