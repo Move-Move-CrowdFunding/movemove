@@ -1,4 +1,8 @@
 <script setup>
+const bannerNavigation = {
+  nextEl: '.banner-swiper-button-next',
+  prevEl: '.banner-swiper-button-prev'
+}
 const hotNavigation = {
   nextEl: '.hot-swiper-button-next',
   prevEl: '.hot-swiper-button-prev'
@@ -6,72 +10,78 @@ const hotNavigation = {
 </script>
 <template>
   <div>
-    <section>
-      <client-only>
-        <Swiper
-          id="banner-swiper"
-          :modules="[SwiperNavigation, SwiperPagination]"
-          :loop="true"
-          :centered-slides="true"
-          :pagination="true"
-          :navigation="true"
-          :slides-per-view="1"
-          :breakpoints="{
-            '640': {
-              slidesPerView: 1.2,
-              spaceBetween: 24
-            },
-            '1024': {
-              slidesPerView: 1.5,
-              spaceBetween: 40
-            }
-          }"
-          class="h-[500px]"
-        >
-          <SwiperSlide class="bg-[url('~/assets/images/index/banner/1.png')] bg-cover bg-center">
-            <div class="h-full text-center font-bold">
-              <p class="mt-20">募募</p>
-              <p class="my-12 text-7xl">群眾募資</p>
-              <p class="text-3xl">共同實現夢想</p>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide class="bg-[url('~/assets/images/index/banner/2.png')] bg-cover bg-center">
-            <div class="h-full text-center font-bold">
-              <p class="mt-20">募募</p>
-              <p class="my-12 text-7xl">群眾募資</p>
-              <p class="text-3xl">建立共同體和凝聚力</p>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide class="bg-[url('~/assets/images/index/banner/3.png')] bg-cover bg-center">
-            <div class="h-full text-center font-bold">
-              <p class="mt-20">募募</p>
-              <p class="my-12 text-7xl">群眾募資</p>
-              <p class="text-3xl">民主參與影響</p>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide class="bg-[url('~/assets/images/index/banner/1.png')] bg-cover bg-center">
-            <div class="h-full text-center font-bold">
-              <p class="mt-20">募募</p>
-              <p class="my-12 text-7xl">群眾募資</p>
-              <p class="text-3xl">共同實現夢想</p>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide class="bg-[url('~/assets/images/index/banner/2.png')] bg-cover bg-center">
-            <div class="h-full text-center font-bold">
-              <p class="mt-20">募募</p>
-              <p class="my-12 text-7xl">群眾募資</p>
-              <p class="text-3xl">建立共同體和凝聚力</p>
-            </div>
-          </SwiperSlide>
-          <SwiperSlide class="bg-[url('~/assets/images/index/banner/3.png')] bg-cover bg-center">
-            <div class="h-full text-center font-bold">
-              <p class="mt-20">募募</p>
-              <p class="my-12 text-7xl">群眾募資</p>
-              <p class="text-3xl">民主參與影響</p>
-            </div>
-          </SwiperSlide>
-        </Swiper>
-      </client-only>
+    <section class="relative">
+      <Swiper
+        id="banner-swiper"
+        :modules="[SwiperNavigation, SwiperPagination]"
+        :loop="true"
+        :centered-slides="true"
+        :pagination="true"
+        :navigation="bannerNavigation"
+        :slides-per-view="1"
+        :breakpoints="{
+          '640': {
+            slidesPerView: 1.2,
+            spaceBetween: 24
+          },
+          '1024': {
+            slidesPerView: 1.5,
+            spaceBetween: 40
+          }
+        }"
+        class="h-[500px]"
+      >
+        <SwiperSlide class="bg-[url('~/assets/images/index/banner/1.png')] bg-cover bg-center">
+          <div class="h-full text-center font-bold">
+            <p class="mt-20">募募</p>
+            <p class="my-12 text-7xl">群眾募資</p>
+            <p class="text-3xl">共同實現夢想</p>
+          </div>
+        </SwiperSlide>
+        <SwiperSlide class="bg-[url('~/assets/images/index/banner/2.png')] bg-cover bg-center">
+          <div class="h-full text-center font-bold">
+            <p class="mt-20">募募</p>
+            <p class="my-12 text-7xl">群眾募資</p>
+            <p class="text-3xl">建立共同體和凝聚力</p>
+          </div>
+        </SwiperSlide>
+        <SwiperSlide class="bg-[url('~/assets/images/index/banner/3.png')] bg-cover bg-center">
+          <div class="h-full text-center font-bold">
+            <p class="mt-20">募募</p>
+            <p class="my-12 text-7xl">群眾募資</p>
+            <p class="text-3xl">民主參與影響</p>
+          </div>
+        </SwiperSlide>
+        <SwiperSlide class="bg-[url('~/assets/images/index/banner/3.png')] bg-cover bg-center">
+          <div class="h-full text-center font-bold">
+            <p class="mt-20">募募</p>
+            <p class="my-12 text-7xl">群眾募資</p>
+            <p class="text-3xl">4</p>
+          </div>
+        </SwiperSlide>
+      </Swiper>
+      <div
+        class="container absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 justify-between bg-primary-2"
+      >
+        <button class="banner-swiper-button-prev">
+          <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <path
+                d="M22.0875 4.71253L19.875 2.50003L7.5 14.875L19.875 27.25L22.0875 25.0375L11.925 14.875L22.0875 4.71253Z"
+              />
+            </g>
+          </svg>
+        </button>
+        <button class="banner-swiper-button-next">
+          <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+            <g>
+              <path
+                d="M7.5 25.2875L9.7125 27.5L22.2125 15L9.7125 2.5L7.5 4.7125L17.7875 15L7.5 25.2875Z"
+              />
+            </g>
+          </svg>
+        </button>
+      </div>
     </section>
     <!-- bg-group -->
     <div class="bg-group-1 bg-none bg-right-bottom bg-no-repeat lg:px-3">
@@ -106,18 +116,22 @@ const hotNavigation = {
             <SwiperSlide><ProjectCard /></SwiperSlide>
           </Swiper>
           <button class="hot-swiper-button-prev">
-            <!-- <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+            <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
               <g>
-              <path d="M22.0875 4.71253L19.875 2.50003L7.5 14.875L19.875 27.25L22.0875 25.0375L11.925 14.875L22.0875 4.71253Z"/>
+                <path
+                  d="M22.0875 4.71253L19.875 2.50003L7.5 14.875L19.875 27.25L22.0875 25.0375L11.925 14.875L22.0875 4.71253Z"
+                />
               </g>
-            </svg> -->
+            </svg>
           </button>
           <button class="hot-swiper-button-next">
-            <!-- <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+            <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
               <g>
-              <path d="M7.5 25.2875L9.7125 27.5L22.2125 15L9.7125 2.5L7.5 4.7125L17.7875 15L7.5 25.2875Z"/>
+                <path
+                  d="M7.5 25.2875L9.7125 27.5L22.2125 15L9.7125 2.5L7.5 4.7125L17.7875 15L7.5 25.2875Z"
+                />
               </g>
-            </svg> -->
+            </svg>
           </button>
         </div>
       </section>
@@ -363,8 +377,12 @@ const hotNavigation = {
   background-image: linear-gradient(#4d3b2fcc, #4d3b2fcc),
     url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
 }
-
-// hot swiper
+.banner-swiper-button-prev {
+  @apply absolute right-full top-1/2 hidden h-[54px] w-[54px] -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
+}
+.banner-swiper-button-next {
+  @apply absolute left-full top-1/2 hidden h-[54px] w-[54px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
+}
 .hot-swiper-button-prev {
   @apply absolute right-full top-1/2 hidden h-[54px] w-[54px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
 }
@@ -373,6 +391,11 @@ const hotNavigation = {
 }
 #hot-swiper {
   padding-bottom: 48px !important;
+  :deep(.swiper-pagination-bullet-active) {
+    @apply bg-primary-1;
+  }
+}
+#banner-swiper {
   :deep(.swiper-pagination-bullet-active) {
     @apply bg-primary-1;
   }
