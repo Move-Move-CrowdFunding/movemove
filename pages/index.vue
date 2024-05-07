@@ -10,11 +10,71 @@ const pagination = {
 <template>
   <div>
     <section>
-      <Swiper id="banner-swiper" :modules="[SwiperNavigation, SwiperPagination]" :loop="true">
-        <SwiperSlide>1</SwiperSlide>
-        <SwiperSlide>2</SwiperSlide>
-        <SwiperSlide>3</SwiperSlide>
-      </Swiper>
+      <client-only>
+        <Swiper
+          id="banner-swiper"
+          :modules="[SwiperNavigation, SwiperPagination]"
+          :loop="true"
+          :centered-slides="true"
+          :pagination="true"
+          :navigation="true"
+          :slides-per-view="1"
+          :breakpoints="{
+            '640': {
+              slidesPerView: 1.2,
+              spaceBetween: 24
+            },
+            '1024': {
+              slidesPerView: 1.5,
+              spaceBetween: 40
+            }
+          }"
+          class="h-[500px]"
+        >
+          <SwiperSlide class="bg-[url('~/assets/images/index/banner/1.png')] bg-cover bg-center">
+            <div class="h-full text-center font-bold">
+              <p class="mt-20">募募</p>
+              <p class="my-12 text-7xl">群眾募資</p>
+              <p class="text-3xl">共同實現夢想</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide class="bg-[url('~/assets/images/index/banner/2.png')] bg-cover bg-center">
+            <div class="h-full text-center font-bold">
+              <p class="mt-20">募募</p>
+              <p class="my-12 text-7xl">群眾募資</p>
+              <p class="text-3xl">建立共同體和凝聚力</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide class="bg-[url('~/assets/images/index/banner/3.png')] bg-cover bg-center">
+            <div class="h-full text-center font-bold">
+              <p class="mt-20">募募</p>
+              <p class="my-12 text-7xl">群眾募資</p>
+              <p class="text-3xl">民主參與影響</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide class="bg-[url('~/assets/images/index/banner/1.png')] bg-cover bg-center">
+            <div class="h-full text-center font-bold">
+              <p class="mt-20">募募</p>
+              <p class="my-12 text-7xl">群眾募資</p>
+              <p class="text-3xl">共同實現夢想</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide class="bg-[url('~/assets/images/index/banner/2.png')] bg-cover bg-center">
+            <div class="h-full text-center font-bold">
+              <p class="mt-20">募募</p>
+              <p class="my-12 text-7xl">群眾募資</p>
+              <p class="text-3xl">建立共同體和凝聚力</p>
+            </div>
+          </SwiperSlide>
+          <SwiperSlide class="bg-[url('~/assets/images/index/banner/3.png')] bg-cover bg-center">
+            <div class="h-full text-center font-bold">
+              <p class="mt-20">募募</p>
+              <p class="my-12 text-7xl">群眾募資</p>
+              <p class="text-3xl">民主參與影響</p>
+            </div>
+          </SwiperSlide>
+        </Swiper>
+      </client-only>
     </section>
     <!-- bg-group -->
     <div class="bg-group-1 bg-none bg-right-bottom bg-no-repeat lg:px-3">
@@ -24,30 +84,32 @@ const pagination = {
           <NuxtLink to="/" class="hover:text-primary-1 active:text-secondary-1">查看更多</NuxtLink>
         </div>
         <div class="">
-          <Swiper
-            id="hot-swiper"
-            :modules="[SwiperNavigation, SwiperPagination]"
-            :loop="true"
-            :slides-per-view="1.3"
-            :space-between="24"
-            :navigation="true"
-            :pagination="pagination"
-            :breakpoints="{
-              '640': {
-                slidesPerView: 2.3
-              },
-              '1024': {
-                slidesPerView: 3
-              }
-            }"
-          >
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-          </Swiper>
+          <client-only>
+            <Swiper
+              id="hot-swiper"
+              :modules="[SwiperNavigation, SwiperPagination]"
+              :loop="true"
+              :slides-per-view="1.3"
+              :space-between="24"
+              :navigation="true"
+              :pagination="pagination"
+              :breakpoints="{
+                '640': {
+                  slidesPerView: 2.3
+                },
+                '1024': {
+                  slidesPerView: 3
+                }
+              }"
+            >
+              <SwiperSlide><ProjectCard /></SwiperSlide>
+              <SwiperSlide><ProjectCard /></SwiperSlide>
+              <SwiperSlide><ProjectCard /></SwiperSlide>
+              <SwiperSlide><ProjectCard /></SwiperSlide>
+              <SwiperSlide><ProjectCard /></SwiperSlide>
+              <SwiperSlide><ProjectCard /></SwiperSlide>
+            </Swiper>
+          </client-only>
         </div>
       </section>
       <section
@@ -264,11 +326,7 @@ const pagination = {
   </div>
 </template>
 
-<style scoped>
-* {
-  outline: 1px solid #0a0;
-}
-
+<style scoped lang="scss">
 @media (width >= 1024px) {
   .bg-group-1 {
     background-image: url('~/assets/images/index/bg/bg-sketch.png'),
@@ -296,8 +354,10 @@ const pagination = {
   background-image: linear-gradient(#4d3b2fcc, #4d3b2fcc),
     url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
 }
-
 #hot-swiper {
   padding-bottom: 48px !important;
+  .swiper-pagination-bullet-active {
+    background-color: #f60 !important;
+  }
 }
 </style>
