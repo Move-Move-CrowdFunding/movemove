@@ -1,10 +1,7 @@
 <script setup>
-const pagination = {
-  clickable: true
-  // bulletActiveClass: 'hot-swiper-pagination-bullet-active'
-  // renderBullet: function (index, className) {
-  //   return '<span class="' + className + '">' + (classname) + '</span>'
-  // }
+const hotNavigation = {
+  nextEl: '.hot-swiper-button-next',
+  prevEl: '.hot-swiper-button-prev'
 }
 </script>
 <template>
@@ -83,33 +80,45 @@ const pagination = {
           <h2 class="text-3xl sm:text-4xl">熱門提案</h2>
           <NuxtLink to="/" class="hover:text-primary-1 active:text-secondary-1">查看更多</NuxtLink>
         </div>
-        <div class="">
-          <client-only>
-            <Swiper
-              id="hot-swiper"
-              :modules="[SwiperNavigation, SwiperPagination]"
-              :loop="true"
-              :slides-per-view="1.3"
-              :space-between="24"
-              :navigation="true"
-              :pagination="pagination"
-              :breakpoints="{
-                '640': {
-                  slidesPerView: 2.3
-                },
-                '1024': {
-                  slidesPerView: 3
-                }
-              }"
-            >
-              <SwiperSlide><ProjectCard /></SwiperSlide>
-              <SwiperSlide><ProjectCard /></SwiperSlide>
-              <SwiperSlide><ProjectCard /></SwiperSlide>
-              <SwiperSlide><ProjectCard /></SwiperSlide>
-              <SwiperSlide><ProjectCard /></SwiperSlide>
-              <SwiperSlide><ProjectCard /></SwiperSlide>
-            </Swiper>
-          </client-only>
+        <div class="relative">
+          <Swiper
+            id="hot-swiper"
+            :modules="[SwiperNavigation, SwiperPagination]"
+            :loop="true"
+            :slides-per-view="1.3"
+            :space-between="24"
+            :navigation="hotNavigation"
+            :pagination="{ clickable: true }"
+            :breakpoints="{
+              '640': {
+                slidesPerView: 2.3
+              },
+              '1024': {
+                slidesPerView: 3
+              }
+            }"
+          >
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide><ProjectCard /></SwiperSlide>
+          </Swiper>
+          <button class="hot-swiper-button-prev">
+            <!-- <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+              <g>
+              <path d="M22.0875 4.71253L19.875 2.50003L7.5 14.875L19.875 27.25L22.0875 25.0375L11.925 14.875L22.0875 4.71253Z"/>
+              </g>
+            </svg> -->
+          </button>
+          <button class="hot-swiper-button-next">
+            <!-- <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+              <g>
+              <path d="M7.5 25.2875L9.7125 27.5L22.2125 15L9.7125 2.5L7.5 4.7125L17.7875 15L7.5 25.2875Z"/>
+              </g>
+            </svg> -->
+          </button>
         </div>
       </section>
       <section
@@ -354,10 +363,18 @@ const pagination = {
   background-image: linear-gradient(#4d3b2fcc, #4d3b2fcc),
     url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
 }
+
+// hot swiper
+.hot-swiper-button-prev {
+  @apply absolute right-full top-1/2 hidden h-[54px] w-[54px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
+}
+.hot-swiper-button-next {
+  @apply absolute left-full top-1/2 hidden h-[54px] w-[54px] -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
+}
 #hot-swiper {
   padding-bottom: 48px !important;
-  .swiper-pagination-bullet-active {
-    background-color: #f60 !important;
+  :deep(.swiper-pagination-bullet-active) {
+    @apply bg-primary-1;
   }
 }
 </style>
