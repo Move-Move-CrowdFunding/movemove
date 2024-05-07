@@ -61,26 +61,28 @@ const hotNavigation = {
         </SwiperSlide>
       </Swiper>
       <div
-        class="container absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 justify-between bg-primary-2"
+        class="container absolute left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 bg-primary-2"
       >
-        <button class="banner-swiper-button-prev">
-          <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
-            <g>
-              <path
-                d="M22.0875 4.71253L19.875 2.50003L7.5 14.875L19.875 27.25L22.0875 25.0375L11.925 14.875L22.0875 4.71253Z"
-              />
-            </g>
-          </svg>
-        </button>
-        <button class="banner-swiper-button-next">
-          <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
-            <g>
-              <path
-                d="M7.5 25.2875L9.7125 27.5L22.2125 15L9.7125 2.5L7.5 4.7125L17.7875 15L7.5 25.2875Z"
-              />
-            </g>
-          </svg>
-        </button>
+        <div class="relative flex justify-between bg-secondary-2">
+          <button class="banner-swiper-button-prev">
+            <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <path
+                  d="M22.0875 4.71253L19.875 2.50003L7.5 14.875L19.875 27.25L22.0875 25.0375L11.925 14.875L22.0875 4.71253Z"
+                />
+              </g>
+            </svg>
+          </button>
+          <button class="banner-swiper-button-next">
+            <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <path
+                  d="M7.5 25.2875L9.7125 27.5L22.2125 15L9.7125 2.5L7.5 4.7125L17.7875 15L7.5 25.2875Z"
+                />
+              </g>
+            </svg>
+          </button>
+        </div>
       </div>
     </section>
     <!-- bg-group -->
@@ -215,7 +217,7 @@ const hotNavigation = {
       </section>
     </div>
 
-    <section class="py-10 sm:py-40 lg:bg-secondary-5">
+    <section class="py-10 sm:pb-40 lg:bg-secondary-5">
       <h2 class="container mb-6 text-3xl sm:text-4xl lg:mb-10">推薦提案</h2>
       <div class="container">
         <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
@@ -279,19 +281,18 @@ const hotNavigation = {
                     class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center duration-300 group-hover:scale-110"
                   ></div>
                   <button
-                    class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 lg:right-4 lg:top-4"
+                    class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 fill-white duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
                   >
                     <svg
                       width="24"
                       height="24"
                       viewBox="0 0 24 24"
-                      fill="none"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <g>
                         <path
                           d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
-                          class="fill-white group-active:fill-primary-1"
+                          class=""
                         />
                       </g>
                     </svg>
@@ -378,10 +379,10 @@ const hotNavigation = {
     url('https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
 }
 .banner-swiper-button-prev {
-  @apply absolute right-full top-1/2 hidden h-[54px] w-[54px] -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
+  @apply absolute right-full top-1/2 hidden h-[54px] w-[54px] items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
 }
 .banner-swiper-button-next {
-  @apply absolute left-full top-1/2 hidden h-[54px] w-[54px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
+  @apply absolute left-full top-1/2 hidden h-[54px] w-[54px] items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
 }
 .hot-swiper-button-prev {
   @apply absolute right-full top-1/2 hidden h-[54px] w-[54px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-secondary-5 fill-primary-1 hover:fill-secondary-1 lg:flex;
