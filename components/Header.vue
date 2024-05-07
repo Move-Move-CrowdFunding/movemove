@@ -1,6 +1,6 @@
 <template>
   <header
-    class="sticky left-0 right-0 top-0 flex items-center justify-between bg-neutral-50 shadow-md md:shadow-none"
+    class="sticky left-0 right-0 top-0 z-50 flex items-center justify-between bg-neutral-50 shadow-md md:shadow-none"
   >
     <div class="container mx-auto py-4">
       <div class="flex items-center justify-between space-x-4">
