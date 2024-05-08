@@ -349,7 +349,11 @@ const hotNavigation = {
     </div>
   </div>
 </template>
-
+<!-- <script setup lang="ts">
+definePageMeta({
+  layout: 'default'
+})
+</script> -->
 <style scoped lang="scss">
 @media (width >= 1024px) {
   .bg-group-1 {
