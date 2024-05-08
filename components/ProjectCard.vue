@@ -1,16 +1,9 @@
 <script setup>
-const data = {
-  id: '123',
-  title: '愛心廚房｜溫飽無憂的一餐，舉辦食物援助計畫',
-  categoryKey: 3,
-  coverUrl:
-    'https://images.unsplash.com/photo-1593113616828-6f22bca04804?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  endDate: 1720000000,
-  targetMoney: 10,
-  achievedMoney: 2,
-  liked: true
-}
+const props = defineProps(['project'])
+const { project } = props
+
 const date = new Date()
+const login = ref(false)
 </script>
 <template>
   <NuxtLink
@@ -20,9 +13,10 @@ const date = new Date()
     <div class="relative overflow-hidden">
       <div
         class="relative h-[168px] bg-cover bg-center duration-300 group-hover:scale-110 lg:h-[274px]"
-        :style="{ backgroundImage: 'url(' + data.coverUrl + ')' }"
+        :style="{ backgroundImage: 'url(' + project.coverUrl + ')' }"
       ></div>
       <button
+        v-if="login"
         class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 fill-white duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -36,7 +30,7 @@ const date = new Date()
     </div>
     <div class="space-y-2 bg-white p-4 lg:space-y-4 lg:p-6">
       <h3 class="line-clamp-2 sm:text-[18px]">
-        <div>{{ data.title }}</div>
+        <div>{{ project.title }}</div>
         <div class="text-transparent">.</div>
       </h3>
       <span
@@ -46,14 +40,14 @@ const date = new Date()
       <div class="h-2 rounded-full bg-[#D9D9D9]">
         <div
           class="h-2 rounded-full bg-primary-1"
-          :style="{ width: `${(100 * data.achievedMoney) / data.targetMoney}%` }"
+          :style="{ width: `${(100 * project.achievedMoney) / project.targetMoney}%` }"
         ></div>
       </div>
       <div class="flex justify-between">
-        <p>NT$ {{ data.achievedMoney }}</p>
+        <p>NT$ {{ project.achievedMoney }}</p>
         <p>
           倒數
-          <span>{{ Math.floor((data.endDate - date.getTime() / 1000) / 60 / 60 / 24) }}</span> 天
+          <span>{{ Math.floor((project.endDate - date.getTime() / 1000) / 60 / 60 / 24) }}</span> 天
         </p>
       </div>
     </div>
