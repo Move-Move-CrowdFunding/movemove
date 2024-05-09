@@ -1,4 +1,8 @@
 <script setup>
+const baseURL = ref('https://movemove-api.onrender.com')
+const token = ref('')
+// const token = ref('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxNjIxNiwiZXhwIjoxNzE1MzAyNjE2fQ.1uueL40f-XXbXx81QCLF93yK73_U08DRM_B8AjH9m-0')
+
 const bannerNavigation = {
   nextEl: '.banner-swiper-button-next',
   prevEl: '.banner-swiper-button-prev'
@@ -6,6 +10,23 @@ const bannerNavigation = {
 const hotNavigation = {
   nextEl: '.hot-swiper-button-next',
   prevEl: '.hot-swiper-button-prev'
+}
+
+const isLogin = ref(false)
+const checkLogin = async () => {
+  await $fetch(`${baseURL.value}/user/check-login`, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${token.value}`
+    }
+  })
+    .then(() => {
+      isLogin.value = true
+    })
+    .catch((err) => {
+      console.dir(err.data)
+      alert('登入開啟更多功能')
+    })
 }
 
 const projects = ref([
@@ -31,7 +52,10 @@ const projects = ref([
     achievedMoney: 6
   }
 ])
-const liked = ref(['123'])
+
+onMounted(() => {
+  checkLogin()
+})
 </script>
 <template>
   <div>
@@ -135,14 +159,9 @@ const liked = ref(['123'])
               }
             }"
           >
-            <SwiperSlide v-for="project in projects" :key="project.id"
-              ><ProjectCard :project="project" :liked="liked"
-            /></SwiperSlide>
-            <!-- <SwiperSlide><ProjectCard :project="project" :liked="liked"/></SwiperSlide>
-            <SwiperSlide><ProjectCard :project="project" :liked="liked"/></SwiperSlide>
-            <SwiperSlide><ProjectCard :project="project" :liked="liked"/></SwiperSlide>
-            <SwiperSlide><ProjectCard :project="project" :liked="liked"/></SwiperSlide>
-            <SwiperSlide><ProjectCard :project="project" :liked="liked"/></SwiperSlide> -->
+            <SwiperSlide v-for="project in projects" :key="project.id">
+              <ProjectCard :project="project" :is-login="isLogin" />
+            </SwiperSlide>
           </Swiper>
           <button class="hot-swiper-button-prev">
             <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
@@ -249,7 +268,7 @@ const liked = ref(['123'])
       <div class="container">
         <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           <li v-for="project in projects" :key="project.id">
-            <ProjectCard :project="project" :liked="liked" />
+            <ProjectCard :project="project" :is-login="isLogin" />
           </li>
         </ul>
       </div>

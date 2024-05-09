@@ -1,4 +1,7 @@
 <script setup>
+const baseURL = ref('https://movemove-api.onrender.com')
+const token = ref('')
+// const token = ref('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxNjIxNiwiZXhwIjoxNzE1MzAyNjE2fQ.1uueL40f-XXbXx81QCLF93yK73_U08DRM_B8AjH9m-0')
 const projects = ref([
   {
     id: '123',
@@ -22,12 +25,32 @@ const projects = ref([
     achievedMoney: 6
   }
 ])
-const liked = ref(['123'])
+
+const isLogin = ref(false)
+const checkLogin = async () => {
+  await $fetch(`${baseURL.value}/user/check-login`, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${token.value}`
+    }
+  })
+    .then(() => {
+      isLogin.value = true
+    })
+    .catch((err) => {
+      console.dir(err.data)
+      alert('登入開啟更多功能')
+    })
+}
 
 const selectedCategory = ref(0)
 const selectCategory = (key) => {
   selectedCategory.value = key
 }
+
+onMounted(() => {
+  checkLogin()
+})
 </script>
 <template>
   <div class="container py-10 lg:py-20">
@@ -73,7 +96,7 @@ const selectCategory = (key) => {
     </div>
     <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in projects" :key="project.id">
-        <ProjectCard :project="project" :liked="liked" />
+        <ProjectCard :project="project" :is-login="isLogin" />
       </li>
     </ul>
   </div>

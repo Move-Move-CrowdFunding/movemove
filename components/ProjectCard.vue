@@ -9,15 +9,18 @@ const props = defineProps({
     default() {
       return []
     }
+  },
+  isLogin: {
+    type: Boolean,
+    required: true
   }
 })
-const { project, liked } = props
+const { project } = props
+const followingStore = useFollowingStore()
 
-const isLiked = liked.find((item) => item === project.id)
-// const isLiked = null
+const isLiked = followingStore.checkFollowing(project.id)
 
 const date = new Date()
-const login = ref(true)
 
 const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒少福利', '長者', '婦女']
 </script>
@@ -32,7 +35,7 @@ const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒�
         :style="{ backgroundImage: 'url(' + project.coverUrl + ')' }"
       ></div>
       <button
-        v-if="login"
+        v-if="isLogin"
         class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': isLiked, 'fill-white': !isLiked }"
       >
