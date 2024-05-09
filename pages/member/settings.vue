@@ -1,5 +1,73 @@
 <script setup>
 const tab = ref(1)
+// const token = ref("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxOTIyOCwiZXhwIjoxNzE1MzA1NjI4fQ.aNTdvwkubT9rfAN7Cesm19YlfCP6aqwIW5eZ71YgumM")
+const token = ref(
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxNjIxNiwiZXhwIjoxNzE1MzAyNjE2fQ.1uueL40f-XXbXx81QCLF93yK73_U08DRM_B8AjH9m-0'
+)
+const baseURL = ref('https://movemove-api.onrender.com')
+
+const userData = ref({})
+const tempUser = ref({
+  nickName: '',
+  userName: '',
+  gender: 0,
+  phone: '',
+  address: '',
+  teamName: '',
+  aboutMe: '',
+  avatar: ''
+})
+
+const checkLogin = async () => {
+  await $fetch(`${baseURL.value}/user/check-login`, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${token.value}`
+    }
+  })
+    .then((res) => {
+      console.log(res)
+      getUser()
+    })
+    .catch((err) => {
+      console.dir(err)
+    })
+}
+const getUser = async () => {
+  await $fetch(`${baseURL.value}/user/`, {
+    method: 'GET',
+    headers: {
+      authorization: `Bearer ${token.value}`
+    }
+  })
+    .then((res) => {
+      userData.value = res.results
+      const { nickName, userName, gender, phone, address, teamName, aboutMe, avatar } = res.results
+      tempUser.value = { nickName, userName, gender, phone, address, teamName, aboutMe, avatar }
+    })
+    .catch((err) => console.log(err))
+}
+const editUser = async () => {
+  await $fetch(`${baseURL.value}/user/`, {
+    method: 'PATCH',
+    headers: {
+      authorization: `Bearer ${token.value}`
+    },
+    body: JSON.stringify(tempUser.value)
+  })
+    .then((res) => {
+      const { nickName, userName, gender, phone, address, teamName, aboutMe, avatar } = res.results
+      tempUser.value = { nickName, userName, gender, phone, address, teamName, aboutMe, avatar }
+      alert(res.message)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+onMounted(() => {
+  checkLogin()
+})
 </script>
 <template>
   <div class="py-10 lg:py-20">
@@ -15,8 +83,8 @@ const tab = ref(1)
             </button>
           </div>
           <div>
-            <div class="mb-3 text-xl font-bold lg:text-3xl">Elsa</div>
-            <div class="lg:text-xl">elsa.syu@gmail.com</div>
+            <div class="mb-3 text-xl font-bold lg:text-3xl">{{ userData.nickName }}</div>
+            <div class="lg:text-xl">{{ userData.email }}</div>
           </div>
         </div>
         <div class="mb-4 flex gap-4 font-bold">
@@ -36,12 +104,13 @@ const tab = ref(1)
           </button>
         </div>
         <div class="bg-secondary-5 px-3 py-10 lg:px-6">
-          <form v-if="tab === 1" action="" class="space-y-4">
+          <form v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
             <div class="flex items-center space-x-4">
               <label for="username" class="w-1/4 font-bold sm:w-1/6">真實姓名</label>
               <div class="grow">
                 <input
                   id="username"
+                  v-model="tempUser.userName"
                   type="text"
                   class="w-full px-3 py-2"
                   placeholder="請輸入真實姓名"
@@ -53,6 +122,7 @@ const tab = ref(1)
               <div class="grow">
                 <input
                   id="nickName"
+                  v-model="tempUser.nickName"
                   type="text"
                   class="w-full px-3 py-2"
                   placeholder="請輸入顯示名稱"
@@ -62,17 +132,11 @@ const tab = ref(1)
             <div class="flex items-center space-x-4">
               <label for="gender" class="w-1/4 font-bold sm:w-1/6">性別</label>
               <div class="grow">
-                <select id="" name="gender" class="w-full px-3 py-2">
-                  <option value="" selected disabled>請選擇性別</option>
+                <select id="" v-model="tempUser.gender" name="gender" class="w-full px-3 py-2">
+                  <option value="0" selected disabled>請選擇性別</option>
                   <option value="1">男</option>
                   <option value="2">女</option>
                 </select>
-              </div>
-            </div>
-            <div class="flex items-center space-x-4">
-              <label for="birth" class="w-1/4 font-bold sm:w-1/6">生日</label>
-              <div class="grow">
-                <input id="birth" type="date" class="w-full px-3 py-2" placeholder="請選擇生日" />
               </div>
             </div>
             <div class="flex items-center space-x-4">
@@ -80,6 +144,7 @@ const tab = ref(1)
               <div class="grow">
                 <input
                   id="phone"
+                  v-model="tempUser.phone"
                   type="text"
                   class="w-full px-3 py-2"
                   placeholder="請輸入連絡電話"
@@ -91,6 +156,7 @@ const tab = ref(1)
               <div class="grow">
                 <input
                   id="address"
+                  v-model="tempUser.address"
                   type="text"
                   class="w-full px-3 py-2"
                   placeholder="請輸入收件地址"
@@ -102,6 +168,7 @@ const tab = ref(1)
               <div class="grow">
                 <input
                   id="teamName"
+                  v-model="tempUser.teamName"
                   type="text"
                   class="w-full px-3 py-2"
                   placeholder="請輸入所屬團隊"
@@ -113,6 +180,7 @@ const tab = ref(1)
               <div class="grow">
                 <textarea
                   id="aboutMe"
+                  v-model="tempUser.aboutMe"
                   name=""
                   rows="4"
                   class="w-full resize-none px-3 py-2"
@@ -120,11 +188,14 @@ const tab = ref(1)
                 ></textarea>
               </div>
             </div>
-            <div class="flex justify-between pt-6">
-              <button class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white">
+            <div class="flex justify-end pt-6">
+              <!-- <button class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white">
                 取消
-              </button>
-              <button class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white">
+              </button> -->
+              <button
+                type="submit"
+                class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white"
+              >
                 更新
               </button>
             </div>
