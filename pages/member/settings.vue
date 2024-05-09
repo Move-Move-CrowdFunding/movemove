@@ -1,9 +1,7 @@
 <script setup>
 const tab = ref(1)
-// const token = ref("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxOTIyOCwiZXhwIjoxNzE1MzA1NjI4fQ.aNTdvwkubT9rfAN7Cesm19YlfCP6aqwIW5eZ71YgumM")
-const token = ref(
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxNjIxNiwiZXhwIjoxNzE1MzAyNjE2fQ.1uueL40f-XXbXx81QCLF93yK73_U08DRM_B8AjH9m-0'
-)
+const token = ref('')
+// const token = ref('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxNjIxNiwiZXhwIjoxNzE1MzAyNjE2fQ.1uueL40f-XXbXx81QCLF93yK73_U08DRM_B8AjH9m-0')
 const baseURL = ref('https://movemove-api.onrender.com')
 
 const userData = ref({})
@@ -29,8 +27,10 @@ const checkLogin = async () => {
       console.log(res)
       getUser()
     })
-    .catch((err) => {
-      console.dir(err)
+    .catch(async (err) => {
+      console.dir(err.data)
+      alert(err.data.message)
+      await navigateTo('/login')
     })
 }
 const getUser = async () => {
