@@ -5,6 +5,7 @@
       <span v-if="isRequired" class="text-warning-500">*</span>
     </label>
     <input
+      v-model="modalValue"
       :type="type"
       class="peer relative min-h-12 w-full appearance-none rounded-[3px] border border-neutral-400 p-3 outline-offset-0 transition-all focus:outline-0 focus:outline-offset-0"
       value=""
@@ -16,6 +17,7 @@
   </div>
 </template>
 <script setup lang="ts">
+const modalValue = defineModel()
 defineProps({
   type: {
     type: String,

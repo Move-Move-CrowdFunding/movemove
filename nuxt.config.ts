@@ -23,21 +23,5 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  css: ['~/assets/style/root.scss'],
-  // devProxy: {
-  //   '/api': {
-  //     target: 'http://movemove-api.onrender.com/',
-  //     changeOrigin: true
-  //   }
-  // }
-  vite: {
-    server: {
-      proxy: {
-        '/api': {
-          target: 'https://movemove-api.onrender.com/',
-          changeOrigin: true
-        }
-      }
-    }
-  }
+  css: ['~/assets/style/root.scss']
 })
