@@ -1,9 +1,25 @@
 <script setup>
-const props = defineProps(['project'])
-const { project } = props
+const props = defineProps({
+  project: {
+    type: Object,
+    required: true
+  },
+  liked: {
+    type: Array,
+    default() {
+      return []
+    }
+  }
+})
+const { project, liked } = props
+
+const isLiked = liked.find((item) => item === project.id)
+// const isLiked = null
 
 const date = new Date()
-const login = ref(false)
+const login = ref(true)
+
+const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒少福利', '長者', '婦女']
 </script>
 <template>
   <NuxtLink
@@ -17,7 +33,8 @@ const login = ref(false)
       ></div>
       <button
         v-if="login"
-        class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 fill-white duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
+        class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
+        :class="{ 'fill-primary-1': isLiked, 'fill-white': !isLiked }"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <g>
@@ -27,6 +44,12 @@ const login = ref(false)
           </g>
         </svg>
       </button>
+      <div
+        v-if="project.endDate < date.getTime() / 1000"
+        class="absolute inset-0 flex items-center justify-center bg-neutral-200/80"
+      >
+        已結束
+      </div>
     </div>
     <div class="space-y-2 bg-white p-4 lg:space-y-4 lg:p-6">
       <h3 class="line-clamp-2 sm:text-[18px]">
@@ -35,7 +58,7 @@ const login = ref(false)
       </h3>
       <span
         class="inline-block rounded-full border border-primary-1 px-2 py-1 text-xs text-primary-1 sm:text-base"
-        >弱勢救助</span
+        >{{ categoryName[project.categoryKey] }}</span
       >
       <div class="h-2 rounded-full bg-[#D9D9D9]">
         <div
@@ -45,7 +68,8 @@ const login = ref(false)
       </div>
       <div class="flex justify-between">
         <p>NT$ {{ project.achievedMoney }}</p>
-        <p>
+        <p v-if="project.endDate < date.getTime() / 1000">已結束</p>
+        <p v-else>
           倒數
           <span>{{ Math.floor((project.endDate - date.getTime() / 1000) / 60 / 60 / 24) }}</span> 天
         </p>
