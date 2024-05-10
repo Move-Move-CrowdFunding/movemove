@@ -5,10 +5,12 @@ interface Params {
 }
 
 export default function getFetchData({ url, method = 'GET', params }: Params) {
+  const runtimeConfig = useRuntimeConfig()
+  const { apiBase } = runtimeConfig.public
   return new Promise((resolve, reject) => {
     useFetch(url, {
       method,
-      baseURL: 'https://movemove-api.onrender.com',
+      baseURL: apiBase,
       onRequest({ options }) {
         options.headers = {
           ...options.headers,
@@ -19,8 +21,8 @@ export default function getFetchData({ url, method = 'GET', params }: Params) {
         }
       },
       onResponse({ request, response }) {
-        if(response.ok){
-        resolve(response._data)
+        if (response.ok) {
+          resolve(response._data)
         } else {
           reject(response?._data)
         }
