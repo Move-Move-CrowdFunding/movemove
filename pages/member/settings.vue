@@ -1,8 +1,5 @@
 <script setup>
 const tab = ref(1)
-const token = ref('')
-// const token = ref('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxNjIxNiwiZXhwIjoxNzE1MzAyNjE2fQ.1uueL40f-XXbXx81QCLF93yK73_U08DRM_B8AjH9m-0')
-const baseURL = ref('https://movemove-api.onrender.com')
 
 const userData = ref({})
 const tempUser = ref({
@@ -15,30 +12,27 @@ const tempUser = ref({
   aboutMe: '',
   avatar: ''
 })
-
-const checkLogin = async () => {
-  await $fetch(`${baseURL.value}/user/check-login`, {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${token.value}`
-    }
+const checkLogin = () => {
+  nextTick(async () => {
+    await getFetchData({
+      url: '/user/check-login',
+      method: 'POST'
+    })
+      .then((res) => {
+        console.log(res)
+        getUser()
+      })
+      .catch(async (err) => {
+        console.log(err)
+        alert(err.message)
+        await navigateTo('/login')
+      })
   })
-    .then((res) => {
-      console.log(res)
-      getUser()
-    })
-    .catch(async (err) => {
-      console.dir(err.data)
-      alert(err.data.message)
-      await navigateTo('/login')
-    })
 }
 const getUser = async () => {
-  await $fetch(`${baseURL.value}/user/`, {
-    method: 'GET',
-    headers: {
-      authorization: `Bearer ${token.value}`
-    }
+  await getFetchData({
+    url: '/user',
+    method: 'GET'
   })
     .then((res) => {
       userData.value = res.results
@@ -48,17 +42,16 @@ const getUser = async () => {
     .catch((err) => console.log(err))
 }
 const editUser = async () => {
-  await $fetch(`${baseURL.value}/user/`, {
+  await getFetchData({
+    url: '/user',
     method: 'PATCH',
-    headers: {
-      authorization: `Bearer ${token.value}`
-    },
-    body: JSON.stringify(tempUser.value)
+    params: tempUser.value
   })
     .then((res) => {
       const { nickName, userName, gender, phone, address, teamName, aboutMe, avatar } = res.results
       tempUser.value = { nickName, userName, gender, phone, address, teamName, aboutMe, avatar }
       alert(res.message)
+      getUser()
     })
     .catch((err) => {
       console.log(err)
@@ -78,9 +71,9 @@ onMounted(() => {
           <div
             class="relative mr-4 block h-20 w-20 rounded-full bg-[url('https://randomuser.me/api/portraits/women/94.jpg')] bg-cover bg-center sm:mr-10"
           >
-            <button class="absolute bottom-0 right-0 block h-6 w-6 bg-secondary-1 text-white">
+            <!-- <button class="absolute bottom-0 right-0 block h-6 w-6 bg-secondary-1 text-white">
               0
-            </button>
+            </button> -->
           </div>
           <div>
             <div class="mb-3 text-xl font-bold lg:text-3xl">{{ userData.nickName }}</div>
