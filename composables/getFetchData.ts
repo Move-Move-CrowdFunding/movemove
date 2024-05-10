@@ -1,4 +1,3 @@
-// import loading from '../store/loading'
 interface Params {
   url: string
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
