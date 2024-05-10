@@ -7,6 +7,51 @@ const hotNavigation = {
   nextEl: '.hot-swiper-button-next',
   prevEl: '.hot-swiper-button-prev'
 }
+
+const isLogin = ref(false)
+
+const checkLogin = () => {
+  nextTick(async () => {
+    await getFetchData({
+      url: '/user/check-login',
+      method: 'POST'
+    })
+      .then((res) => {
+        console.log(res.message)
+        isLogin.value = true
+      })
+      .catch((err) => {
+        console.log(err.message)
+      })
+  })
+}
+const projects = ref([
+  {
+    id: '123',
+    title: '愛心廚房｜溫飽無憂的一餐，舉辦食物援助計畫',
+    categoryKey: 3,
+    coverUrl:
+      'https://images.unsplash.com/photo-1593113616828-6f22bca04804?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    endDate: 1720000000,
+    targetMoney: 10,
+    achievedMoney: 2
+  },
+  {
+    id: '456',
+    title:
+      '扶助之手｜為學習障礙兒童鋪路供專業支持和個別化教育計畫,幫助學習障礙兒童鋪路供專業支持和個別化教育計畫',
+    categoryKey: 1,
+    coverUrl:
+      'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1232&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    endDate: 1720000000,
+    targetMoney: 10,
+    achievedMoney: 6
+  }
+])
+
+onMounted(() => {
+  checkLogin()
+})
 </script>
 <template>
   <div>
@@ -110,12 +155,15 @@ const hotNavigation = {
               }
             }"
           >
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
-            <SwiperSlide><ProjectCard /></SwiperSlide>
+            <SwiperSlide v-for="project in projects" :key="project.id">
+              <ProjectCard :project="project" :is-login="isLogin" />
+            </SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
           </Swiper>
           <button class="hot-swiper-button-prev">
             <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
@@ -221,8 +269,8 @@ const hotNavigation = {
       <h2 class="container mb-6 text-3xl sm:text-4xl lg:mb-10">推薦提案</h2>
       <div class="container">
         <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          <li v-for="n in 6" :key="n">
-            <ProjectCard />
+          <li v-for="project in projects" :key="project.id">
+            <ProjectCard :project="project" :is-login="isLogin" />
           </li>
         </ul>
       </div>
