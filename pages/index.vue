@@ -1,8 +1,4 @@
 <script setup>
-// const baseURL = ref('https://movemove-api.onrender.com')
-
-// const token = useCookie('userToken')
-
 const bannerNavigation = {
   nextEl: '.banner-swiper-button-next',
   prevEl: '.banner-swiper-button-prev'
@@ -13,35 +9,22 @@ const hotNavigation = {
 }
 
 const isLogin = ref(false)
-// const checkLogin = async () => {
-//   await $fetch(`${baseURL.value}/user/check-login`, {
-//     method: 'POST',
-//     headers: {
-//       authorization: `Bearer ${token.value}`
-//     }
-//   })
-//     .then((res) => {
-//       isLogin.value = true
-//       // alert('登入成功')
-//     })
-//     .catch((err) => {
-//       // alert('登入開啟更多功能')
-//     })
-// }
-const checkLogin2 = async () => {
-  await getFetchData({
-    url: '/user/check-login',
-    method: 'POST'
-  })
-    .then((res) => {
-      // isLogin.value = true
-      console.log('res', res)
-    })
-    .catch((err) => {
-      console.log('err', err)
-    })
-}
 
+const checkLogin = () => {
+  nextTick(async () => {
+    await getFetchData({
+      url: '/user/check-login',
+      method: 'POST'
+    })
+      .then((res) => {
+        console.log(res.message)
+        isLogin.value = true
+      })
+      .catch((err) => {
+        console.log(err.message)
+      })
+  })
+}
 const projects = ref([
   {
     id: '123',
@@ -67,7 +50,7 @@ const projects = ref([
 ])
 
 onMounted(() => {
-  checkLogin2()
+  checkLogin()
 })
 </script>
 <template>

@@ -11,8 +11,6 @@ export default function getFetchData({ url, method = 'GET', params }: Params) {
       method,
       baseURL: 'https://movemove-api.onrender.com',
       onRequest({ options }) {
-        console.log('options', options)
-        // changeLoading(true)
         options.headers = {
           ...options.headers,
           authorization: 'Bearer ' + useCookie('userToken').value || ''
@@ -21,17 +19,16 @@ export default function getFetchData({ url, method = 'GET', params }: Params) {
           options.body = params
         }
       },
-      async onResponseError({ request, response }) {
-        reject(response?._data)
-      },
-      onResponse({ response }) {
-        console.log('response', response)
+      onResponse({ request, response }) {
+        if(response.ok){
         resolve(response._data)
+        } else {
+          reject(response?._data)
+        }
+      },
+      onResponseError({ request, response }) {
+        reject(response?._data)
       }
     })
-      .then((res) => {})
-      .catch((error) => {
-        reject(error)
-      })
   })
 }

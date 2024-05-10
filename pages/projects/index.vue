@@ -1,6 +1,6 @@
 <script setup>
-const baseURL = ref('https://movemove-api.onrender.com')
-const token = useCookie('userToken')
+// const baseURL = ref('https://movemove-api.onrender.com')
+// const token = useCookie('userToken')
 
 const projects = ref([
   {
@@ -27,22 +27,21 @@ const projects = ref([
 ])
 
 const isLogin = ref(false)
-const checkLogin = async () => {
-  await $fetch(`${baseURL.value}/user/check-login`, {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${token.value}`
-    }
+const checkLogin = () => {
+  nextTick(async () => {
+    await getFetchData({
+      url: '/user/check-login',
+      method: 'POST'
+    })
+      .then((res) => {
+        console.log(res.message)
+        isLogin.value = true
+      })
+      .catch((err) => {
+        console.log(err.message)
+      })
   })
-    .then(() => {
-      isLogin.value = true
-    })
-    .catch((err) => {
-      console.dir(err.data)
-      alert('登入開啟更多功能')
-    })
 }
-
 const selectedCategory = ref(0)
 const selectCategory = (key) => {
   selectedCategory.value = key
