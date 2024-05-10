@@ -26,6 +26,9 @@ importers:
       nuxt-swiper:
         specifier: ^1.2.2
         version: 1.2.2(rollup@4.17.2)
+      swiper:
+        specifier: ^11.1.1
+        version: 11.1.1
       vue:
         specifier: ^3.4.21
         version: 3.4.26(typescript@5.4.5)
@@ -5027,6 +5030,10 @@ packages:
 
   swiper@10.3.1:
     resolution: {integrity: sha512-24Wk3YUdZHxjc9faID97GTu6xnLNia+adMt6qMTZG/HgdSUt4fS0REsGUXJOgpTED0Amh/j+gRGQxsLayJUlBQ==}
+    engines: {node: '>= 4.7.0'}
+
+  swiper@11.1.1:
+    resolution: {integrity: sha512-jGmEA/fNz1lACIcY4/40ggm1Gcyv+EUivmgV/Jd2WFPsEJhbWXnRAwzZR8OPjkBLtDxmzcoYG/iiAMWfRs0YKQ==}
     engines: {node: '>= 4.7.0'}
 
   synckit@0.8.8:
@@ -11511,6 +11518,8 @@ snapshots:
       picocolors: 1.0.0
 
   swiper@10.3.1: {}
+
+  swiper@11.1.1: {}
 
   synckit@0.8.8:
     dependencies:

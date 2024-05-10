@@ -1,7 +1,7 @@
 <script setup>
 const baseURL = ref('https://movemove-api.onrender.com')
-const token = ref('')
-// const token = ref('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxNjIxNiwiZXhwIjoxNzE1MzAyNjE2fQ.1uueL40f-XXbXx81QCLF93yK73_U08DRM_B8AjH9m-0')
+const token = useCookie('userToken')
+
 const projects = ref([
   {
     id: '123',

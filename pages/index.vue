@@ -1,7 +1,7 @@
 <script setup>
-const baseURL = ref('https://movemove-api.onrender.com')
-const token = ref('')
-// const token = ref('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjowLCJpZCI6IjY2M2MxZWI3ZjRmNWMxOGY4YjdkZDM5YSIsImlhdCI6MTcxNTIxNjIxNiwiZXhwIjoxNzE1MzAyNjE2fQ.1uueL40f-XXbXx81QCLF93yK73_U08DRM_B8AjH9m-0')
+// const baseURL = ref('https://movemove-api.onrender.com')
+
+// const token = useCookie('userToken')
 
 const bannerNavigation = {
   nextEl: '.banner-swiper-button-next',
@@ -13,19 +13,32 @@ const hotNavigation = {
 }
 
 const isLogin = ref(false)
-const checkLogin = async () => {
-  await $fetch(`${baseURL.value}/user/check-login`, {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${token.value}`
-    }
+// const checkLogin = async () => {
+//   await $fetch(`${baseURL.value}/user/check-login`, {
+//     method: 'POST',
+//     headers: {
+//       authorization: `Bearer ${token.value}`
+//     }
+//   })
+//     .then((res) => {
+//       isLogin.value = true
+//       // alert('登入成功')
+//     })
+//     .catch((err) => {
+//       // alert('登入開啟更多功能')
+//     })
+// }
+const checkLogin2 = async () => {
+  await getFetchData({
+    url: '/user/check-login',
+    method: 'POST'
   })
-    .then(() => {
-      isLogin.value = true
+    .then((res) => {
+      // isLogin.value = true
+      console.log('res', res)
     })
     .catch((err) => {
-      console.dir(err.data)
-      alert('登入開啟更多功能')
+      console.log('err', err)
     })
 }
 
@@ -54,7 +67,7 @@ const projects = ref([
 ])
 
 onMounted(() => {
-  checkLogin()
+  checkLogin2()
 })
 </script>
 <template>
@@ -162,6 +175,12 @@ onMounted(() => {
             <SwiperSlide v-for="project in projects" :key="project.id">
               <ProjectCard :project="project" :is-login="isLogin" />
             </SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
+            <SwiperSlide>6</SwiperSlide>
           </Swiper>
           <button class="hot-swiper-button-prev">
             <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
