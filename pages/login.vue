@@ -15,7 +15,7 @@
       <!-- 登入 -->
       <template v-if="currentView === 'login'">
         <div
-          class="relative z-10 flex w-full justify-center p-4 md:h-full md:w-1/2 md:items-center"
+          class="relative z-10 flex w-full justify-center p-6 md:h-full md:w-1/2 md:items-center"
         >
           <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
             <h3 class="peer text-center text-lg text-neutral-900">登入</h3>
@@ -56,7 +56,6 @@
             >
               登入
             </BaseButton>
-            <p v-if="msg && Object.keys(msg).length > 0">{{ msg }}</p>
           </div>
         </div>
       </template>
@@ -64,9 +63,9 @@
       <!-- 忘記密碼 -->
       <template v-if="currentView === 'forgot'">
         <div
-          class="relative z-10 flex w-full justify-center p-4 md:h-full md:w-1/2 md:items-center"
+          class="relative z-10 flex w-full justify-center p-6 md:h-full md:w-1/2 md:items-center"
         >
-          <div class="mx-auto flex w-full max-w-[500px] flex-col space-y-4 p-6">
+          <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
             <h3 class="peer text-center text-lg text-neutral-900">忘記密碼</h3>
             <div class="space-y-6 peer-[&]:mt-6">
               <BaseInputField input-title="E-mail" placeholder="請輸入 E-mail" is-required />
@@ -88,9 +87,9 @@
       <!-- 註冊 -->
       <template v-if="currentView === 'register'">
         <div
-          class="relative z-10 flex w-full justify-center p-4 md:h-full md:w-1/2 md:items-center"
+          class="relative z-10 flex w-full justify-center p-6 md:h-full md:w-1/2 md:items-center"
         >
-          <div class="mx-auto flex w-full max-w-[500px] flex-col space-y-4 p-6">
+          <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
             <h3 class="peer text-center text-lg text-neutral-900">註冊</h3>
             <div class="space-y-6 peer-[&]:mt-6">
               <BaseInputField
@@ -152,7 +151,6 @@ const registerForm = ref({
   password: '',
   confirmPassword: ''
 })
-const msg = ref({})
 
 // 註冊
 const submitSignUp = async () => {
@@ -167,9 +165,12 @@ const submitSignUp = async () => {
   })
     .then((res) => {
       console.log('res', res)
-      msg.value = (res as ResponseData).message
+      alert((res as ResponseData).message)
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      alert((err as ResponseData).message)
+    })
 }
 
 // 登入
@@ -185,9 +186,12 @@ const submitLogin = async () => {
     .then(async (res) => {
       const { token } = (res as ResponseData).results
       useCookie('userToken').value = token
+      alert((res as ResponseData).message)
       await navigateTo('/')
-      msg.value = (res as ResponseData).message
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      alert((err as ResponseData).message)
+    })
 }
 </script>

@@ -6,16 +6,14 @@ interface Params {
 }
 
 export default function getFetchData({ url, method = 'GET', params }: Params) {
-  //   const { baseUrl } = useRuntimeConfig().public
-  //   const { changeLoading } = loading()
+  const runtimeConfig = useRuntimeConfig()
+  const { apiBase } = runtimeConfig.public
 
   return new Promise((resolve, reject) => {
     useFetch(url, {
       method,
-      baseURL: 'https://movemove-api.onrender.com',
+      baseURL: apiBase,
       onRequest({ options }) {
-        // changeLoading(true)
-        // console.log('options', options)
         options.headers = {
           ...options.headers,
           authorization: useCookie('token').value || ''

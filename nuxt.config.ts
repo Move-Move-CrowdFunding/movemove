@@ -23,5 +23,10 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  css: ['~/assets/style/root.scss']
+  css: ['~/assets/style/root.scss'],
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.NUXT_PUBLIC_API_BASE
+    }
+  }
 })
