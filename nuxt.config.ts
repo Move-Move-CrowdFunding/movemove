@@ -7,7 +7,7 @@ export default defineNuxtConfig({
       viewport: 'width=device-width, initial-scale=1'
     }
   },
-  modules: ['@nuxtjs/stylelint-module', '@nuxtjs/tailwindcss', '@vueuse/nuxt','nuxt-swiper'],
+  modules: ['@nuxtjs/stylelint-module', '@nuxtjs/tailwindcss', '@vueuse/nuxt','nuxt-swiper','@pinia/nuxt'],
   typescript: {
     typeCheck: true
   },
