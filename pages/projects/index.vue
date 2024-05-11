@@ -27,7 +27,7 @@ const projects = ref([
 ])
 
 const isLogin = useIsLoginStore()
-
+const apiProject = ref({})
 const checkLogin = () => {
   nextTick(async () => {
     await getFetchData({
@@ -43,13 +43,34 @@ const checkLogin = () => {
       })
   })
 }
+
+const getProjects = async () => {
+  await getFetchData({
+    url: '/project/',
+    method: 'GET',
+    params: {
+      pageNo: 1,
+      pageSize: 10,
+      categoryKey: 0,
+      sort: 1
+    }
+  })
+    .then((res) => {
+      apiProject.value = res
+      console.log('apiProject', apiProject.value)
+    })
+    .catch((err) => console.log(err))
+}
 const selectedCategory = ref(0)
 const selectCategory = (key) => {
   selectedCategory.value = key
 }
 
 onMounted(() => {
-  checkLogin()
+  nextTick(async () => {
+    await checkLogin()
+    await getProjects()
+  })
 })
 </script>
 <template>
@@ -99,6 +120,7 @@ onMounted(() => {
         <ProjectCard :project="project" />
       </li>
     </ul>
+    <pre>{{ apiProject }}</pre>
   </div>
 </template>
 

@@ -15,9 +15,11 @@
     <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
       <UPagination v-model="page" :page-count="pageCount" :total="projectList.length" />
     </div>
+    <pre>{{ projects }}</pre>
   </div>
 </template>
 <script setup lang="ts">
+import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'admin-layout'
 })
@@ -78,5 +80,32 @@ const pageCount = 5
 
 const rows = computed(() => {
   return projectList.slice((page.value - 1) * pageCount, page.value * pageCount)
+})
+
+const projects = ref({})
+
+// 列表
+const getProjects = async () => {
+  await getFetchData({
+    url: '/admin/projects',
+    method: 'GET',
+    params: {
+      pageNo: 1,
+      pageSize: 10,
+      sortDesc: 0,
+      status: 0
+    }
+  })
+    .then((res) => {
+      projects.value = res as ResponseData
+      console.log('apiProject', projects.value)
+    })
+    .catch((err) => console.log(err))
+}
+
+onMounted(() => {
+  nextTick(async () => {
+    await getProjects()
+  })
 })
 </script>

@@ -48,9 +48,31 @@ const projects = ref([
     achievedMoney: 6
   }
 ])
+const apiProject = ref({})
 
+// 取得提案列表
+const getProjects = async () => {
+  await getFetchData({
+    url: '/project/',
+    method: 'GET',
+    params: {
+      pageNo: 1,
+      pageSize: 10,
+      categoryKey: 0,
+      sort: 1
+    }
+  })
+    .then((res) => {
+      apiProject.value = res
+      console.log('apiProject', apiProject.value)
+    })
+    .catch((err) => console.log(err))
+}
 onMounted(() => {
-  checkLogin()
+  nextTick(async () => {
+    await checkLogin()
+    await getProjects()
+  })
 })
 </script>
 <template>
@@ -184,6 +206,7 @@ onMounted(() => {
             </svg>
           </button>
         </div>
+        <pre>{{ apiProject }}</pre>
       </section>
       <section
         class="bg-secondary-5 bg-[url('~/assets/images/index/bg/bg-sketch.png')] bg-no-repeat lg:bg-transparent lg:bg-none"
