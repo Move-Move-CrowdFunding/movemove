@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  colorMode: {
+    preference: 'light'
+  },
   app: {
     head: {
       title: 'movemove 募募',
@@ -9,10 +12,11 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxtjs/stylelint-module',
-    '@nuxtjs/tailwindcss',
+    // '@nuxtjs/tailwindcss',
     '@vueuse/nuxt',
     'nuxt-swiper',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@nuxt/ui'
   ],
   typescript: {
     typeCheck: true

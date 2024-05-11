@@ -184,10 +184,10 @@ const submitLogin = async () => {
     }
   })
     .then(async (res) => {
-      const { token } = (res as ResponseData).results
+      const { token, auth } = (res as ResponseData).results
       useCookie('userToken').value = token
       alert((res as ResponseData).message)
-      await navigateTo('/')
+      await navigateTo(auth ? '/admin' : '/')
     })
     .catch((err) => {
       console.log(err)

@@ -13,6 +13,7 @@
     "*.{js,vue}": "eslint --cache --fix"
   },
   "dependencies": {
+    "@nuxt/ui": "^2.16.0",
     "@pinia/nuxt": "^0.5.1",
     "@vueuse/components": "^10.9.0",
     "@vueuse/core": "^10.9.0",

@@ -8,7 +8,7 @@ const hotNavigation = {
   prevEl: '.hot-swiper-button-prev'
 }
 
-const isLogin = ref(false)
+const isLogin = useIsLoginStore()
 
 const checkLogin = () => {
   nextTick(async () => {
@@ -18,7 +18,7 @@ const checkLogin = () => {
     })
       .then((res) => {
         console.log(res.message)
-        isLogin.value = true
+        isLogin.isLogin = true
       })
       .catch((err) => {
         console.log(err.message)

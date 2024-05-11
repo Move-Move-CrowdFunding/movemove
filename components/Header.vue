@@ -39,7 +39,7 @@
                 <NuxtLink to="/create" class="block p-2">提案</NuxtLink>
               </div>
               <BaseButton
-                v-if="isLogin"
+                v-if="isLogin.isLogin"
                 tag="nuxtLink"
                 to="/member/notifications"
                 class="relative hidden h-full flex-shrink-0 items-center justify-center p-2 md:flex"
@@ -55,7 +55,7 @@
               </BaseButton>
             </div>
             <BaseButton
-              v-if="!isLogin"
+              v-if="!isLogin.isLogin"
               class="rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50"
               to="/login"
               tag="nuxtLink"
@@ -64,7 +64,7 @@
             </BaseButton>
             <div class="relative cursor-pointer" @click="toggleMenu">
               <Avatar
-                v-if="isLogin"
+                v-if="isLogin.isLogin"
                 ref="dropdown"
                 src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
                 class="h-10 w-10 overflow-hidden rounded-full object-cover"
@@ -115,7 +115,7 @@
               </div>
             </div>
             <BaseButton
-              v-if="isLogin"
+              v-if="isLogin.isLogin"
               tag="nuxtLink"
               to="/member/notifications"
               class="relative flex h-full flex-shrink-0 items-center justify-center p-2 md:hidden"
@@ -138,20 +138,39 @@
         </div>
       </div>
     </div>
-    <MobileMenu v-model="mobileMenuIsShow" :is-login="isLogin" />
+    <MobileMenu v-model="mobileMenuIsShow" />
   </header>
 </template>
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
+import type { ResponseData } from '~/types/response'
 
 const dropdown = ref(null)
 const dropdownMenu = ref(null)
 const menuIsShow = ref(false)
 const menuList = ref(menuMapList)
 
-const isLogin = ref(false)
+const isLogin = useIsLoginStore()
 
 const searchIsShow = ref(false)
+
+const checkLogin = () => {
+  nextTick(async () => {
+    await getFetchData({
+      url: '/user/check-login',
+      method: 'POST'
+    })
+      .then((res) => {
+        console.log((res as ResponseData).message)
+        // alert((res as ResponseData).message)
+        isLogin.isLogin = true
+      })
+      .catch((err) => {
+        console.log((err as ResponseData).message)
+        // alert((err as ResponseData).message)
+      })
+  })
+}
 
 const toggleMenu = () => {
   if (dropdownMenu.value) {
@@ -161,5 +180,9 @@ const toggleMenu = () => {
 const mobileMenuIsShow = ref(false)
 onClickOutside(dropdown, () => {
   menuIsShow.value = false
+})
+
+onMounted(() => {
+  checkLogin()
 })
 </script>

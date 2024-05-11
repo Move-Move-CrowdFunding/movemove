@@ -1,4 +1,6 @@
 <script setup>
+const isLogin = useIsLoginStore()
+
 const props = defineProps({
   project: {
     type: Object,
@@ -9,10 +11,6 @@ const props = defineProps({
     default() {
       return []
     }
-  },
-  isLogin: {
-    type: Boolean,
-    required: true
   }
 })
 const { project } = props
@@ -35,7 +33,7 @@ const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒�
         :style="{ backgroundImage: 'url(' + project.coverUrl + ')' }"
       ></div>
       <button
-        v-if="isLogin"
+        v-if="isLogin.isLogin"
         class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': isLiked, 'fill-white': !isLiked }"
       >
