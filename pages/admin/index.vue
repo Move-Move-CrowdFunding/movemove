@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>管理 - 提案列表</div>
+    <h2>管理 - 提案列表</h2>
     <UTable :rows="rows" :columns="columns">
       <template #name-data="{ row }">
         <span
