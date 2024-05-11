@@ -3,7 +3,7 @@
     <NuxtLink v-for="item in menuMapList" :key="item.name" class="block px-6 py-2" :to="item.url"
       >{{ item.name }}
     </NuxtLink>
-    <NuxtLink to="/" class="block px-6 py-2">登出</NuxtLink>
+    <NuxtLink to="/" class="block px-6 py-2" @click="logout">登出</NuxtLink>
   </div>
 </template>
 <script setup lang="ts">

@@ -5,7 +5,7 @@
   >
     <div class="flex flex-1 flex-col overflow-hidden">
       <div
-        v-if="isLogin"
+        v-if="isLogin.isLogin"
         class="peer flex items-center space-x-6 border-b border-neutral-100 bg-neutral-50 px-3 py-4"
       >
         <Avatar
@@ -18,7 +18,7 @@
         </div>
       </div>
       <div class="flex flex-1 flex-col overflow-y-auto">
-        <div v-if="isLogin" class="peer bg-neutral-50 py-4 peer-[&]:mt-2">
+        <div v-if="isLogin.isLogin" class="peer bg-neutral-50 py-4 peer-[&]:mt-2">
           <ul>
             <li v-for="item in menuMapList" :key="item.name">
               <NuxtLink
@@ -43,7 +43,7 @@
         </div>
         <div class="bg-neutral-50 peer-[&]:mt-2">
           <BaseButton
-            v-if="!isLogin"
+            v-if="!isLogin.isLogin"
             class="flex flex-shrink-0 items-center space-x-2 px-3 py-6 text-neutral-600"
             tag="nuxtLink"
             to="/login"
@@ -55,6 +55,7 @@
             class="flex flex-shrink-0 items-center space-x-2 px-3 py-6 text-neutral-600"
             tag="nuxtLink"
             to="/"
+            @click="logout"
           >
             <template #prepend>
               <div
@@ -71,13 +72,7 @@
 <script setup lang="ts">
 import type { CategoryKeys } from '~/types/categoryKeys'
 import { menuMapList } from '@/utils/menuMaps'
-
-defineProps({
-  isLogin: {
-    type: Boolean,
-    default: false
-  }
-})
+const isLogin = useIsLoginStore()
 
 const categoryMenuList = ref(
   categoryKeys.map((item: CategoryKeys) => {

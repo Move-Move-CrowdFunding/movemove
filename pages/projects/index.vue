@@ -26,7 +26,8 @@ const projects = ref([
   }
 ])
 
-const isLogin = ref(false)
+const isLogin = useIsLoginStore()
+
 const checkLogin = () => {
   nextTick(async () => {
     await getFetchData({
@@ -35,7 +36,7 @@ const checkLogin = () => {
     })
       .then((res) => {
         console.log(res.message)
-        isLogin.value = true
+        isLogin.isLogin = true
       })
       .catch((err) => {
         console.log(err.message)
@@ -95,7 +96,7 @@ onMounted(() => {
     </div>
     <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in projects" :key="project.id">
-        <ProjectCard :project="project" :is-login="isLogin" />
+        <ProjectCard :project="project" />
       </li>
     </ul>
   </div>
