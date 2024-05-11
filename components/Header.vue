@@ -143,6 +143,7 @@
 </template>
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
+import type { ResponseData } from '~/types/response'
 
 const dropdown = ref(null)
 const dropdownMenu = ref(null)
@@ -153,6 +154,24 @@ const isLogin = ref(false)
 
 const searchIsShow = ref(false)
 
+const checkLogin = () => {
+  nextTick(async () => {
+    await getFetchData({
+      url: '/user/check-login',
+      method: 'POST'
+    })
+      .then((res) => {
+        console.log((res as ResponseData).message)
+        alert((res as ResponseData).message)
+        isLogin.value = true
+      })
+      .catch((err) => {
+        console.log((err as ResponseData).message)
+        alert((err as ResponseData).message)
+      })
+  })
+}
+
 const toggleMenu = () => {
   if (dropdownMenu.value) {
     menuIsShow.value = !menuIsShow.value
@@ -161,5 +180,9 @@ const toggleMenu = () => {
 const mobileMenuIsShow = ref(false)
 onClickOutside(dropdown, () => {
   menuIsShow.value = false
+})
+
+onMounted(() => {
+  checkLogin()
 })
 </script>
