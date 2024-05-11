@@ -138,7 +138,7 @@
         </div>
       </div>
     </div>
-    <MobileMenu v-model="mobileMenuIsShow" />
+    <MobileMenu v-model="mobileMenuIsShow" :user-data="userData" />
   </header>
 </template>
 <script setup lang="ts">
@@ -164,6 +164,7 @@ const checkLogin = () => {
         console.log((res as ResponseData).message)
         // alert((res as ResponseData).message)
         isLogin.isLogin = true
+        getUser()
       })
       .catch((err) => {
         console.log((err as ResponseData).message)
@@ -171,7 +172,18 @@ const checkLogin = () => {
       })
   })
 }
-
+const userData = ref({})
+const getUser = async () => {
+  await getFetchData({
+    url: '/user',
+    method: 'GET'
+  })
+    .then((res) => {
+      console.log(res as ResponseData)
+      userData.value = (res as ResponseData).results
+    })
+    .catch((err) => console.log(err as ResponseData))
+}
 const toggleMenu = () => {
   if (dropdownMenu.value) {
     menuIsShow.value = !menuIsShow.value

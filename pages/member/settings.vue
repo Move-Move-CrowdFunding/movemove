@@ -12,6 +12,8 @@ const tempUser = ref({
   aboutMe: '',
   avatar: ''
 })
+
+const isLogin = useIsLoginStore()
 const checkLogin = () => {
   nextTick(async () => {
     await getFetchData({
@@ -20,6 +22,7 @@ const checkLogin = () => {
     })
       .then((res) => {
         console.log(res)
+        isLogin.isLogin = true
         getUser()
       })
       .catch(async (err) => {

@@ -9,12 +9,12 @@
         class="peer flex items-center space-x-6 border-b border-neutral-100 bg-neutral-50 px-3 py-4"
       >
         <Avatar
-          :src="userInfo.avatar"
+          :src="userData.avatar"
           class="h-[60px] w-[60px] flex-shrink-0 overflow-hidden rounded-full object-cover"
         />
         <div class="space-y-2 overflow-hidden text-neutral-900">
-          <h5 class="overflow-hidden text-ellipsis whitespace-nowrap">{{ userInfo.name }}</h5>
-          <p class="overflow-hidden text-ellipsis whitespace-nowrap">{{ userInfo.email }}</p>
+          <h5 class="overflow-hidden text-ellipsis whitespace-nowrap">{{ userData.name }}</h5>
+          <p class="overflow-hidden text-ellipsis whitespace-nowrap">{{ userData.email }}</p>
         </div>
       </div>
       <div class="flex flex-1 flex-col overflow-y-auto">
@@ -85,9 +85,13 @@ const categoryMenuList = ref(
 
 const modelValue = defineModel()
 
-const userInfo = ref({
-  name: 'Claire',
-  email: 'Claire09983@gmail.com.tw',
-  avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d'
+const props = defineProps({
+  userData: {
+    type: Object,
+    default() {
+      return {}
+    }
+  }
 })
+const { userData } = props
 </script>
