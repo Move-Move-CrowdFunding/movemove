@@ -186,12 +186,12 @@ const submitLogin = async () => {
     .then(async (res) => {
       const { token } = (res as ResponseData).results
       useCookie('userToken').value = token
-      alert(`res: ${(res as ResponseData).message}`)
+      alert((res as ResponseData).message)
       await navigateTo('/')
     })
     .catch((err) => {
       console.log(err)
-      alert(`err: ${(err as ResponseData).message}`)
+      alert((err as ResponseData).message)
     })
 }
 </script>
