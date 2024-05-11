@@ -26,6 +26,9 @@ importers:
       nuxt-swiper:
         specifier: ^1.2.2
         version: 1.2.2(rollup@4.17.2)
+      pinia:
+        specifier: ^2.1.7
+        version: 2.1.7(typescript@5.4.5)(vue@3.4.26(typescript@5.4.5))
       swiper:
         specifier: ^11.1.1
         version: 11.1.1
