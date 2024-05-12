@@ -1,4 +1,5 @@
-const colors = require('./tailwindcss/colors')
+import colors from './tailwindcss/colors'
+
 module.exports = {
   content: [
     './components/**/*.{js,vue,ts}',
@@ -17,7 +18,7 @@ module.exports = {
       padding: {
         DEFAULT: '0.75rem',
         sm: '2rem',
-        lg:'6rem'
+        lg: '6rem'
       }
     }
   },

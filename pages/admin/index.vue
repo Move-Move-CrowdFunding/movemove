@@ -1,99 +1,187 @@
 <template>
-  <div>
-    <h2>管理 - 提案列表</h2>
-    <UTable :rows="rows" :columns="columns">
-      <template #name-data="{ row }">
-        <span
-          :class="[
-            selected.find((item) => item.projectId === row.projectId) &&
-              'text-primary-500 dark:text-primary-400'
-          ]"
-          >{{ row.name }}</span
-        >
+  <div class="flex flex-1 flex-col overflow-y-auto">
+    <h2 class="flex-shrink-0 py-3 font-semibold text-neutral-800">管理 - 提案列表</h2>
+    <div class="flex w-full space-x-4 border-b border-gray-200 py-3 dark:border-gray-700">
+      <div class="flex items-center space-x-2">
+        <span class="text-sm">提案編號</span>
+        <UInput v-model="q" placeholder="請輸入提案編號" />
+      </div>
+      <!-- <div class="flex items-center space-x-2">
+        <span class="text-sm">案名</span>
+        <UInput v-model="q" placeholder="請輸入案名" />
+      </div> -->
+      <div class="flex items-center space-x-2">
+        <span class="text-sm">狀態</span>
+        <USelect v-model="filterStatus" :options="statusList" />
+      </div>
+      <UButton class="!ml-auto" size="md" color="primary">搜尋</UButton>
+    </div>
+    <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
+      <UPagination v-model="page" :page-count="pageCount" :total="projectList.length" />
+    </div>
+    <UTable
+      :ui="{
+        th: {
+          base: 'whitespace-nowrap',
+          padding: 'p-2'
+        },
+        td: {
+          base: 'whitespace-normal',
+          padding: 'p-2'
+        }
+      }"
+      :rows="filteredRows"
+      :columns="columns"
+    >
+      <template #no-data="{ index }">
+        <div class="line-clamp-2">
+          {{ index + 1 }}
+        </div>
+      </template>
+      <template #title-data="{ row }">
+        <div class="line-clamp-2">
+          <NuxtLink
+            :to="`/admin/${row.id}`"
+            class="block break-words text-secondary-2 hover:underline"
+            >{{ row.title }}</NuxtLink
+          >
+        </div>
+      </template>
+      <template #id-data="{ row }">
+        <p class="break-words">{{ row.id }}</p>
+      </template>
+      <template #coverUrl-data="{ row }">
+        <img :src="row.coverUrl" class="h-20 w-20 max-w-[inherit] border object-contain" alt="" />
+      </template>
+      <template #dateRange-data="{ row }">
+        <div class="space-y-2">
+          <p>{{ dayjs(row.startDate).format('YYYY/MM/DD') }}</p>
+          <p>{{ dayjs(row.endDate).format('YYYY/MM/DD') }}</p>
+        </div>
+      </template>
+      <template #target-data="{ row }">
+        <div class="flex flex-wrap overflow-hidden whitespace-normal [word-break:break-word]">
+          <p>{{ row.feedbackMoney }}</p>
+          <div class="mx-1">/</div>
+          <p>{{ row.targetMoney }}</p>
+        </div>
+      </template>
+      <template #teamName-data="{ row }">
+        <div class="line-clamp-2">
+          {{ row.teamName }}
+        </div>
+      </template>
+      <template #empty-state>
+        <div class="flex flex-col items-center justify-center gap-3 py-6">
+          <span class="text-sm">暫無資料</span>
+        </div>
       </template>
     </UTable>
     <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
       <UPagination v-model="page" :page-count="pageCount" :total="projectList.length" />
     </div>
-    <pre>{{ projects }}</pre>
   </div>
 </template>
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
+import { useDayjs } from '#dayjs'
 definePageMeta({
   layout: 'admin-layout'
 })
+
+interface ProjectsList {
+  userId: string
+  introduce: string
+  teamName: string
+  email: string
+  phone: string
+  title: string
+  categoryKey: number
+  targetMoney: number
+  startDate: number
+  endDate: number
+  describe: string
+  coverUrl: string
+  content: string
+  videoUrl: string
+  relatedUrl: string
+  feedbackItem: string
+  feedbackUrl: string
+  feedbackMoney: number
+  feedbackDate: number
+  createTime: number
+  updateTime: number
+  id: number
+  // status: string
+}
+
+const dayjs = useDayjs()
+
 const columns = [
   {
-    key: 'projectId',
-    label: '提案編號'
+    key: 'no',
+    label: '#',
+    sortable: true
   },
   {
-    key: 'cover',
+    key: 'id',
+    label: '提案編號',
+    sortable: true
+  },
+  {
+    key: 'coverUrl',
     label: '封面照片'
   },
   {
     key: 'title',
-    label: '案名'
+    label: '案名',
+    sortable: true
   },
   {
     key: 'dateRange',
     label: '起迄日期'
   },
   {
-    key: 'goal',
+    key: 'target',
     label: '金額/目標'
   },
   {
-    key: 'people',
+    key: 'teamName',
     label: '提案人'
   },
   {
     key: 'status',
-    label: '狀態'
+    label: '狀態',
+    sortable: true
   }
 ]
-const projectList = [
-  {
-    projectId: 0,
-    cover: '',
-    title: '',
-    dateRange: '',
-    goal: '',
-    people: '',
-    status: ''
-  }
-  // {
-  //   projectId: 1,
-  //   cover: 'image',
-  //   title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-  //   dateRange: '2024/03/01 2025/03/01',
-  //   goal: '500/100000',
-  //   people: '弱勢救星',
-  //   status: '募資中'
-  // },
-  // {
-  //   projectId: 2,
-  //   cover: 'image',
-  //   title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-  //   dateRange: '2024/03/01 2025/03/01',
-  //   goal: '500/100000',
-  //   people: '弱勢救星',
-  //   status: '募資中'
-  // }
-]
-const selected = ref([projectList[1]])
 
+const projectList: Ref<Partial<ProjectsList>[]> = ref([])
+
+// 分頁
 const page = ref(1)
-const pageCount = 5
-
+const pageCount = 10
 const rows = computed(() => {
-  return projectList.slice((page.value - 1) * pageCount, page.value * pageCount)
+  return projectList.value.slice((page.value - 1) * pageCount, page.value * pageCount)
 })
 
-const projects = ref({})
+// select
+const statusList = ['全部', '募資中', '已結束', '待審核', '已退回']
+const filterStatus = ref(statusList[0])
 
-// 列表
+// 搜尋
+const q = ref('')
+const filteredRows = computed(() => {
+  if (!q.value) {
+    return rows.value
+  }
+  return rows.value.filter((item) => {
+    return Object.values(item).some((value) => {
+      return String(value).toLowerCase().includes(q.value.toLowerCase())
+    })
+  })
+})
+
 const getProjects = async () => {
   await getFetchData({
     url: '/admin/projects',
@@ -106,8 +194,7 @@ const getProjects = async () => {
     }
   })
     .then((res) => {
-      projects.value = res as ResponseData
-      console.log('apiProject', projects.value)
+      projectList.value = (res as ResponseData).results
     })
     .catch((err) => console.log(err))
 }

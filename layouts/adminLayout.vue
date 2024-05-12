@@ -2,23 +2,35 @@
   <div class="relative flex flex-1 flex-col">
     <div class="flex min-h-dvh flex-1 flex-col">
       <header
-        class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between px-3 py-4 md:shadow-none"
+        class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between bg-neutral-50 px-3 py-4 shadow-sm"
       >
         <BaseLogo
-          class="mx-auto h-[40px] w-[227px] overflow-hidden whitespace-nowrap bg-secondary-2 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] md:mx-0"
+          class="mx-auto h-[40px] w-[227px] overflow-hidden whitespace-nowrap bg-secondary-1 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] md:mx-0"
+          target="_blank"
         />
-        <BaseButton @click="logout">
+        <!-- <BaseButton @click="logout">
           <span>登出</span>
-        </BaseButton>
+        </BaseButton> -->
+        <!-- <UButton label="Button" /> -->
+        <UButton
+          icon="i-heroicons-arrow-right-on-rectangle-20-solid"
+          size="md"
+          color="primary"
+          variant="outline"
+          :trailing="false"
+          @click="logout"
+          >登出</UButton
+        >
       </header>
-      <!-- <UContainer class="mx-0 max-w-[100%] px-3 pb-4">
-        <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800">
-          <template #default="{ link }">
-            <span class="group-hover:text-primary relative">{{ link.label }}</span>
-          </template>
-        </UHorizontalNavigation>
-       </UContainer> -->
-      <slot />
+      <UContainer
+        class="mx-auto flex w-full max-w-[100%] flex-col"
+        :ui="{
+          strategy: 'override',
+          padding: 'px-3'
+        }"
+      >
+        <slot />
+      </UContainer>
     </div>
   </div>
 </template>

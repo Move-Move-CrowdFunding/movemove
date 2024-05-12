@@ -16,7 +16,8 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     'nuxt-swiper',
     '@pinia/nuxt',
-    '@nuxt/ui'
+    '@nuxt/ui',
+    'dayjs-nuxt'
   ],
   typescript: {
     typeCheck: true
@@ -33,6 +34,7 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
+  dayjs: {},
   css: ['~/assets/style/root.scss'],
   runtimeConfig: {
     public: {

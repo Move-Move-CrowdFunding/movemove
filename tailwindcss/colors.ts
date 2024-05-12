@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'primary-1': 'rgb(var(--color-primary-1)/<alpha-value>)',
   'primary-2': 'rgb(var(--color-primary-2)/<alpha-value>)',
   'primary-3': 'rgb(var(--color-primary-3)/<alpha-value>)',
