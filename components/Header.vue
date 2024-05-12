@@ -138,12 +138,11 @@
         </div>
       </div>
     </div>
-    <MobileMenu v-model="mobileMenuIsShow" :user-data="userData" />
+    <MobileMenu v-model="mobileMenuIsShow" />
   </header>
 </template>
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
-import type { ResponseData } from '~/types/response'
 
 const dropdown = ref(null)
 const dropdownMenu = ref(null)
@@ -154,36 +153,6 @@ const isLogin = useIsLoginStore()
 
 const searchIsShow = ref(false)
 
-const checkLogin = () => {
-  nextTick(async () => {
-    await getFetchData({
-      url: '/user/check-login',
-      method: 'POST'
-    })
-      .then((res) => {
-        console.log((res as ResponseData).message)
-        // alert((res as ResponseData).message)
-        isLogin.isLogin = true
-        getUser()
-      })
-      .catch((err) => {
-        console.log((err as ResponseData).message)
-        // alert((err as ResponseData).message)
-      })
-  })
-}
-const userData = ref({})
-const getUser = async () => {
-  await getFetchData({
-    url: '/user',
-    method: 'GET'
-  })
-    .then((res) => {
-      console.log(res as ResponseData)
-      userData.value = (res as ResponseData).results
-    })
-    .catch((err) => console.log(err as ResponseData))
-}
 const toggleMenu = () => {
   if (dropdownMenu.value) {
     menuIsShow.value = !menuIsShow.value
@@ -192,9 +161,5 @@ const toggleMenu = () => {
 const mobileMenuIsShow = ref(false)
 onClickOutside(dropdown, () => {
   menuIsShow.value = false
-})
-
-onMounted(() => {
-  checkLogin()
 })
 </script>

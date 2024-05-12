@@ -8,23 +8,6 @@ const hotNavigation = {
   prevEl: '.hot-swiper-button-prev'
 }
 
-const isLogin = useIsLoginStore()
-
-const checkLogin = () => {
-  nextTick(async () => {
-    await getFetchData({
-      url: '/user/check-login',
-      method: 'POST'
-    })
-      .then((res) => {
-        console.log(res.message)
-        isLogin.isLogin = true
-      })
-      .catch((err) => {
-        console.log(err.message)
-      })
-  })
-}
 const projects = ref([
   {
     id: '123',
@@ -69,10 +52,7 @@ const getProjects = async () => {
     .catch((err) => console.log(err))
 }
 onMounted(() => {
-  nextTick(async () => {
-    await checkLogin()
-    await getProjects()
-  })
+  getProjects()
 })
 </script>
 <template>
@@ -178,7 +158,7 @@ onMounted(() => {
             }"
           >
             <SwiperSlide v-for="project in projects" :key="project.id">
-              <ProjectCard :project="project" :is-login="isLogin" />
+              <ProjectCard :project="project" />
             </SwiperSlide>
             <SwiperSlide>6</SwiperSlide>
             <SwiperSlide>6</SwiperSlide>
@@ -293,7 +273,7 @@ onMounted(() => {
       <div class="container">
         <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           <li v-for="project in projects" :key="project.id">
-            <ProjectCard :project="project" :is-login="isLogin" />
+            <ProjectCard :project="project" />
           </li>
         </ul>
       </div>
@@ -420,11 +400,7 @@ onMounted(() => {
     </div>
   </div>
 </template>
-<!-- <script setup lang="ts">
-definePageMeta({
-  layout: 'default'
-})
-</script> -->
+
 <style scoped lang="scss">
 @media (width >= 1024px) {
   .bg-group-1 {

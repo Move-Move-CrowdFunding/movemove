@@ -9,12 +9,16 @@
         class="peer flex items-center space-x-6 border-b border-neutral-100 bg-neutral-50 px-3 py-4"
       >
         <Avatar
-          :src="userData.avatar"
+          :src="isLogin.userData.avatar"
           class="h-[60px] w-[60px] flex-shrink-0 overflow-hidden rounded-full object-cover"
         />
         <div class="space-y-2 overflow-hidden text-neutral-900">
-          <h5 class="overflow-hidden text-ellipsis whitespace-nowrap">{{ userData.name }}</h5>
-          <p class="overflow-hidden text-ellipsis whitespace-nowrap">{{ userData.email }}</p>
+          <h5 class="overflow-hidden text-ellipsis whitespace-nowrap">
+            {{ isLogin.userData.nickName }}
+          </h5>
+          <p class="overflow-hidden text-ellipsis whitespace-nowrap">
+            {{ isLogin.userData.email }}
+          </p>
         </div>
       </div>
       <div class="flex flex-1 flex-col overflow-y-auto">
@@ -84,14 +88,4 @@ const categoryMenuList = ref(
 )
 
 const modelValue = defineModel()
-
-const props = defineProps({
-  userData: {
-    type: Object,
-    default() {
-      return {}
-    }
-  }
-})
-const { userData } = props
 </script>

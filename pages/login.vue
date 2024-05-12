@@ -139,6 +139,9 @@ import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'custom-layout'
 })
+
+const isLogin = useIsLoginStore()
+
 const currentView = ref('login')
 
 const loginForm = ref({
@@ -166,6 +169,13 @@ const submitSignUp = async () => {
     .then((res) => {
       console.log('res', res)
       alert((res as ResponseData).message)
+      currentView.value = 'login'
+      registerForm.value = {
+        nickName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      }
     })
     .catch((err) => {
       console.log(err)
@@ -186,6 +196,7 @@ const submitLogin = async () => {
     .then(async (res) => {
       const { token, auth } = (res as ResponseData).results
       useCookie('userToken').value = token
+      isLogin.getUserData()
       alert((res as ResponseData).message)
       await navigateTo(auth ? '/admin' : '/')
     })
