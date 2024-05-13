@@ -13,9 +13,9 @@ const tempUser = ref({
   avatar: ''
 })
 
-const checkLoggedin = async () => {
+const checkPermission = async () => {
+  await isLogin.getUserData()
   if (isLogin.isLogin) {
-    await isLogin.getUserData()
     getTempUser(isLogin.userData)
   } else {
     await navigateTo('/login')
@@ -42,7 +42,7 @@ const editUser = async () => {
 }
 
 onMounted(() => {
-  checkLoggedin()
+  checkPermission()
 })
 </script>
 <template>
