@@ -1,7 +1,4 @@
 <script setup>
-// const baseURL = ref('https://movemove-api.onrender.com')
-// const token = useCookie('userToken')
-
 const projects = ref([
   {
     id: '123',
@@ -26,23 +23,7 @@ const projects = ref([
   }
 ])
 
-const isLogin = useIsLoginStore()
 const apiProject = ref({})
-const checkLogin = () => {
-  nextTick(async () => {
-    await getFetchData({
-      url: '/user/check-login',
-      method: 'POST'
-    })
-      .then((res) => {
-        console.log(res.message)
-        isLogin.isLogin = true
-      })
-      .catch((err) => {
-        console.log(err.message)
-      })
-  })
-}
 
 const getProjects = async () => {
   await getFetchData({
@@ -67,10 +48,7 @@ const selectCategory = (key) => {
 }
 
 onMounted(() => {
-  nextTick(async () => {
-    await checkLogin()
-    await getProjects()
-  })
+  getProjects()
 })
 </script>
 <template>

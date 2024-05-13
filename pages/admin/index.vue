@@ -55,23 +55,32 @@ const columns = [
 ]
 const projectList = [
   {
-    projectId: 1,
-    cover: 'image',
-    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    dateRange: '2024/03/01 2025/03/01',
-    goal: '500/100000',
-    people: '弱勢救星',
-    status: '募資中'
-  },
-  {
-    projectId: 2,
-    cover: 'image',
-    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    dateRange: '2024/03/01 2025/03/01',
-    goal: '500/100000',
-    people: '弱勢救星',
-    status: '募資中'
+    projectId: 0,
+    cover: '',
+    title: '',
+    dateRange: '',
+    goal: '',
+    people: '',
+    status: ''
   }
+  // {
+  //   projectId: 1,
+  //   cover: 'image',
+  //   title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+  //   dateRange: '2024/03/01 2025/03/01',
+  //   goal: '500/100000',
+  //   people: '弱勢救星',
+  //   status: '募資中'
+  // },
+  // {
+  //   projectId: 2,
+  //   cover: 'image',
+  //   title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+  //   dateRange: '2024/03/01 2025/03/01',
+  //   goal: '500/100000',
+  //   people: '弱勢救星',
+  //   status: '募資中'
+  // }
 ]
 const selected = ref([projectList[1]])
 
@@ -103,9 +112,20 @@ const getProjects = async () => {
     .catch((err) => console.log(err))
 }
 
+const isLogin = useIsLoginStore()
+
+const checkPermission = async () => {
+  await isLogin.getUserData()
+  if (isLogin.userData.auth) {
+    getProjects()
+  } else {
+    alert('無瀏覽權限，請先登入')
+    await navigateTo('/login')
+  }
+}
 onMounted(() => {
-  nextTick(async () => {
-    await getProjects()
+  nextTick(() => {
+    checkPermission()
   })
 })
 </script>

@@ -1,7 +1,7 @@
 <script setup>
 const tab = ref(1)
+const isLogin = useIsLoginStore()
 
-const userData = ref({})
 const tempUser = ref({
   nickName: '',
   userName: '',
@@ -13,36 +13,17 @@ const tempUser = ref({
   avatar: ''
 })
 
-const isLogin = useIsLoginStore()
-const checkLogin = () => {
-  nextTick(async () => {
-    await getFetchData({
-      url: '/user/check-login',
-      method: 'POST'
-    })
-      .then((res) => {
-        console.log(res)
-        isLogin.isLogin = true
-        getUser()
-      })
-      .catch(async (err) => {
-        console.log(err)
-        alert(err.message)
-        await navigateTo('/login')
-      })
-  })
+const checkPermission = async () => {
+  await isLogin.getUserData()
+  if (isLogin.isLogin) {
+    getTempUser(isLogin.userData)
+  } else {
+    await navigateTo('/login')
+  }
 }
-const getUser = async () => {
-  await getFetchData({
-    url: '/user',
-    method: 'GET'
-  })
-    .then((res) => {
-      userData.value = res.results
-      const { nickName, userName, gender, phone, address, teamName, aboutMe, avatar } = res.results
-      tempUser.value = { nickName, userName, gender, phone, address, teamName, aboutMe, avatar }
-    })
-    .catch((err) => console.log(err))
+const getTempUser = (data) => {
+  const { nickName, userName, gender, phone, address, teamName, aboutMe, avatar } = data
+  tempUser.value = { nickName, userName, gender, phone, address, teamName, aboutMe, avatar }
 }
 const editUser = async () => {
   await getFetchData({
@@ -51,10 +32,9 @@ const editUser = async () => {
     params: tempUser.value
   })
     .then((res) => {
-      const { nickName, userName, gender, phone, address, teamName, aboutMe, avatar } = res.results
-      tempUser.value = { nickName, userName, gender, phone, address, teamName, aboutMe, avatar }
+      getTempUser(res.results)
       alert(res.message)
-      getUser()
+      userData.getUserData()
     })
     .catch((err) => {
       console.log(err)
@@ -62,7 +42,7 @@ const editUser = async () => {
 }
 
 onMounted(() => {
-  checkLogin()
+  checkPermission()
 })
 </script>
 <template>
@@ -72,15 +52,16 @@ onMounted(() => {
       <div class="mx-auto lg:w-[800px]">
         <div class="mb-6 flex items-center px-3 lg:px-6">
           <div
-            class="relative mr-4 block h-20 w-20 rounded-full bg-[url('https://randomuser.me/api/portraits/women/94.jpg')] bg-cover bg-center sm:mr-10"
+            class="relative mr-4 block h-20 w-20 rounded-full bg-cover bg-center sm:mr-10"
+            :style="{ 'background-image': `url('${isLogin.userData.avatar}')` }"
           >
             <!-- <button class="absolute bottom-0 right-0 block h-6 w-6 bg-secondary-1 text-white">
               0
             </button> -->
           </div>
           <div>
-            <div class="mb-3 text-xl font-bold lg:text-3xl">{{ userData.nickName }}</div>
-            <div class="lg:text-xl">{{ userData.email }}</div>
+            <div class="mb-3 text-xl font-bold lg:text-3xl">{{ isLogin.userData.nickName }}</div>
+            <div class="lg:text-xl">{{ isLogin.userData.email }}</div>
           </div>
         </div>
         <div class="mb-4 flex gap-4 font-bold">

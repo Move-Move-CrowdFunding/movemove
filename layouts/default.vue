@@ -7,6 +7,15 @@
     <Footer />
   </div>
 </template>
+<script setup>
+const isLogin = useIsLoginStore()
+
+onMounted(() => {
+  nextTick(() => {
+    isLogin.checkLogin()
+  })
+})
+</script>
 <style lang="scss" scope>
 #__nuxt {
   @apply min-h-dvh;

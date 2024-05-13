@@ -22,17 +22,12 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
-// const links = [
-//   {
-//     label: '列表',
-//     icon: 'i-heroicons-home',
-//     to: '/admin'
-//   },
-//   {
-//     label: '登出',
-//     icon: 'i-heroicons-home',
-//     click: logout
-//   }
-// ]
+<script setup>
+const isLogin = useIsLoginStore()
+
+onMounted(() => {
+  nextTick(() => {
+    isLogin.checkLogin()
+  })
+})
 </script>
