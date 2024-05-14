@@ -55,8 +55,8 @@
       </template>
       <template #dateRange-data="{ row }">
         <div class="space-y-2">
-          <p>{{ dayjs(row.startDate).format('YYYY/MM/DD') }}</p>
-          <p>{{ dayjs(row.endDate).format('YYYY/MM/DD') }}</p>
+          <p>{{ dayjs(row.startDate * 1000).format('YYYY/MM/DD') }}</p>
+          <p>{{ dayjs(row.endDate * 1000).format('YYYY/MM/DD') }}</p>
         </div>
       </template>
       <template #target-data="{ row }">
@@ -83,8 +83,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { ResponseData } from '~/types/response'
 import { useDayjs } from '#dayjs'
+import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'admin-layout'
 })
