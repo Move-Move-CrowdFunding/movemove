@@ -2,28 +2,18 @@
 const tab = ref(1)
 const isLogin = useIsLoginStore()
 
-const tempUser = ref({
-  nickName: '',
-  userName: '',
-  gender: 0,
-  phone: '',
-  address: '',
-  teamName: '',
-  aboutMe: '',
-  avatar: ''
-})
+const tempUser = ref({})
 
 const checkPermission = async () => {
   await isLogin.getUserData()
-  if (isLogin.isLogin) {
+  if (isLogin.userData.email) {
     getTempUser(isLogin.userData)
   } else {
     await navigateTo('/login')
   }
 }
 const getTempUser = (data) => {
-  const { nickName, userName, gender, phone, address, teamName, aboutMe, avatar } = data
-  tempUser.value = { nickName, userName, gender, phone, address, teamName, aboutMe, avatar }
+  tempUser.value = JSON.parse(JSON.stringify(data))
 }
 const editUser = async () => {
   await getFetchData({
@@ -34,7 +24,7 @@ const editUser = async () => {
     .then((res) => {
       getTempUser(res.results)
       alert(res.message)
-      userData.getUserData()
+      isLogin.getUserData()
     })
     .catch((err) => {
       console.log(err)
@@ -42,7 +32,9 @@ const editUser = async () => {
 }
 
 onMounted(() => {
-  checkPermission()
+  nextTick(() => {
+    checkPermission()
+  })
 })
 </script>
 <template>

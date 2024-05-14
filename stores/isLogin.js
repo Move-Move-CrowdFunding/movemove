@@ -4,7 +4,6 @@ export const useIsLoginStore = defineStore('isLogin', () => {
   const isLogin = ref(false)
 
   const checkLogin = () => {
-    console.log('check login')
     getFetchData({
       url: '/user/check-login',
       method: 'POST'
