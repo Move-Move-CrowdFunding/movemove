@@ -1,0 +1,65 @@
+import { defu } from 'defu'
+import type { UseFetchOptions } from '#app'
+
+interface UseFetchResponse<T> {
+  status: boolean
+  token?: string
+  results: T
+}
+// import type { UseFetchResponse } from '@/types/fetch';
+
+export async function useCustomFetch<T>(
+  url: string,
+  options?: UseFetchOptions<UseFetchResponse<T>>
+) {
+  const config = useRuntimeConfig()
+  const token = useCookie('userToken')
+  //   const { $notify } = useNuxtApp()
+  //   const isLoading = useLoading()
+  const { apiBase } = config.public
+  const defaults: UseFetchOptions<UseFetchResponse<T>> = {
+    baseURL: apiBase as string,
+    key: url,
+    headers: token.value ? { Authorization: `Bearer ${token.value}` } : {},
+    onRequest({ request, options }) {
+      console.log('onRequest', 'request', request, 'options', options)
+    },
+    onRequestError({ request, options, error }) {
+      console.log('onRequestError', 'request', request, 'options', options, 'error', error)
+      if (process.client) {
+        // $notify({
+        //   type: 'danger',
+        //   text: '系統異常'
+        // })
+      }
+    },
+    onResponse({ request, response }) {
+      console.log('onResponse', 'request', request, 'response', response)
+    },
+    onResponseError({ response }) {
+      if (process.client) {
+        // $notify({
+        //   type: 'danger',
+        //   text: response._data?.message
+        // })
+      }
+      setTimeout(() => {
+        if (response.status === 403) {
+          navigateTo('/login')
+        }
+      }, 2000)
+    }
+  }
+
+  const params = defu(options, defaults)
+
+  //   isLoading.value++
+
+  const { data: response, refresh, pending, error } = await useFetch(url, params)
+
+  //   if (isLoading.value > 0) {
+  //     isLoading.value--
+  //   }
+
+  return { response, refresh, pending, error }
+}

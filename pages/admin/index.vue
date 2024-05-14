@@ -12,9 +12,9 @@
       </div> -->
       <div class="flex items-center space-x-2">
         <span class="text-sm">狀態</span>
-        <USelect v-model="filterStatus" :options="statusList" />
+        <USelect v-model="filterStatus" :options="statusList" option-attribute="name" />
       </div>
-      <UButton class="!ml-auto" size="md" color="primary">搜尋</UButton>
+      <UButton class="!ml-auto" size="md" color="primary" @click="search">搜尋</UButton>
     </div>
     <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
       <UPagination v-model="page" :page-count="pageCount" :total="projectList.length" />
@@ -34,9 +34,9 @@
       :columns="columns"
     >
       <template #no-data="{ index }">
-        <div class="line-clamp-2">
+        <span>
           {{ index + 1 }}
-        </div>
+        </span>
       </template>
       <template #title-data="{ row }">
         <div class="line-clamp-2">
@@ -80,11 +80,12 @@
     <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
       <UPagination v-model="page" :page-count="pageCount" :total="projectList.length" />
     </div>
+    <pre>{{ projectList }}</pre>
   </div>
 </template>
 <script setup lang="ts">
+// import type { ResponseData } from '~/types/response'
 import { useDayjs } from '#dayjs'
-import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'admin-layout'
 })
@@ -160,14 +161,25 @@ const projectList: Ref<Partial<ProjectsList>[]> = ref([])
 
 // 分頁
 const page = ref(1)
-const pageCount = 10
+const pageCount = ref(10)
 const rows = computed(() => {
-  return projectList.value.slice((page.value - 1) * pageCount, page.value * pageCount)
+  return projectList.value.slice((page.value - 1) * pageCount.value, page.value * pageCount.value)
 })
 
 // select
-const statusList = ['全部', '募資中', '已結束', '待審核', '已退回']
-const filterStatus = ref(statusList[0])
+// interface StatusList {
+//   name: string
+//   value: number
+// }
+const statusList = ref([
+  { name: '全部', value: 3 },
+  { name: '已結束', value: 2 },
+  { name: '否准', value: -1 },
+  { name: '核准', value: 1 },
+  { name: '送審', value: 0 }
+])
+// console.log('statusList', statusList.value)
+const filterStatus = ref(statusList.value[0])
 
 // 搜尋
 const q = ref('')
@@ -181,22 +193,31 @@ const filteredRows = computed(() => {
     })
   })
 })
+const formData = ref({
+  pageNo: page.value || 1,
+  pageSize: pageCount.value || 10,
+  sortDesc: false,
+  status: filterStatus.value.value || 3
+})
 
-const getProjects = async () => {
-  await getFetchData({
-    url: '/admin/projects',
-    method: 'GET',
-    params: {
-      pageNo: 1,
-      pageSize: 10,
-      sortDesc: 0,
-      status: 0
-    }
-  })
-    .then((res) => {
-      projectList.value = (res as ResponseData).results
-    })
-    .catch((err) => console.log(err))
+const getProjects = async (query: any) => {
+  // console.log('query', query.value)
+  // await getFetchData({
+  //   url: '/admin/projects',
+  //   method: 'GET',
+  //   params: query.value
+  // })
+  //   .then((res) => {
+  projectList.value = (res as ResponseData).results
+  //   })
+  //   .catch((err) => console.log(err))
+  // const { response } = await useCustomFetch<ProjectsList[]>('/admin/projects', {
+  //   method: 'GET'
+  //   // body:
+  // })
+  const { data } = await useGetProjects(query.value)
+  // console.log('data', data)
+  projectList.value = data.value?.results
 }
 
 const isLogin = useIsLoginStore()
@@ -204,13 +225,17 @@ const isLogin = useIsLoginStore()
 const checkPermission = async () => {
   await isLogin.getUserData()
   if (isLogin.userData.auth) {
-    getProjects()
+    await getProjects(formData)
   } else {
     alert('無瀏覽權限，請先登入')
     await navigateTo('/login')
   }
 }
+const search = async () => {
+  await getProjects(formData)
+}
 onMounted(() => {
+  // console.log('formData', formData.value, filterStatus)
   nextTick(() => {
     checkPermission()
   })
