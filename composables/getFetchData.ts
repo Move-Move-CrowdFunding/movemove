@@ -12,7 +12,6 @@ export default function getFetchData({ url, method = 'GET', params }: Params) {
       method,
       baseURL: apiBase,
       onRequest({ options }) {
-        console.log('options', options)
         options.headers = {
           ...options.headers,
           authorization: 'Bearer ' + useCookie('userToken').value || ''
