@@ -1,21 +1,29 @@
+import { BaseModal } from '#components'
 type UrlType = string | Request | Ref<string | Request> | (() => string | Request)
 interface RequestOptions {
   method?: any
   params?: any
 }
+
 const request = async (url: UrlType, params: any, options: RequestOptions) => {
   const token = useCookie('userToken')
-  //   const headers = useRequestHeaders.cookie
+  const modal = useModal()
+
+  function openModal(title: string, message: string) {
+    modal.open(BaseModal, {
+      title,
+      message
+    })
+  }
   const { apiBase: baseURL } = useRuntimeConfig().public
   const { method = ((options?.method || 'GET') as string).toUpperCase() } = options
-  return await useFetch(url as string, {
+
+  const { data, pending, error, refresh, status } = await useFetch(url as string, {
     default: () => [],
     baseURL,
     method,
     params: { ...params },
-    // headers,
     headers: token.value ? { Authorization: `Bearer ${token.value}` } : {},
-    // credentials: 'include',
     body: method === 'POST' ? JSON.stringify(params) : undefined,
     onRequest({ request, options }) {
       //   console.log('onRequest', 'request', request, 'options', options)
@@ -25,19 +33,36 @@ const request = async (url: UrlType, params: any, options: RequestOptions) => {
     },
     onResponse({ request, response }) {
       //   console.log('onResponse', 'request', request, 'response._data', response._data)
+      //   openModal('成功', response._data.message)
       return response._data
     },
     onResponseError({ request, response, options }) {
       //   console.log('onResponseError', 'request', request, 'response', response, 'options', options)
+      openModal('錯誤', response._data.msg)
     }
   })
+  return { data, pending, error, refresh, status }
 }
 
-export const useDefaultRequest = {
-  get: (url: UrlType, params?: any, options?: RequestOptions) => {
-    return request(url, params, { method: 'GET', ...options })
-  },
-  post: (url: UrlType, params?: any, options?: RequestOptions) => {
-    return request(url, params, { method: 'POST', ...options })
-  }
-}
+/**
+ * 根據指定的方法、URL 和選項執行默認請求。
+ *
+ * @param {T} method - 用於請求的 HTTP 方法。
+ * @param {UrlType} url - 發送請求的 URL。
+ * @param {any} [params] - 請求中要包含的參數（如果有的話）。
+ * @param {RequestOptions} [options={}] - 用於請求的其他選項。
+ * @return {Promise} 一個 Promise，解析為請求響應數據。
+ **/
+
+const methods = {
+  get: 'GET',
+  post: 'POST',
+  put: 'PUT',
+  delete: 'DELETE'
+} as const
+export const useRequest = <T extends keyof typeof methods>(
+  method: T,
+  url: UrlType,
+  params?: any,
+  options: RequestOptions = {}
+) => request(url, params, { method, ...options })

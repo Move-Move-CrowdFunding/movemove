@@ -208,15 +208,15 @@ const getProjects = async (query: any) => {
   //   params: query.value
   // })
   //   .then((res) => {
-  projectList.value = (res as ResponseData).results
+  // projectList.value = (res as ResponseData).results
   //   })
   //   .catch((err) => console.log(err))
   // const { response } = await useCustomFetch<ProjectsList[]>('/admin/projects', {
   //   method: 'GET'
   //   // body:
   // })
-  const { data } = await useGetProjects(query.value)
-  // console.log('data', data)
+  const { data, error } = await useGetProjects(query.value)
+  if (error.value) return
   projectList.value = data.value?.results
 }
 
