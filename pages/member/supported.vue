@@ -44,7 +44,7 @@ const items = [
       <template #default="{ item, open }">
         <UButton color="gray" variant="ghost" class="mt-2 p-0">
           <div
-            class="relative flex w-full flex-col-reverse items-center gap-2 bg-secondary-2 px-3 py-4 text-white sm:flex-row lg:gap-4"
+            class="relative flex w-full flex-col-reverse items-stretch gap-2 bg-secondary-2 px-3 py-4 text-white sm:flex-row lg:gap-4"
           >
             <div class="mr-auto text-left">
               <div class="items-center gap-2 sm:flex">
@@ -53,12 +53,14 @@ const items = [
                 </div>
               </div>
               <div class="mt-2 flex items-center gap-3">
-                <span class="rounded-full bg-primary-1 px-2 py-0.5 text-xs">教育</span>
+                <span class="rounded-full bg-primary-1 px-2 py-0.5 text-xs">{{
+                  categoryKeys[item.project.categoryKey].name
+                }}</span>
                 <p class="text-sm sm:mt-0">回饋：{{ item.project.feedbackItem }}</p>
               </div>
             </div>
             <div
-              class="flex w-full shrink-0 items-center justify-between gap-4 sm:block sm:w-auto sm:text-end"
+              class="flex w-full shrink-0 items-center justify-between gap-4 sm:w-auto sm:flex-col sm:items-end sm:text-end"
             >
               <div class="text-xs">
                 {{ dayjs(item.createTime * 1000).format('YYYY/MM/DD HH:mm:ss') }}
@@ -76,40 +78,38 @@ const items = [
         </UButton>
       </template>
       <template #item="{ item }">
-        <div
-          class="flex items-end justify-between border-2 border-secondary-2 bg-white px-3 py-4 text-base"
-        >
-          <div class="">
+        <div class="border-2 border-secondary-2 bg-white px-3 py-4 text-base">
+          <div>
             <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
               <div class="font-bold">收件人</div>
-              <div class="col-span-3">{{ item.receiver }}</div>
+              <div class="sm:col-span-3 lg:col-span-5">{{ item.receiver }}</div>
             </div>
             <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
               <div class="font-bold">寄件地址</div>
-              <div class="col-span-3">{{ item.address }}</div>
+              <div class="sm:col-span-3 lg:col-span-5">{{ item.address }}</div>
             </div>
             <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
               <div class="font-bold">連絡電話</div>
-              <div class="col-span-3">{{ item.receiverPhone }}</div>
+              <div class="sm:col-span-3 lg:col-span-5">{{ item.receiverPhone }}</div>
             </div>
             <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
               <div class="font-bold">電子郵件</div>
-              <div class="col-span-3">{{ item.email }}</div>
+              <div class="sm:col-span-3 lg:col-span-5">{{ item.email }}</div>
             </div>
             <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
               <div class="font-bold">預計寄送日期</div>
-              <div class="col-span-3">
+              <div class="sm:col-span-2 lg:col-span-4">
                 {{ dayjs(item.feedbackDate * 1000).format('YYYY/MM/DD') }}
               </div>
+              <div class="text-right">
+                <NuxtLink
+                  :to="`/projects/${item.id}`"
+                  target="_blank"
+                  class="underline underline-offset-2 hover:text-primary-1"
+                  >前往專案</NuxtLink
+                >
+              </div>
             </div>
-          </div>
-          <div class="p-2">
-            <NuxtLink
-              :to="`/projects/${item.id}`"
-              target="_blank"
-              class="underline underline-offset-2 hover:text-primary-1"
-              >前往專案</NuxtLink
-            >
           </div>
         </div>
       </template>
@@ -118,9 +118,6 @@ const items = [
 </template>
 
 <style scoped lang="scss">
-* {
-  outline: 1px solid #090;
-}
 .quick-example {
   display: grid;
   border-radius: 0.5rem;
