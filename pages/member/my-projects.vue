@@ -80,9 +80,6 @@ const results = {
 </template>
 
 <style scoped lang="scss">
-* {
-  outline: 1px solid #0a0;
-}
 .stateTab {
   @apply h-full w-full border-b-2 border-white py-2 hover:border-primary-3;
 }
