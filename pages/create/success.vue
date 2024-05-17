@@ -1,3 +1,3 @@
 <template>
-  <div>提案成功</div>
+  <CreateSteps :step="3" />
 </template>

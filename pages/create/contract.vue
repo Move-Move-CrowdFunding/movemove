@@ -4,17 +4,7 @@ const contractTwoChecked = ref(false)
 </script>
 <template>
   <div>
-    <ul class="flex justify-center gap-6 py-10">
-      <li class="border-b-2 border-primary-1">
-        <NuxtLink>提案者合約</NuxtLink>
-      </li>
-      <li>
-        <NuxtLink>提案內容</NuxtLink>
-      </li>
-      <li>
-        <NuxtLink>提案成功</NuxtLink>
-      </li>
-    </ul>
+    <CreateSteps :step="1" />
     <div class="bg-secondary-5 py-10">
       <h1 class="text-center text-2xl font-bold">提案者合約</h1>
       <p class="container">
@@ -113,6 +103,7 @@ const contractTwoChecked = ref(false)
         <button
           class="rounded bg-secondary-1 px-3 py-2 text-white disabled:bg-neutral-300"
           :disabled="!contractOneChecked || !contractTwoChecked"
+          @click="$router.push({ path: '/create/edit' })"
         >
           發起提案
         </button>
