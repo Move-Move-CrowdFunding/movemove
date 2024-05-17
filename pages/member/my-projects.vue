@@ -38,7 +38,7 @@ const results = {
 </script>
 <template>
   <div class="container py-10 lg:py-20">
-    <h1 class="mb-6 text-center text-3xl font-bold lg:mb-10">提案紀錄{{ results.state }}</h1>
+    <h1 class="mb-6 text-center text-3xl font-bold lg:mb-10">提案紀錄</h1>
     <ul class="mb-6 flex justify-center lg:mb-10 lg:gap-10">
       <li class="w-1/4 max-w-40">
         <button class="stateTab" :class="{ active: results.state == 'ongoing' }">
