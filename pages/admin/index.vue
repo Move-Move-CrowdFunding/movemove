@@ -1,23 +1,48 @@
 <template>
   <div class="flex flex-1 flex-col overflow-y-auto">
-    <h2 class="flex-shrink-0 py-3 font-semibold text-neutral-800">管理 - 提案列表</h2>
-    <div class="flex w-full space-x-4 border-b border-gray-200 py-3 dark:border-gray-700">
-      <div class="flex items-center space-x-2">
-        <span class="text-sm">提案編號</span>
-        <UInput v-model="q" placeholder="請輸入提案編號" />
+    <h2 class="flex-shrink-0 py-6 font-semibold text-neutral-800">管理 - 提案列表</h2>
+    <div class="mb-4 flex w-full space-x-8 bg-neutral-100/70 px-3 py-4 dark:border-gray-700">
+      <div class="flex items-center space-x-2 whitespace-nowrap">
+        <span class="text-sm">搜尋</span>
+        <UInput v-model.trim="formData.search" placeholder="請輸入提案標題或編號" />
       </div>
-      <!-- <div class="flex items-center space-x-2">
-        <span class="text-sm">案名</span>
-        <UInput v-model="q" placeholder="請輸入案名" />
-      </div> -->
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-2 whitespace-nowrap">
         <span class="text-sm">狀態</span>
-        <USelect v-model="filterStatus" :options="statusList" />
+        <USelect v-model.number="filterStatus" :options="statusList" option-attribute="name" />
       </div>
-      <UButton class="!ml-auto" size="md" color="primary">搜尋</UButton>
+      <div class="flex items-center space-x-2 whitespace-nowrap">
+        <span class="text-sm">新舊排序</span>
+        <USelect v-model="sortDesc" :options="sortList" option-attribute="name" />
+      </div>
+      <UButton
+        icon="i-heroicons-arrow-path"
+        class="!mr-4 ml-auto"
+        size="sm"
+        color="gray"
+        @click="resetSearch"
+        >重設搜尋條件</UButton
+      >
+      <UButton
+        icon="i-heroicons-magnifying-glass"
+        class="!ml-auto"
+        size="md"
+        color="primary"
+        @click="search"
+        >搜尋</UButton
+      >
     </div>
-    <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-      <UPagination v-model="page" :page-count="pageCount" :total="projectList.length" />
+    <div class="flex justify-end space-x-6 border-gray-200 px-3 py-6 dark:border-gray-700">
+      <div class="flex items-center space-x-2">
+        <span>總共</span>
+        <p>{{ responsePagination.count }}</p>
+        <span>筆資料</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span>每頁</span>
+        <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
+        <span>筆</span>
+      </div>
+      <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" />
     </div>
     <UTable
       :ui="{
@@ -25,23 +50,26 @@
           base: 'whitespace-nowrap',
           padding: 'p-2'
         },
+        tr: {
+          base: ' [&:nth-child(even)]:bg-neutral-100/60   border-neutral-100'
+        },
         td: {
           base: 'whitespace-normal',
           padding: 'p-2'
         }
       }"
-      :rows="filteredRows"
+      :rows="projectList"
       :columns="columns"
     >
       <template #no-data="{ index }">
-        <div class="line-clamp-2">
+        <span>
           {{ index + 1 }}
-        </div>
+        </span>
       </template>
       <template #title-data="{ row }">
         <div class="line-clamp-2">
           <NuxtLink
-            :to="`/admin/${row.id}`"
+            :to="`/admin/${row._id}`"
             class="block break-words text-secondary-2 hover:underline"
             >{{ row.title }}</NuxtLink
           >
@@ -77,14 +105,23 @@
         </div>
       </template>
     </UTable>
-    <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-      <UPagination v-model="page" :page-count="pageCount" :total="projectList.length" />
+    <div class="flex justify-end space-x-6 border-t border-gray-200 px-3 py-6 dark:border-gray-700">
+      <div class="flex items-center space-x-2">
+        <span>總共</span>
+        <p>{{ responsePagination.count }}</p>
+        <span>筆資料</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span>每頁</span>
+        <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
+        <span>筆</span>
+      </div>
+      <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { useDayjs } from '#dayjs'
-import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'admin-layout'
 })
@@ -111,12 +148,13 @@ interface ProjectsList {
   feedbackDate: number
   createTime: number
   updateTime: number
-  id: number
-  // status: string
+  _id: number
+  status: boolean
 }
 
 const dayjs = useDayjs()
 
+// 表格欄位名稱
 const columns = [
   {
     key: 'no',
@@ -124,7 +162,7 @@ const columns = [
     sortable: true
   },
   {
-    key: 'id',
+    key: '_id',
     label: '提案編號',
     sortable: true
   },
@@ -156,58 +194,110 @@ const columns = [
   }
 ]
 
+// 表格資料
 const projectList: Ref<Partial<ProjectsList>[]> = ref([])
 
-// 分頁
-const page = ref(1)
-const pageCount = 10
-const rows = computed(() => {
-  return projectList.value.slice((page.value - 1) * pageCount, page.value * pageCount)
+// 接收回傳分頁資料
+const responsePagination = ref({
+  pageNo: 1,
+  pageSize: 10,
+  totalPage: 1,
+  count: 10,
+  sortDesc: 'false',
+  search: ''
 })
 
-// select
-const statusList = ['全部', '募資中', '已結束', '待審核', '已退回']
-const filterStatus = ref(statusList[0])
+// 單頁顯示幾筆 選單
+const pageList = ref([10, 20, 30, 40, 50])
 
-// 搜尋
-const q = ref('')
-const filteredRows = computed(() => {
-  if (!q.value) {
-    return rows.value
+// 目前頁數
+const pageNo = ref(1)
+
+// 單頁筆數
+const pageSize = ref(10)
+
+// 新舊排序
+const sortList = ref([
+  {
+    name: '新',
+    value: 'true'
+  },
+  {
+    name: '舊',
+    value: 'false'
   }
-  return rows.value.filter((item) => {
-    return Object.values(item).some((value) => {
-      return String(value).toLowerCase().includes(q.value.toLowerCase())
-    })
-  })
+])
+
+// 排序選擇 預設最新
+const sortDesc = ref('true')
+
+// 狀態
+const statusList = ref([
+  { name: '全部', value: 3 },
+  { name: '已結束', value: 2 },
+  { name: '否准', value: -1 },
+  { name: '核准', value: 1 },
+  { name: '送審', value: 0 }
+])
+
+// 篩選狀態
+const filterStatus = ref(3)
+
+// 搜尋條件
+const formData = ref({
+  pageNo,
+  pageSize,
+  sortDesc: 'false',
+  status: 3,
+  search: ''
 })
 
-const getProjects = async () => {
-  await getFetchData({
-    url: '/admin/projects',
-    method: 'GET',
-    params: {
-      pageNo: 1,
-      pageSize: 10,
-      sortDesc: 0,
-      status: 0
-    }
-  })
-    .then((res) => {
-      projectList.value = (res as ResponseData).results
-    })
-    .catch((err) => console.log(err))
+const getProjects = async (query: any) => {
+  const { data, error } = await useGetProjects(query.value)
+  if (error.value) return
+  projectList.value = data.value?.results
+
+  responsePagination.value.pageNo = parseInt(data.value?.pagination.pageNo)
+  responsePagination.value.pageSize = parseInt(data.value?.pagination.pageSize)
+  responsePagination.value.totalPage = parseInt(data.value?.pagination.totalPage)
+  responsePagination.value.count = parseInt(data.value?.pagination.count)
+  responsePagination.value.sortDesc = data.value?.pagination.sortDesc
+  responsePagination.value.search = data.value?.pagination.search
 }
 
+// 監聽 每頁幾筆
+watch(pageSize, async () => {
+  await getProjects(formData)
+})
+
+// 監聽 目前分頁
+watch(pageNo, async () => {
+  await getProjects(formData)
+})
 const isLogin = useIsLoginStore()
 
 const checkPermission = async () => {
   await isLogin.getUserData()
   if (isLogin.userData.auth) {
-    getProjects()
+    await getProjects(formData)
   } else {
     alert('無瀏覽權限，請先登入')
     await navigateTo('/login')
+  }
+}
+const search = async () => {
+  formData.value.status = filterStatus.value
+  formData.value.sortDesc = sortDesc.value
+  await getProjects(formData)
+}
+const resetSearch = () => {
+  filterStatus.value = 3
+  formData.value = {
+    pageNo: 1,
+    pageSize: 10,
+    sortDesc: 'true',
+    status: 3,
+    search: ''
   }
 }
 onMounted(() => {
