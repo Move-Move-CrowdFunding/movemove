@@ -1,3 +1,7 @@
+<script setup>
+const contractOneChecked = ref(false)
+const contractTwoChecked = ref(false)
+</script>
 <template>
   <div>
     <ul class="flex justify-center gap-6 py-10">
@@ -87,6 +91,7 @@
         <div class="mb-3 flex gap-2">
           <input
             id="contract_1"
+            v-model="contractOneChecked"
             type="checkbox"
             class="mr-2 h-5 w-5 shrink-0 appearance-none rounded-sm border-secondary-1 outline outline-2 outline-secondary-1 after:relative after:block after:h-5/6 after:w-6/12 after:translate-x-[5px] checked:bg-secondary-1 checked:after:relative checked:after:rotate-45 checked:after:border-b-4 checked:after:border-r-4 checked:after:border-white"
           />
@@ -95,6 +100,7 @@
         <div class="flex gap-2">
           <input
             id="contract_2"
+            v-model="contractTwoChecked"
             type="checkbox"
             class="mr-2 h-5 w-5 shrink-0 appearance-none rounded-sm border-secondary-1 outline outline-2 outline-secondary-1 after:relative after:block after:h-5/6 after:w-6/12 after:translate-x-[5px] checked:bg-secondary-1 checked:after:relative checked:after:rotate-45 checked:after:border-b-4 checked:after:border-r-4 checked:after:border-white"
           />
@@ -104,7 +110,12 @@
         </div>
       </div>
       <div class="text-center">
-        <button class="rounded bg-secondary-1 px-3 py-2 text-white">發起提案</button>
+        <button
+          class="rounded bg-secondary-1 px-3 py-2 text-white disabled:bg-neutral-300"
+          :disabled="!contractOneChecked || !contractTwoChecked"
+        >
+          發起提案
+        </button>
       </div>
     </div>
   </div>
