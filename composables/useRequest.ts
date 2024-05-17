@@ -38,7 +38,7 @@ const request = async (url: UrlType, params: any, options: RequestOptions) => {
     },
     onResponseError({ request, response, options }) {
       //   console.log('onResponseError', 'request', request, 'response', response, 'options', options)
-      openModal('錯誤', response._data.msg)
+      openModal('錯誤', response._data.message)
     }
   })
   return { data, pending, error, refresh, status }
