@@ -24,7 +24,8 @@ const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒�
 </script>
 <template>
   <NuxtLink
-    :to="`/`"
+    :to="`/projects/${project.id || ''}`"
+    target="_blank"
     class="group block overflow-hidden rounded-3xl border border-primary-3 duration-300 hover:border-primary-1 hover:shadow-lg lg:rounded-[32px]"
   >
     <div class="relative overflow-hidden">
@@ -64,11 +65,11 @@ const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒�
       <div class="h-2 rounded-full bg-[#D9D9D9]">
         <div
           class="h-2 rounded-full bg-primary-1"
-          :style="{ width: `${(100 * project.achievedMoney) / project.targetMoney}%` }"
+          :style="{ width: `${(100 * project.achievedMoney || 0) / project.targetMoney}%` }"
         ></div>
       </div>
       <div class="flex justify-between">
-        <p>NT$ {{ project.achievedMoney }}</p>
+        <p>NT$ {{ project.achievedMoney || 0 }}</p>
         <p v-if="project.endDate < date.getTime() / 1000">已結束</p>
         <p v-else>
           倒數
