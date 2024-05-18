@@ -21,17 +21,17 @@ const { step } = props
   </ul> -->
   <div class="container relative bottom-2 px-6">
     <ul
-      class="relative mx-auto flex max-w-[480px] justify-between py-10 text-center before:absolute before:left-0 before:top-1/2 before:block before:h-0.5 before:w-1/2 before:-translate-y-1/2 after:absolute after:right-0 after:top-1/2 after:block after:h-0.5 after:w-1/2 after:-translate-y-1/2"
+      class="relative mx-auto flex max-w-[480px] justify-between py-10 text-center before:absolute before:left-0 before:top-1/2 before:block before:h-0.5 before:w-1/2 before:-translate-y-1/2 after:absolute after:right-0 after:top-1/2 after:-z-10 after:block after:h-0.5 after:w-1/2 after:-translate-y-1/2"
       :class="{
         'before:bg-neutral-300 after:bg-neutral-300': step == 1,
         'before:bg-secondary-1 after:bg-neutral-300': step == 2,
         'before:bg-secondary-1 after:bg-secondary-1': step == 3
       }"
     >
-      <li class="z-20">
+      <li>
         <div class="step bg-primary-1 after:text-secondary-1 after:content-['提案者合約']">1</div>
       </li>
-      <li class="z-20">
+      <li>
         <div
           class="step after:content-['提案內容']"
           :class="{
@@ -42,7 +42,7 @@ const { step } = props
           2
         </div>
       </li>
-      <li class="z-20">
+      <li>
         <div
           class="step after:content-['提案成功']"
           :class="{
