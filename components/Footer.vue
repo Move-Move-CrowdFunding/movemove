@@ -1,6 +1,7 @@
 <template>
-  <footer class="border-t-4 border-primary-1 bg-secondary-2 py-11 md:py-[60px]">
+  <footer class="relative border-t-4 border-primary-1 bg-secondary-2 py-11 md:py-[60px]">
     <div class="container">
+      <GoTop />
       <div class="flex flex-col items-center md:flex-row md:justify-between">
         <div class="flex flex-col">
           <BaseLogo
