@@ -1,6 +1,3 @@
-<template>
-  <img :alt="alt" :src="src" />
-</template>
 <script setup lang="ts">
 defineProps({
   src: {
@@ -13,3 +10,6 @@ defineProps({
   }
 })
 </script>
+<template>
+  <img :alt="alt" :src="src" />
+</template>

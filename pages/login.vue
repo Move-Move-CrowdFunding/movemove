@@ -1,3 +1,75 @@
+<script setup lang="ts">
+import type { ResponseData } from '~/types/response'
+definePageMeta({
+  layout: 'custom-layout'
+})
+
+const isLogin = useIsLoginStore()
+
+const currentView = ref('login')
+
+const loginForm = ref({
+  email: '',
+  password: ''
+})
+const registerForm = ref({
+  nickName: '',
+  email: '',
+  password: '',
+  confirmPassword: ''
+})
+
+// 註冊
+const submitSignUp = async () => {
+  await getFetchData({
+    url: '/user/sign-up',
+    method: 'POST',
+    params: {
+      nickName: registerForm.value.nickName,
+      email: registerForm.value.email,
+      password: registerForm.value.password
+    }
+  })
+    .then((res) => {
+      console.log('res', res)
+      alert((res as ResponseData).message)
+      currentView.value = 'login'
+      registerForm.value = {
+        nickName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      alert((err as ResponseData).message)
+    })
+}
+
+// 登入
+const submitLogin = async () => {
+  await getFetchData({
+    url: '/user/login',
+    method: 'POST',
+    params: {
+      email: loginForm.value.email,
+      password: loginForm.value.password
+    }
+  })
+    .then(async (res) => {
+      const { token, auth } = (res as ResponseData).results
+      useCookie('userToken').value = token
+      isLogin.getUserData()
+      alert((res as ResponseData).message)
+      await navigateTo(auth ? '/admin' : '/')
+    })
+    .catch((err) => {
+      console.log(err)
+      alert((err as ResponseData).message)
+    })
+}
+</script>
 <template>
   <div
     class="flex min-h-dvh w-full flex-col overflow-y-auto overflow-x-hidden bg-[url('https://s3-alpha-sig.figma.com/img/63b9/c4de/1d365aa54c32994571885671912f4ecc?Expires=1716163200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=LloJcbNY89E8mGl5d3O02BCigmRlCShJ0Iuut0CI5jrVoMthIgWrsq5d4ssi--zTMVIYAvpmsi25~oHkWGPwXElEpzzSZKBLWJZmo6UUudhjfySXj8EqFvF3WsO29dEb48dg~-HOfTBSyxTLtt0R6P8t-uAlWR~UOKl70dmBqoJ5iADxZsmAnjPFPv9VHTv-wrl8aYMhX8wC0FaDGCusmF9y~JBwAE3T91o1MoODDBq9muq5KLOsxTbmQWHGhom4T6rrp4O6IUTaGirfVwb~tvHvmzc1gkCRumpoozw7YiaGzm99lEA~-4RYUf1HSoPH41Ixkc9KNaThHqHjM9pXzg__')] bg-cover bg-center before:absolute before:inset-0 before:backdrop-blur-sm before:content-[''] md:flex-row md:items-start md:justify-start"
@@ -134,75 +206,3 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
-import type { ResponseData } from '~/types/response'
-definePageMeta({
-  layout: 'custom-layout'
-})
-
-const isLogin = useIsLoginStore()
-
-const currentView = ref('login')
-
-const loginForm = ref({
-  email: '',
-  password: ''
-})
-const registerForm = ref({
-  nickName: '',
-  email: '',
-  password: '',
-  confirmPassword: ''
-})
-
-// 註冊
-const submitSignUp = async () => {
-  await getFetchData({
-    url: '/user/sign-up',
-    method: 'POST',
-    params: {
-      nickName: registerForm.value.nickName,
-      email: registerForm.value.email,
-      password: registerForm.value.password
-    }
-  })
-    .then((res) => {
-      console.log('res', res)
-      alert((res as ResponseData).message)
-      currentView.value = 'login'
-      registerForm.value = {
-        nickName: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-      }
-    })
-    .catch((err) => {
-      console.log(err)
-      alert((err as ResponseData).message)
-    })
-}
-
-// 登入
-const submitLogin = async () => {
-  await getFetchData({
-    url: '/user/login',
-    method: 'POST',
-    params: {
-      email: loginForm.value.email,
-      password: loginForm.value.password
-    }
-  })
-    .then(async (res) => {
-      const { token, auth } = (res as ResponseData).results
-      useCookie('userToken').value = token
-      isLogin.getUserData()
-      alert((res as ResponseData).message)
-      await navigateTo(auth ? '/admin' : '/')
-    })
-    .catch((err) => {
-      console.log(err)
-      alert((err as ResponseData).message)
-    })
-}
-</script>

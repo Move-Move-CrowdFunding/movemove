@@ -1,3 +1,12 @@
+<script setup>
+const isLogin = useIsLoginStore()
+
+onMounted(() => {
+  nextTick(() => {
+    isLogin.checkLogin()
+  })
+})
+</script>
 <template>
   <div class="relative flex flex-1 flex-col">
     <div class="flex min-h-dvh flex-1 flex-col">
@@ -30,12 +39,3 @@
     </div>
   </div>
 </template>
-<script setup>
-const isLogin = useIsLoginStore()
-
-onMounted(() => {
-  nextTick(() => {
-    isLogin.checkLogin()
-  })
-})
-</script>
