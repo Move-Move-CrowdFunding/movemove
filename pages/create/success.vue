@@ -68,9 +68,9 @@ const project = ref({
             <li class="mb-6">
               <div class="font-bold">提案發起日期：</div>
               <p>
-                <span v-dateformat="project.startDate * 1000"></span>
+                <span v-dateformat="project.startDate"></span>
                 至
-                <span v-dateformat="project.endDate * 1000"></span>
+                <span v-dateformat="project.endDate"></span>
               </p>
             </li>
             <li>

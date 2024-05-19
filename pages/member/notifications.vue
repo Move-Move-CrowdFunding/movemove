@@ -1,5 +1,6 @@
 <script setup>
-import { dateFormat } from '@/utils/date'
+const { $dateformat } = useNuxtApp()
+
 const isLogin = useIsLoginStore()
 
 const tempUser = ref({})
@@ -8,21 +9,21 @@ const notificationsList = ref([
   {
     id: 1,
     title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    createTime: dateFormat(1728492012),
+    createTime: 1728492012,
     coverUrl:
       'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   },
   {
     id: 2,
     title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    createTime: dateFormat(1728492012),
+    createTime: 1728492012,
     coverUrl:
       'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   },
   {
     id: 3,
     title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    createTime: dateFormat(1728492012),
+    createTime: 1728492012,
     coverUrl:
       'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
   }
@@ -59,7 +60,7 @@ onMounted(() => {
         <li
           v-for="item in notificationsList"
           :key="item.id"
-          class="relative top-0 flex-shrink-0 flex-shrink-0 pb-6 [&:first-child>*>*:first-child]:top-[calc(50%_-_12px)] [&:last-child>*>*:first-child]:h-[calc(50%_-_12px)] [&:only-child>*>*:first-child]:hidden"
+          class="relative top-0 flex-shrink-0 pb-6 [&:first-child>*>*:first-child]:top-[calc(50%_-_12px)] [&:last-child>*>*:first-child]:h-[calc(50%_-_12px)] [&:only-child>*>*:first-child]:hidden"
         >
           <NuxtLink to="/">
             <div class="absolute left-1 hidden h-full border-l-2 border-neutral-200 md:block"></div>
@@ -76,8 +77,9 @@ onMounted(() => {
                 ></div>
               </div>
               <div class="col-span-3 space-y-2 p-3 lg:px-6 lg:py-10">
-                <p class="text-neutral-600">2024/03/01</p>
-
+                <p class="text-neutral-600">
+                  {{ $dateformat(item.createTime) }}
+                </p>
                 <h3 class="line-clamp-4 sm:text-[18px] md:line-clamp-2">
                   你發起的「<span
                     class="text-secondary-2 underline md:no-underline md:hover:underline"
