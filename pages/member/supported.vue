@@ -67,13 +67,13 @@ const items = [
               </div>
               <div class="font-bold">NT$ {{ item.money }}</div>
             </div>
-            <button class="absolute bottom-0 right-0 p-3 sm:relative">
+            <div class="absolute bottom-0 right-0 p-3 sm:relative">
               <UIcon
                 name="i-heroicons-chevron-right-20-solid"
                 class="ms-auto h-5 w-5 transform transition-transform duration-200"
                 :class="[open && 'rotate-90']"
               />
-            </button>
+            </div>
           </div>
         </UButton>
       </template>
