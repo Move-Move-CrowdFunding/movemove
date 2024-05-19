@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useDayjs } from '#dayjs'
 definePageMeta({
   layout: 'admin-layout'
 })
@@ -30,7 +29,7 @@ interface ProjectsList {
   status: boolean
 }
 
-const dayjs = useDayjs()
+const { $dateformat } = useNuxtApp()
 
 // 表格欄位名稱
 const columns = [
@@ -117,7 +116,18 @@ const statusList = ref([
   { name: '核准', value: 1 },
   { name: '送審', value: 0 }
 ])
-
+const setStatusClass = (value: number) => {
+  switch (value) {
+    case 2:
+      return 'text-neutral-400 border-neutral-400'
+    case -1:
+      return 'text-warning-500 border-warning-500'
+    case 1:
+      return 'text-warning-700 border-warning-700'
+    default:
+      return 'text-secondary-3 border-secondary-3'
+  }
+}
 // 篩選狀態
 const filterStatus = ref(3)
 
@@ -170,14 +180,14 @@ const search = async () => {
 }
 const resetSearch = () => {
   filterStatus.value = 3
-  formData.value = {
-    pageNo: 1,
-    pageSize: 10,
-    sortDesc: 'true',
-    status: 3,
-    search: ''
-  }
+  formData.value.pageNo = 1
+  formData.value.pageSize = 10
+  formData.value.sortDesc = 'true'
+  formData.value.status = 3
+  formData.value.search = ''
 }
+const getStatus = (status: number) => statusList.value.find((item) => item.value === status)
+
 onMounted(() => {
   nextTick(() => {
     checkPermission()
@@ -269,8 +279,8 @@ onMounted(() => {
       </template>
       <template #dateRange-data="{ row }">
         <div class="space-y-2">
-          <p>{{ dayjs(row.startDate * 1000).format('YYYY/MM/DD') }}</p>
-          <p>{{ dayjs(row.endDate * 1000).format('YYYY/MM/DD') }}</p>
+          <p>{{ $dateformat(row.startDate) }}</p>
+          <p>{{ $dateformat(row.endDate) }}</p>
         </div>
       </template>
       <template #target-data="{ row }">
@@ -284,6 +294,14 @@ onMounted(() => {
         <div class="line-clamp-2">
           {{ row.teamName }}
         </div>
+      </template>
+      <template #status-data="{ row }">
+        <p
+          :class="setStatusClass(row.status)"
+          class="w-[54px] overflow-hidden rounded border text-center"
+        >
+          {{ getStatus(row.status)?.name }}
+        </p>
       </template>
       <template #empty-state>
         <div class="flex flex-col items-center justify-center gap-3 py-6">
