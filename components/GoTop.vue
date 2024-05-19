@@ -1,3 +1,10 @@
+<script setup lang="ts">
+import { useWindowScroll } from '@vueuse/core'
+const { y } = useWindowScroll({ behavior: 'smooth' })
+const scrollToTop = () => {
+  y.value = 0
+}
+</script>
 <template>
   <div
     title="返回最上層"
@@ -9,10 +16,3 @@
     ></div>
   </div>
 </template>
-<script setup lang="ts">
-import { useWindowScroll } from '@vueuse/core'
-const { y } = useWindowScroll({ behavior: 'smooth' })
-const scrollToTop = () => {
-  y.value = 0
-}
-</script>

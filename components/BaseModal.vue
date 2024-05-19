@@ -1,3 +1,17 @@
+<script setup lang="ts">
+defineProps({
+  title: {
+    type: String,
+    default: '標題'
+  },
+  message: {
+    type: String,
+    default: '內容'
+  }
+})
+
+const emit = defineEmits(['close'])
+</script>
 <template>
   <UModal>
     <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800 text-center' }">
@@ -19,17 +33,3 @@
     </UCard>
   </UModal>
 </template>
-<script setup lang="ts">
-defineProps({
-  title: {
-    type: String,
-    default: '標題'
-  },
-  message: {
-    type: String,
-    default: '內容'
-  }
-})
-
-const emit = defineEmits(['close'])
-</script>

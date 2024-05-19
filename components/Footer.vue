@@ -1,3 +1,31 @@
+<script setup lang="ts">
+const menuList = ref([
+  {
+    name: '關於我們',
+    url: '/'
+  },
+  {
+    name: '常見問題',
+    url: '/'
+  },
+  {
+    name: '接案者合約',
+    url: '/'
+  },
+  {
+    name: '會員獎勵介紹',
+    url: '/'
+  },
+  {
+    name: '使用條款',
+    url: '/'
+  },
+  {
+    name: '隱私權策略',
+    url: '/'
+  }
+])
+</script>
 <template>
   <footer class="relative border-t-4 border-primary-1 bg-secondary-2 py-11 md:py-[60px]">
     <div class="container">
@@ -44,31 +72,3 @@
     <div></div>
   </footer>
 </template>
-<script setup lang="ts">
-const menuList = ref([
-  {
-    name: '關於我們',
-    url: '/'
-  },
-  {
-    name: '常見問題',
-    url: '/'
-  },
-  {
-    name: '接案者合約',
-    url: '/'
-  },
-  {
-    name: '會員獎勵介紹',
-    url: '/'
-  },
-  {
-    name: '使用條款',
-    url: '/'
-  },
-  {
-    name: '隱私權策略',
-    url: '/'
-  }
-])
-</script>

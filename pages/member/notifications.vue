@@ -1,3 +1,56 @@
+<script setup>
+import { dateFormat } from '@/utils/date'
+const isLogin = useIsLoginStore()
+
+const tempUser = ref({})
+
+const notificationsList = ref([
+  {
+    id: 1,
+    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+    createTime: dateFormat(1728492012),
+    coverUrl:
+      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  },
+  {
+    id: 2,
+    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+    createTime: dateFormat(1728492012),
+    coverUrl:
+      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  },
+  {
+    id: 3,
+    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+    createTime: dateFormat(1728492012),
+    coverUrl:
+      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  }
+])
+
+// 目前頁數
+const pageNo = ref(1)
+
+// 單頁筆數
+const pageSize = ref(1)
+
+const checkPermission = async () => {
+  await isLogin.getUserData()
+  if (isLogin.userData.email) {
+    getTempUser(isLogin.userData)
+  } else {
+    await navigateTo('/login')
+  }
+}
+const getTempUser = (data) => {
+  tempUser.value = JSON.parse(JSON.stringify(data))
+}
+onMounted(() => {
+  nextTick(() => {
+    checkPermission()
+  })
+})
+</script>
 <template>
   <div class="py-10 lg:py-20">
     <div class="sm:px-auto container">
@@ -52,56 +105,3 @@
     </div>
   </div>
 </template>
-<script setup>
-import { dateFormat } from '@/utils/date'
-const isLogin = useIsLoginStore()
-
-const tempUser = ref({})
-
-const notificationsList = ref([
-  {
-    id: 1,
-    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    createTime: dateFormat(1728492012),
-    coverUrl:
-      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-  },
-  {
-    id: 2,
-    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    createTime: dateFormat(1728492012),
-    coverUrl:
-      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-  },
-  {
-    id: 3,
-    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    createTime: dateFormat(1728492012),
-    coverUrl:
-      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-  }
-])
-
-// 目前頁數
-const pageNo = ref(1)
-
-// 單頁筆數
-const pageSize = ref(1)
-
-const checkPermission = async () => {
-  await isLogin.getUserData()
-  if (isLogin.userData.email) {
-    getTempUser(isLogin.userData)
-  } else {
-    await navigateTo('/login')
-  }
-}
-const getTempUser = (data) => {
-  tempUser.value = JSON.parse(JSON.stringify(data))
-}
-onMounted(() => {
-  nextTick(() => {
-    checkPermission()
-  })
-})
-</script>

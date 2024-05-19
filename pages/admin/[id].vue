@@ -1,12 +1,3 @@
-<template>
-  <div>
-    <h2>管理 - 提案內容</h2>
-    返回上一頁
-    <NuxtLink to="/admin">回到管理頁面</NuxtLink>
-    <p>提案編號: {{ $route.params.id }}</p>
-    <pre>{{ projectItem }}</pre>
-  </div>
-</template>
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
 
@@ -34,3 +25,12 @@ onMounted(() => {
   })
 })
 </script>
+<template>
+  <div>
+    <h2>管理 - 提案內容</h2>
+    返回上一頁
+    <NuxtLink to="/admin">回到管理頁面</NuxtLink>
+    <p>提案編號: {{ $route.params.id }}</p>
+    <pre>{{ projectItem }}</pre>
+  </div>
+</template>

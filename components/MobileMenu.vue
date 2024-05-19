@@ -1,3 +1,19 @@
+<script setup lang="ts">
+import type { CategoryKeys } from '~/types/categoryKeys'
+import { menuMapList } from '@/utils/menuMaps'
+const isLogin = useIsLoginStore()
+
+const categoryMenuList = ref(
+  categoryKeys.map((item: CategoryKeys) => {
+    return {
+      name: item.name,
+      url: `/projects?categoryKey=${item.key}`
+    }
+  })
+)
+
+const modelValue = defineModel()
+</script>
 <template>
   <div
     class="fixed bottom-0 left-0 right-0 top-[72px] flex w-full flex-1 translate-y-[calc(-72px_+_-100%)] flex-col overflow-y-auto overflow-x-hidden bg-neutral-100 transition-all duration-300 ease-in-out lg:hidden"
@@ -73,19 +89,3 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
-import type { CategoryKeys } from '~/types/categoryKeys'
-import { menuMapList } from '@/utils/menuMaps'
-const isLogin = useIsLoginStore()
-
-const categoryMenuList = ref(
-  categoryKeys.map((item: CategoryKeys) => {
-    return {
-      name: item.name,
-      url: `/projects?categoryKey=${item.key}`
-    }
-  })
-)
-
-const modelValue = defineModel()
-</script>

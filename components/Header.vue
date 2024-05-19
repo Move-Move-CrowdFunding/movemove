@@ -1,3 +1,25 @@
+<script setup lang="ts">
+import { onClickOutside } from '@vueuse/core'
+
+const dropdown = ref(null)
+const dropdownMenu = ref(null)
+const menuIsShow = ref(false)
+const menuList = ref(menuMapList)
+
+const isLogin = useIsLoginStore()
+
+const searchIsShow = ref(false)
+
+const toggleMenu = () => {
+  if (dropdownMenu.value) {
+    menuIsShow.value = !menuIsShow.value
+  }
+}
+const mobileMenuIsShow = ref(false)
+onClickOutside(dropdown, () => {
+  menuIsShow.value = false
+})
+</script>
 <template>
   <header class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between md:shadow-none">
     <div class="relative z-10 w-full bg-neutral-50 shadow-md">
@@ -141,25 +163,3 @@
     <MobileMenu v-model="mobileMenuIsShow" />
   </header>
 </template>
-<script setup lang="ts">
-import { onClickOutside } from '@vueuse/core'
-
-const dropdown = ref(null)
-const dropdownMenu = ref(null)
-const menuIsShow = ref(false)
-const menuList = ref(menuMapList)
-
-const isLogin = useIsLoginStore()
-
-const searchIsShow = ref(false)
-
-const toggleMenu = () => {
-  if (dropdownMenu.value) {
-    menuIsShow.value = !menuIsShow.value
-  }
-}
-const mobileMenuIsShow = ref(false)
-onClickOutside(dropdown, () => {
-  menuIsShow.value = false
-})
-</script>

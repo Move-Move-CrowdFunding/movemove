@@ -1,12 +1,12 @@
+<script setup lang="ts">
+const modal = useModal()
+</script>
 <template>
   <NuxtLayout>
     <NuxtPage />
     <UModals @close="modal.close()" />
   </NuxtLayout>
 </template>
-<script lang="ts" setup>
-const modal = useModal()
-</script>
 <style lang="scss">
 .box {
   position: absolute;

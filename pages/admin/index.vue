@@ -1,125 +1,3 @@
-<template>
-  <div class="flex flex-1 flex-col overflow-y-auto">
-    <h2 class="flex-shrink-0 py-6 font-semibold text-neutral-800">管理 - 提案列表</h2>
-    <div class="mb-4 flex w-full space-x-8 bg-neutral-100/70 px-3 py-4 dark:border-gray-700">
-      <div class="flex items-center space-x-2 whitespace-nowrap">
-        <span class="text-sm">搜尋</span>
-        <UInput v-model.trim="formData.search" placeholder="請輸入提案標題或編號" />
-      </div>
-      <div class="flex items-center space-x-2 whitespace-nowrap">
-        <span class="text-sm">狀態</span>
-        <USelect v-model.number="filterStatus" :options="statusList" option-attribute="name" />
-      </div>
-      <div class="flex items-center space-x-2 whitespace-nowrap">
-        <span class="text-sm">新舊排序</span>
-        <USelect v-model="sortDesc" :options="sortList" option-attribute="name" />
-      </div>
-      <UButton
-        icon="i-heroicons-arrow-path"
-        class="!mr-4 ml-auto"
-        size="sm"
-        color="gray"
-        @click="resetSearch"
-        >重設搜尋條件</UButton
-      >
-      <UButton
-        icon="i-heroicons-magnifying-glass"
-        class="!ml-auto"
-        size="md"
-        color="primary"
-        @click="search"
-        >搜尋</UButton
-      >
-    </div>
-    <div class="flex justify-end space-x-6 border-gray-200 px-3 py-6 dark:border-gray-700">
-      <div class="flex items-center space-x-2">
-        <span>總共</span>
-        <p>{{ responsePagination.count }}</p>
-        <span>筆資料</span>
-      </div>
-      <div class="flex items-center space-x-2">
-        <span>每頁</span>
-        <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
-        <span>筆</span>
-      </div>
-      <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" />
-    </div>
-    <UTable
-      :ui="{
-        th: {
-          base: 'whitespace-nowrap',
-          padding: 'p-2'
-        },
-        tr: {
-          base: ' [&:nth-child(even)]:bg-neutral-100/60   border-neutral-100'
-        },
-        td: {
-          base: 'whitespace-normal',
-          padding: 'p-2'
-        }
-      }"
-      :rows="projectList"
-      :columns="columns"
-    >
-      <template #no-data="{ index }">
-        <span>
-          {{ index + 1 }}
-        </span>
-      </template>
-      <template #title-data="{ row }">
-        <div class="line-clamp-2">
-          <NuxtLink
-            :to="`/admin/${row._id}`"
-            class="block break-words text-secondary-2 hover:underline"
-            >{{ row.title }}</NuxtLink
-          >
-        </div>
-      </template>
-      <template #id-data="{ row }">
-        <p class="break-words">{{ row.id }}</p>
-      </template>
-      <template #coverUrl-data="{ row }">
-        <img :src="row.coverUrl" class="h-20 w-20 max-w-[inherit] border object-contain" alt="" />
-      </template>
-      <template #dateRange-data="{ row }">
-        <div class="space-y-2">
-          <p>{{ dayjs(row.startDate * 1000).format('YYYY/MM/DD') }}</p>
-          <p>{{ dayjs(row.endDate * 1000).format('YYYY/MM/DD') }}</p>
-        </div>
-      </template>
-      <template #target-data="{ row }">
-        <div class="flex flex-wrap overflow-hidden whitespace-normal [word-break:break-word]">
-          <p>{{ row.feedbackMoney }}</p>
-          <div class="mx-1">/</div>
-          <p>{{ row.targetMoney }}</p>
-        </div>
-      </template>
-      <template #teamName-data="{ row }">
-        <div class="line-clamp-2">
-          {{ row.teamName }}
-        </div>
-      </template>
-      <template #empty-state>
-        <div class="flex flex-col items-center justify-center gap-3 py-6">
-          <span class="text-sm">暫無資料</span>
-        </div>
-      </template>
-    </UTable>
-    <div class="flex justify-end space-x-6 border-t border-gray-200 px-3 py-6 dark:border-gray-700">
-      <div class="flex items-center space-x-2">
-        <span>總共</span>
-        <p>{{ responsePagination.count }}</p>
-        <span>筆資料</span>
-      </div>
-      <div class="flex items-center space-x-2">
-        <span>每頁</span>
-        <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
-        <span>筆</span>
-      </div>
-      <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" />
-    </div>
-  </div>
-</template>
 <script setup lang="ts">
 import { useDayjs } from '#dayjs'
 definePageMeta({
@@ -306,3 +184,125 @@ onMounted(() => {
   })
 })
 </script>
+<template>
+  <div class="flex flex-1 flex-col overflow-y-auto">
+    <h2 class="flex-shrink-0 py-6 font-semibold text-neutral-800">管理 - 提案列表</h2>
+    <div class="mb-4 flex w-full space-x-8 bg-neutral-100/70 px-3 py-4 dark:border-gray-700">
+      <div class="flex items-center space-x-2 whitespace-nowrap">
+        <span class="text-sm">搜尋</span>
+        <UInput v-model.trim="formData.search" placeholder="請輸入提案標題或編號" />
+      </div>
+      <div class="flex items-center space-x-2 whitespace-nowrap">
+        <span class="text-sm">狀態</span>
+        <USelect v-model.number="filterStatus" :options="statusList" option-attribute="name" />
+      </div>
+      <div class="flex items-center space-x-2 whitespace-nowrap">
+        <span class="text-sm">新舊排序</span>
+        <USelect v-model="sortDesc" :options="sortList" option-attribute="name" />
+      </div>
+      <UButton
+        icon="i-heroicons-arrow-path"
+        class="!mr-4 ml-auto"
+        size="sm"
+        color="gray"
+        @click="resetSearch"
+        >重設搜尋條件</UButton
+      >
+      <UButton
+        icon="i-heroicons-magnifying-glass"
+        class="!ml-auto"
+        size="md"
+        color="primary"
+        @click="search"
+        >搜尋</UButton
+      >
+    </div>
+    <div class="flex justify-end space-x-6 border-gray-200 px-3 py-6 dark:border-gray-700">
+      <div class="flex items-center space-x-2">
+        <span>總共</span>
+        <p>{{ responsePagination.count }}</p>
+        <span>筆資料</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span>每頁</span>
+        <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
+        <span>筆</span>
+      </div>
+      <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" />
+    </div>
+    <UTable
+      :ui="{
+        th: {
+          base: 'whitespace-nowrap',
+          padding: 'p-2'
+        },
+        tr: {
+          base: ' [&:nth-child(even)]:bg-neutral-100/60   border-neutral-100'
+        },
+        td: {
+          base: 'whitespace-normal',
+          padding: 'p-2'
+        }
+      }"
+      :rows="projectList"
+      :columns="columns"
+    >
+      <template #no-data="{ index }">
+        <span>
+          {{ index + 1 }}
+        </span>
+      </template>
+      <template #title-data="{ row }">
+        <div class="line-clamp-2">
+          <NuxtLink
+            :to="`/admin/${row._id}`"
+            class="block break-words text-secondary-2 hover:underline"
+            >{{ row.title }}</NuxtLink
+          >
+        </div>
+      </template>
+      <template #id-data="{ row }">
+        <p class="break-words">{{ row.id }}</p>
+      </template>
+      <template #coverUrl-data="{ row }">
+        <img :src="row.coverUrl" class="h-20 w-20 max-w-[inherit] border object-contain" alt="" />
+      </template>
+      <template #dateRange-data="{ row }">
+        <div class="space-y-2">
+          <p>{{ dayjs(row.startDate * 1000).format('YYYY/MM/DD') }}</p>
+          <p>{{ dayjs(row.endDate * 1000).format('YYYY/MM/DD') }}</p>
+        </div>
+      </template>
+      <template #target-data="{ row }">
+        <div class="flex flex-wrap overflow-hidden whitespace-normal [word-break:break-word]">
+          <p>{{ row.feedbackMoney }}</p>
+          <div class="mx-1">/</div>
+          <p>{{ row.targetMoney }}</p>
+        </div>
+      </template>
+      <template #teamName-data="{ row }">
+        <div class="line-clamp-2">
+          {{ row.teamName }}
+        </div>
+      </template>
+      <template #empty-state>
+        <div class="flex flex-col items-center justify-center gap-3 py-6">
+          <span class="text-sm">暫無資料</span>
+        </div>
+      </template>
+    </UTable>
+    <div class="flex justify-end space-x-6 border-t border-gray-200 px-3 py-6 dark:border-gray-700">
+      <div class="flex items-center space-x-2">
+        <span>總共</span>
+        <p>{{ responsePagination.count }}</p>
+        <span>筆資料</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <span>每頁</span>
+        <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
+        <span>筆</span>
+      </div>
+      <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" />
+    </div>
+  </div>
+</template>
