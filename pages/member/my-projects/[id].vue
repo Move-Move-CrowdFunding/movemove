@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const tempData = ref({
   introduce: '專業金援團隊，弱勢族群救星，幫助許多需要協助的家庭。',
   teamName: '弱勢救星',
@@ -20,29 +20,29 @@ const tempData = ref({
   feedbackUrl:
     'https://plus.unsplash.com/premium_photo-1669632824466-09b2c595aa4c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   feedbackMoney: 250,
-  feedbackDate: 1712016000
+  feedbackDate: 1712016000,
+  state: {
+    state: -1,
+    content: ''
+  },
+  reviewLog: [
+    {
+      timestamp: 1700000000,
+      state: 0,
+      content: '提案送審'
+    },
+    {
+      timestamp: 1700000000,
+      state: -1,
+      content: '提案退回 - 請補上完整聯絡資訊'
+    }
+  ]
 })
 </script>
 <template>
-  <div>
-    <CreateSteps :step="2" />
+  <div class="">
+    我的單一提案
+    <div>{{ tempData }}</div>
     <ProjectInfo :temp-data="tempData" />
   </div>
 </template>
-
-<style scoped>
-/* * {
-  outline: 1px solid #090;
-} */
-h2 {
-  @apply mb-3 mt-4 text-lg font-bold;
-}
-label {
-  @apply mb-1 inline-block;
-}
-input,
-textarea,
-select {
-  @apply rounded border p-3;
-}
-</style>

@@ -21,7 +21,7 @@ const { data, state } = props
   >
     <div class="relative h-56 w-full overflow-hidden lg:h-full">
       <NuxtLink
-        to="/"
+        to="/member/my-projects/123"
         class="block h-56 w-full bg-cover bg-center duration-300 hover:scale-110 lg:h-full"
         :style="{ backgroundImage: `url(${data.coverUrl})` }"
       ></NuxtLink>
@@ -34,7 +34,7 @@ const { data, state } = props
         <h2
           class="text-lg font-bold text-secondary-2 decoration-secondary-2 underline-offset-2 hover:underline"
         >
-          <NuxtLink to="/">{{ data.title }}</NuxtLink>
+          <NuxtLink to="/member/my-projects/123">{{ data.title }}</NuxtLink>
         </h2>
         <div class="text-neutral-600">
           {{ dayjs(data.startDate * 1000).format('YYYY/MM/DD') }} -
