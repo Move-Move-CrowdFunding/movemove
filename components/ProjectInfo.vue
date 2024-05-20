@@ -1,80 +1,22 @@
 <script setup>
-// const { $timeformat } = useNuxtApp()
+const route = useRoute()
+const inAdmin = route.fullPath.includes('admin')
 
-// const tempData1 = ref({
-//   introduce: '專業金援團隊，弱勢族群救星，幫助許多需要協助的家庭。',
-//   teamName: '弱勢救星',
-//   title: '愛心廚房｜溫飽無憂的一餐，舉辦食物援助計劃',
-//   email: 'movemove@gmail.com',
-//   categoryKey: 0,
-//   phone: '0912345678',
-//   targetMoney: 3000000,
-//   content:
-//     '<p>我們希望能幫助這些求助者，他們需要有個遮風避雨的住所，每月提供物資包與協助破損老舊的家，能得以維修,以減輕需要幫助的以及長輩們經濟開銷壓力。因此，發起修繕募資計畫，邀請社會大眾一同幫忙，協助清寒民眾與長輩房屋修繕，既使最初只能幫忙清理家園，讓長輩們有一個乾淨、舒適的生活環境，並定期提供長輩生活物資包，靠大家的力量，一同翻新清寒長輩與求助者們的生活。</p>',
-//   coverUrl:
-//     'https://images.unsplash.com/photo-1711722221946-e271830d5081?q=80&w=2235&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//   describe: '一場無情的大火吞噬了整個社區，請幫助無家可歸的民眾。',
-//   videoUrl: 'https://www.youtube.com/',
-//   startDate: 1712016024,
-//   endDate: 1722016034,
-//   relatedUrl: 'https://www.google.com.tw/',
-//   feedbackItem: '限量精美小熊維尼 * 1',
-//   feedbackUrl:
-//     'https://plus.unsplash.com/premium_photo-1669632824466-09b2c595aa4c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-//   feedbackMoney: 250,
-//   feedbackDate: 1712016000
-// })
-const tempData = ref({
-  introduce: '',
-  teamName: '',
-  title: '',
-  email: '',
-  categoryKey: 0,
-  phone: '',
-  targetMoney: 0,
-  content: '',
-  coverUrl: '',
-  describe: '',
-  videoUrl: '',
-  startDate: 0,
-  endDate: 0,
-  relatedUrl: '',
-  feedbackItem: '',
-  feedbackUrl: '',
-  feedbackMoney: 0,
-  feedbackDate: 0,
-  status: {
-    status: 0,
-    content: ''
-  },
-  reviewLog: [
-    {
-      timestamp: 1700000000,
-      status: 0,
-      content: '提案送審'
-    },
-    {
-      timestamp: 1700000000,
-      status: -1,
-      content: '提案退回 - 請補上完整聯絡資訊'
-    },
-    {
-      timestamp: 1700000000,
-      status: 0,
-      content: '提案送審'
-    },
-    {
-      timestamp: 1700000000,
-      status: 1,
-      content: '提案通過'
-    }
-  ]
+const props = defineProps({
+  tempData: {
+    type: Object,
+    required: true
+  }
 })
+const { tempData } = props
+
+const isDisable =
+  inAdmin || tempData.value?.state?.state === 0 || tempData.value?.state?.state === 1
 </script>
 <template>
   <div>
     <div class="container py-10">
-      <div class="border-2 border-secondary-2">
+      <div v-if="tempData?.state?.state === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">
           <span>審核失敗</span>
           <span>2024/1/23</span>
@@ -96,6 +38,7 @@ const tempData = ref({
               type="text"
               placeholder="請輸入提案人姓名/團隊名稱"
               class="block w-full"
+              :disabled="isDisable"
             />
             <p class="mt-2 text-xs">
               提案人必須要用真實姓名註冊會員，不接受匿名或使用他人名義的提案。
@@ -109,16 +52,18 @@ const tempData = ref({
               type="email"
               placeholder="請輸入聯絡信箱"
               class="block w-full"
+              :disabled="isDisable"
             />
           </div>
           <div class="mb-6">
-            <label for="">聯絡手機</label>
+            <label for="phone">聯絡手機</label>
             <input
-              id=""
+              id="phone"
               v-model="tempData.phone"
               type="tel"
               placeholder="請輸入聯絡手機"
               class="block w-full"
+              :disabled="isDisable"
             />
           </div>
           <div class="mb-6">
@@ -128,22 +73,21 @@ const tempData = ref({
               v-model="tempData.introduce"
               placeholder="請輸入團隊介紹"
               class="block w-full"
+              :disabled="isDisable"
             ></textarea>
           </div>
-          <div>
+          <div v-if="!inAdmin">
             <h2>專案卡預覽</h2>
             <ProjectCard :project="tempData" />
           </div>
-          <div v-if="tempData.reviewLog">
+          <div v-if="inAdmin">
             <h2>檢核紀錄</h2>
             <ul>
               <li v-for="item in tempData.reviewLog" :key="item">
-                {{ item.timestamp }}
+                {{ $timeformat(item.timestamp) }}
+                {{ item.state === 0 ? '➖' : item.state === -1 ? '✖️' : '✔️' }}
+                {{ item.content }}
               </li>
-              <li>2023/02/01 11:25 ➖ 提案送審</li>
-              <li>2023/02/01 14:30 ✖️ 否准提案 - 請補上完整聯絡資訊</li>
-              <li>2023/02/01 15:45 ➖ 提案送審</li>
-              <li>2023/02/02 20:10 ✔️ 核准提案</li>
             </ul>
           </div>
         </div>
@@ -157,6 +101,7 @@ const tempData = ref({
               type="text"
               placeholder="請輸入提案標題"
               class="block w-full"
+              :disabled="isDisable"
             />
             <p class="mt-2 text-xs">
               好的標題應該要好記、好搜尋、吸引人想點進去看，並讓瀏覽者能在最短的時間內瞭解專案的核心理念。
@@ -165,7 +110,13 @@ const tempData = ref({
           <div class="mb-6 grid grid-cols-2 gap-3">
             <div>
               <label for="categoryKey">分類</label>
-              <select id="categoryKey" v-model="tempData.categoryKey" name="" class="block w-full">
+              <select
+                id="categoryKey"
+                v-model="tempData.categoryKey"
+                name=""
+                class="block w-full"
+                :disabled="isDisable"
+              >
                 <option value="0" disabled>請選擇分類</option>
                 <option v-for="category in categoryKeys" :key="category.key" :value="category.key">
                   {{ category.name }}
@@ -181,6 +132,7 @@ const tempData = ref({
                   type="text"
                   placeholder="請輸入提案目標"
                   class="block w-full"
+                  :disabled="isDisable"
                 />
                 <span>NTD</span>
               </div>
@@ -190,9 +142,21 @@ const tempData = ref({
           <div class="mb-6">
             <label for="">預計時間</label>
             <div class="flex items-center">
-              <input id="startDate" v-model="tempData.startDate" type="date" class="grow" />
+              <input
+                id="startDate"
+                v-model="tempData.startDate"
+                type="date"
+                class="grow"
+                :disabled="isDisable"
+              />
               <span>→</span>
-              <input id="endDate" v-model="tempData.endDate" type="date" class="grow" />
+              <input
+                id="endDate"
+                v-model="tempData.endDate"
+                type="date"
+                class="grow"
+                :disabled="isDisable"
+              />
             </div>
             <p class="mt-2 text-xs">
               專案提交後需要7-10個工作天進行內容檢視，所以開始時間至少為10天後。募資天數最短為7天，最長為60天。
@@ -205,17 +169,24 @@ const tempData = ref({
               v-model="tempData.introduce"
               placeholder="請簡短敘述提案內容, 最長不超過 80 字"
               class="block w-full"
+              :disabled="isDisable"
             ></textarea>
           </div>
           <div class="mb-6">
             <label for="">封面照片</label>
             <div class="flex items-center rounded border pl-1">
-              <button class="rounded bg-secondary-2 px-3 py-2 text-white">請選擇檔案</button>
+              <button
+                class="rounded bg-secondary-2 px-3 py-2 text-white disabled:bg-neutral-300"
+                :disabled="isDisable"
+              >
+                請選擇檔案
+              </button>
               <input
                 id="feedbackUrl"
                 v-model="tempData.coverUrl"
                 type="text"
                 class="grow border-white"
+                :disabled="isDisable"
               />
             </div>
             <img :src="tempData.coverUrl" class="mt-1" />
@@ -227,6 +198,7 @@ const tempData = ref({
               v-model="tempData.content"
               placeholder="請輸入提案說明, 至少 350 字"
               class="block w-full"
+              :disabled="isDisable"
             ></textarea>
             <p class="mt-2 text-xs">
               請告訴我們關於你計畫的故事、為什麼大家應該支持你的計畫。（最少 350 字）
@@ -241,7 +213,13 @@ const tempData = ref({
               type="text"
               placeholder="請輸入影片網址"
               class="block w-full"
+              :disabled="isDisable"
             />
+            <iframe
+              v-if="tempData.videoUrl"
+              class="mt-2 aspect-video w-full"
+              :src="`https://www.youtube.com/embed/${tempData.videoUrl.split('v=')[1]}`"
+            ></iframe>
           </div>
           <div class="mb-6">
             <label for="relatedUrl">相關網站</label>
@@ -251,6 +229,7 @@ const tempData = ref({
               type="text"
               placeholder="請輸入相關網站"
               class="block w-full"
+              :disabled="isDisable"
             />
           </div>
 
@@ -263,17 +242,24 @@ const tempData = ref({
               type="text"
               placeholder="請輸入回饋項目"
               class="block w-full"
+              :disabled="isDisable"
             />
           </div>
           <div class="mb-6">
             <label for="feedbackUrl">回饋品圖片</label>
             <div class="flex items-center rounded border pl-1">
-              <button class="rounded bg-secondary-2 px-3 py-2 text-white">請選擇檔案</button>
+              <button
+                class="rounded bg-secondary-2 px-3 py-2 text-white disabled:bg-neutral-300"
+                :disabled="isDisable"
+              >
+                請選擇檔案
+              </button>
               <input
                 id="feedbackUrl"
                 v-model="tempData.feedbackUrl"
                 type="text"
                 class="grow border-white"
+                :disabled="isDisable"
               />
             </div>
             <img :src="tempData.feedbackUrl" class="mt-1" />
@@ -287,6 +273,7 @@ const tempData = ref({
                 type="text"
                 placeholder="請輸入回饋門檻"
                 class="block w-full"
+                :disabled="isDisable"
               />
               <span>NTD</span>
             </div>
@@ -300,25 +287,45 @@ const tempData = ref({
               type="date"
               placeholder="請輸入寄出日期"
               class="block w-full"
+              :disabled="isDisable"
             />
           </div>
         </div>
       </div>
-
+      <div
+        v-if="inAdmin && tempData.state.state == 0"
+        class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10 sm:flex-row"
+      >
+        <input type="text" class="w-full" />
+        <div class="flex shrink-0 gap-4 text-white">
+          <button class="ml-auto rounded-lg bg-warning-500 px-3 py-2">否準提案</button>
+          <button class="rounded-lg bg-warning-700 px-3 py-2">核准提案</button>
+        </div>
+      </div>
       <button
+        v-if="!tempData.state"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         @click="$router.push({ path: '/create/success' })"
       >
         發起提案
+      </button>
+      <button
+        v-if="tempData?.state?.state === 1 && !inAdmin"
+        class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
+      >
+        結束提案
+      </button>
+      <button
+        v-if="tempData?.state?.state === -1 && !inAdmin"
+        class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
+      >
+        送出
       </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* * {
-  outline: 1px solid #090;
-} */
 h2 {
   @apply mb-3 mt-4 text-lg font-bold;
 }
@@ -329,5 +336,8 @@ input,
 textarea,
 select {
   @apply rounded border p-3;
+}
+iframe {
+  aspect-ratio: 16 / 9;
 }
 </style>
