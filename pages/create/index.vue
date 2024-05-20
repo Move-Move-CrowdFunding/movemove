@@ -103,6 +103,36 @@
       </div>
     </div>
   </section>
+  <section class="pb-20">
+    <div class="container">
+      <div class="relative mb-4 flex flex-col items-center justify-between lg:flex-row">
+        <div class="relative rounded-[32px] border-2 border-[#D9D9D9] bg-[#E4F6FF] p-8 lg:w-7/12">
+          <p class="mb-4 text-2xl">請確認以下事項，確保您符合提案人的身份</p>
+          <ul class="list-decimal">
+            <li class="mb-4">
+              您已滿 18
+              歲是具備完全行為能力的自然人，或是合法登記的法人或團體。若提案者為未成年人，應由其法定代理人閱讀、暸解，才可進行提案流程。
+            </li>
+            <li>
+              您是具有台灣居住地址、銀行帳戶及國籍的自然人或法人。目前本平台只限定台灣用戶，國外單位提案必須有台灣分公司或代理人，並且由台灣代理人提交專案。
+            </li>
+          </ul>
+        </div>
+        <div
+          class="-z-10 -translate-y-1/4 rounded-[32px] border-2 border-[#D9D9D9] bg-[#ffffff] py-8 pl-8 pr-8 pt-28 lg:absolute lg:bottom-0 lg:right-0 lg:top-0 lg:w-6/12 lg:translate-x-1/4 lg:translate-y-0 lg:pt-8"
+        >
+          <p class="mb-4 text-2xl">平台收費方式</p>
+          <p>
+            當提案團隊的專案時間結束或募資金額到達目標時，本平台將收取專案總金額的 5%
+            作為平台服務費。
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center justify-center">
+        <button class="rounded-lg bg-[#4767A2] px-10 py-4 text-white">發起提案</button>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script setup>
