@@ -103,10 +103,16 @@
       </div>
     </div>
   </section>
-  <section class="pb-20">
-    <div class="container">
-      <div class="relative mb-4 flex flex-col items-center justify-between lg:flex-row">
-        <div class="relative rounded-[32px] border-2 border-[#D9D9D9] bg-[#E4F6FF] p-8 lg:w-7/12">
+  <section
+    class="bg-left-bottom bg-no-repeat py-20 lg:bg-[url('~/assets/images/projects/whyBG3.png')]"
+  >
+    <div class="container relative">
+      <div
+        class="relative mb-4 flex flex-col justify-between rounded-[32px] border-2 border-[#D9D9D9] bg-[#ffffff] lg:flex-row"
+      >
+        <div
+          class="rounded-[32px] border-b-2 border-b-[#D9D9D9] bg-[#E4F6FF] p-8 lg:w-7/12 lg:border-r-2 lg:border-r-[#D9D9D9]"
+        >
           <p class="mb-4 text-2xl">請確認以下事項，確保您符合提案人的身份</p>
           <ul class="list-decimal">
             <li class="mb-4">
@@ -118,9 +124,7 @@
             </li>
           </ul>
         </div>
-        <div
-          class="-z-10 -translate-y-1/4 rounded-[32px] border-2 border-[#D9D9D9] bg-[#ffffff] py-8 pl-8 pr-8 pt-28 lg:absolute lg:bottom-0 lg:right-0 lg:top-0 lg:w-6/12 lg:translate-x-1/4 lg:translate-y-0 lg:pt-8"
-        >
+        <div class="rounded-[32px] p-8 lg:w-5/12">
           <p class="mb-4 text-2xl">平台收費方式</p>
           <p>
             當提案團隊的專案時間結束或募資金額到達目標時，本平台將收取專案總金額的 5%
@@ -131,6 +135,11 @@
       <div class="flex items-center justify-center">
         <button class="rounded-lg bg-[#4767A2] px-10 py-4 text-white">發起提案</button>
       </div>
+      <img
+        class="absolute end-0 top-0 hidden -translate-y-1/2 translate-x-1/2 lg:inline"
+        :src="whyBG4"
+        alt="heart"
+      />
     </div>
   </section>
 </template>
@@ -143,4 +152,5 @@ import whyImage3 from '~/assets/images/projects/why3.png'
 import whyImage4 from '~/assets/images/projects/why4.png'
 import whyImage5 from '~/assets/images/projects/why5.png'
 import whyImage6 from '~/assets/images/projects/why6.png'
+import whyBG4 from '~/assets/images/projects/whyBG4.png'
 </script>
