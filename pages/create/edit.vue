@@ -13,14 +13,14 @@ const tempData = ref({
     'https://images.unsplash.com/photo-1711722221946-e271830d5081?q=80&w=2235&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   describe: '一場無情的大火吞噬了整個社區，請幫助無家可歸的民眾。',
   videoUrl: 'https://www.youtube.com/watch?v=YkVjY1F-Eoc',
-  startDate: 1712016024,
-  endDate: 1722016034,
+  startDate: new Date() / 1000,
+  endDate: new Date() / 1000,
   relatedUrl: 'https://www.google.com.tw/',
   feedbackItem: '限量精美小熊維尼 * 1',
   feedbackUrl:
     'https://plus.unsplash.com/premium_photo-1669632824466-09b2c595aa4c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   feedbackMoney: 250,
-  feedbackDate: 1712016000
+  feedbackDate: new Date() / 1000
 })
 </script>
 <template>

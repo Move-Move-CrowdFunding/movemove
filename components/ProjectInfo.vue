@@ -1,4 +1,7 @@
 <script setup>
+import { useDayjs } from '#dayjs'
+const dayjs = useDayjs()
+
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
 
@@ -9,6 +12,24 @@ const props = defineProps({
   }
 })
 const { tempData } = props
+
+const dateInput = ref({
+  startDate: dayjs(tempData.startDate * 1000).format('YYYY-MM-DD'),
+  endDate: dayjs(tempData.endDate * 1000).format('YYYY-MM-DD'),
+  feedbackDate: dayjs(tempData.feedbackDate * 1000).format('YYYY-MM-DD')
+})
+tempData.startDate = computed(() => {
+  const date = new Date(dateInput.value.startDate)
+  return date.getTime() / 1000
+})
+tempData.endDate = computed(() => {
+  const date = new Date(dateInput.value.endDate)
+  return date.getTime() / 1000
+})
+tempData.feedbackDate = computed(() => {
+  const date = new Date(dateInput.value.feedbackDate)
+  return date.getTime() / 1000
+})
 
 const isDisable =
   inAdmin || tempData.value?.state?.state === 0 || tempData.value?.state?.state === 1
@@ -144,7 +165,7 @@ const isDisable =
             <div class="flex items-center">
               <input
                 id="startDate"
-                v-model="tempData.startDate"
+                v-model="dateInput.startDate"
                 type="date"
                 class="grow"
                 :disabled="isDisable"
@@ -152,7 +173,7 @@ const isDisable =
               <span>→</span>
               <input
                 id="endDate"
-                v-model="tempData.endDate"
+                v-model="dateInput.endDate"
                 type="date"
                 class="grow"
                 :disabled="isDisable"
@@ -283,7 +304,7 @@ const isDisable =
             <label for="feedbackDate">預計寄出日期</label>
             <input
               id="feedbackDate"
-              v-model="tempData.feedbackDate"
+              v-model="dateInput.feedbackDate"
               type="date"
               placeholder="請輸入寄出日期"
               class="block w-full"
