@@ -1,3 +1,14 @@
+<script setup>
+import whyIcon from '~/assets/images/projects/whyIcon.vue'
+import whyImage1 from '~/assets/images/projects/why1.png'
+import whyImage2 from '~/assets/images/projects/why2.png'
+import whyImage3 from '~/assets/images/projects/why3.png'
+import whyImage4 from '~/assets/images/projects/why4.png'
+import whyImage5 from '~/assets/images/projects/why5.png'
+import whyImage6 from '~/assets/images/projects/why6.png'
+import whyBG4 from '~/assets/images/projects/whyBG4.png'
+</script>
+
 <template>
   <div
     class="flex flex-col items-center justify-center bg-[url('~/assets/images/projects/banner.png')] bg-cover bg-no-repeat py-20"
@@ -5,7 +16,9 @@
     <h2 class="mb-2 text-center text-3xl leading-normal text-white lg:text-7xl">
       群眾的力量， 讓世界更美好
     </h2>
-    <button class="rounded-lg bg-[#4767A2] px-5 py-2 text-white">發起提案</button>
+    <NuxtLink to="/create/contract" class="rounded-lg bg-[#4767A2] px-5 py-2 text-white"
+      >發起提案</NuxtLink
+    >
   </div>
   <section class="bg-top-center bg-no-repeat lg:bg-[url('~/assets/images/projects/whyBG.png')]">
     <div class="container flex flex-col items-center justify-center pt-20">
@@ -133,7 +146,9 @@
         </div>
       </div>
       <div class="flex items-center justify-center">
-        <button class="rounded-lg bg-[#4767A2] px-10 py-4 text-white">發起提案</button>
+        <NuxtLink to="/create/contract" class="rounded-lg bg-[#4767A2] px-10 py-4 text-white"
+          >發起提案</NuxtLink
+        >
       </div>
       <img
         class="absolute end-0 top-0 hidden -translate-y-1/2 translate-x-1/2 lg:inline"
@@ -143,14 +158,3 @@
     </div>
   </section>
 </template>
-
-<script setup>
-import whyIcon from '~/assets/images/projects/whyIcon.vue'
-import whyImage1 from '~/assets/images/projects/why1.png'
-import whyImage2 from '~/assets/images/projects/why2.png'
-import whyImage3 from '~/assets/images/projects/why3.png'
-import whyImage4 from '~/assets/images/projects/why4.png'
-import whyImage5 from '~/assets/images/projects/why5.png'
-import whyImage6 from '~/assets/images/projects/why6.png'
-import whyBG4 from '~/assets/images/projects/whyBG4.png'
-</script>
