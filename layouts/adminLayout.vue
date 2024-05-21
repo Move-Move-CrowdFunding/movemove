@@ -8,8 +8,8 @@ onMounted(() => {
 })
 </script>
 <template>
-  <div class="relative flex flex-1 flex-col">
-    <div class="flex min-h-dvh flex-1 flex-col">
+  <div class="relative flex min-h-dvh flex-1 flex-col">
+    <div class="flex flex-1 flex-col">
       <header
         class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between bg-neutral-50 px-3 py-4 shadow-md"
       >
