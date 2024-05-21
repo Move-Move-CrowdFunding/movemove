@@ -301,7 +301,7 @@ onMounted(() => {
                   ></div>
                   <button
                     class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 fill-white duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
-                    :class="{ block: trackingStatus, hidden: !trackingStatus }"
+                    :class="{ block: item.trackingStatus, hidden: !item.trackingStatus }"
                   >
                     <svg
                       width="24"
