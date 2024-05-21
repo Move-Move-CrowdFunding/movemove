@@ -187,10 +187,13 @@ onMounted(() => {
                 ></textarea>
               </div>
             </div>
-            <div class="flex justify-end pt-6">
-              <!-- <button class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white">
+            <div class="flex justify-between pt-6">
+              <button
+                class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white"
+                @click.prevent="getTempUser(isLogin.userData)"
+              >
                 取消
-              </button> -->
+              </button>
               <button
                 type="submit"
                 class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white"
