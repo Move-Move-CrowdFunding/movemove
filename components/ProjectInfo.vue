@@ -358,7 +358,4 @@ textarea,
 select {
   @apply rounded border p-3;
 }
-iframe {
-  aspect-ratio: 16 / 9;
-}
 </style>
