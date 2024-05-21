@@ -77,7 +77,8 @@ onMounted(() => {
     返回上一頁
     <NuxtLink to="/admin">回到管理頁面</NuxtLink>
     <p>提案編號: {{ $route.params.id }}</p>
-    <pre>{{ projectItem }}</pre>
-    <ProjectInfo :temp-data="tempData" />
+    <div class="rounded-xl bg-neutral-50">
+      <ProjectInfo :temp-data="tempData" />
+    </div>
   </div>
 </template>

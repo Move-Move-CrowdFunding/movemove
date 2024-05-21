@@ -186,6 +186,7 @@ const resetSearch = () => {
   formData.value.status = 3
   formData.value.search = ''
 }
+
 const getStatus = (status: number) => statusList.value.find((item) => item.value === status)
 
 onMounted(() => {
@@ -197,7 +198,12 @@ onMounted(() => {
 <template>
   <div class="flex flex-1 flex-col overflow-y-auto">
     <h2 class="flex-shrink-0 py-6 font-semibold text-neutral-800">管理 - 提案列表</h2>
-    <div class="mb-4 flex w-full space-x-8 bg-neutral-100/70 px-3 py-4 dark:border-gray-700">
+    <!-- <div class="bg-neutral-50 p-3">
+      <UBreadcrumb :links="links" />
+    </div> -->
+    <div
+      class="mb-4 flex w-full space-x-8 rounded-xl bg-neutral-100/70 bg-neutral-50 px-3 py-4 shadow-md dark:border-gray-700"
+    >
       <div class="flex items-center space-x-2 whitespace-nowrap">
         <span class="text-sm">搜尋</span>
         <UInput v-model.trim="formData.search" placeholder="請輸入提案標題或編號" />
@@ -242,13 +248,14 @@ onMounted(() => {
     </div>
     <UTable
       :ui="{
+        wrapper: 'rounded-xl bg-neutral-50',
         th: {
           base: 'whitespace-nowrap',
           padding: 'p-2'
         },
-        tr: {
-          base: ' [&:nth-child(even)]:bg-neutral-100/60   border-neutral-100'
-        },
+        // tr: {
+        //   base: '[&:nth-child(even)]:bg-neutral-100/60 border-neutral-100 ![&:last-child]:border-0'
+        // },
         td: {
           base: 'whitespace-normal',
           padding: 'p-2'
