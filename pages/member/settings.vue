@@ -31,6 +31,36 @@ const editUser = async () => {
     })
 }
 
+const tempPassword = ref({
+  old: '',
+  new: '',
+  newCheck: ''
+})
+const changePassword = async () => {
+  await getFetchData({
+    url: '/member/password',
+    method: 'PATCH',
+    params: {
+      oldPassword: tempPassword.value.old,
+      newPassword: tempPassword.value.new
+    }
+  })
+    .then((res) => {
+      console.log(res)
+      alert(res.message)
+      tempPassword.value = {
+        old: '',
+        new: '',
+        newCheck: ''
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      alert(err.message)
+    })
+  console.log(tempPassword)
+}
+const showPassword = ref(false)
 onMounted(() => {
   nextTick(() => {
     checkPermission()
@@ -73,7 +103,7 @@ onMounted(() => {
           </button>
         </div>
         <div class="bg-secondary-5 px-3 py-10 lg:px-6">
-          <form v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
+          <div v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
             <div class="flex items-center space-x-4">
               <label for="username" class="w-1/4 font-bold sm:w-1/6">真實姓名</label>
               <div class="grow">
@@ -157,10 +187,13 @@ onMounted(() => {
                 ></textarea>
               </div>
             </div>
-            <div class="flex justify-end pt-6">
-              <!-- <button class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white">
+            <div class="flex justify-between pt-6">
+              <button
+                class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white"
+                @click.prevent="getTempUser(isLogin.userData)"
+              >
                 取消
-              </button> -->
+              </button>
               <button
                 type="submit"
                 class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white"
@@ -168,14 +201,15 @@ onMounted(() => {
                 更新
               </button>
             </div>
-          </form>
+          </div>
           <form v-else action="" class="space-y-4">
             <div class="flex items-center space-x-4">
               <label for="oldPassword" class="w-1/4 font-bold sm:w-1/6">舊密碼</label>
-              <div class="grow">
+              <div class="relative grow">
                 <input
                   id="oldPassword"
-                  type="password"
+                  v-model="tempPassword.old"
+                  :type="showPassword ? 'text' : 'password'"
                   class="w-full px-3 py-2"
                   placeholder="請輸入舊密碼"
                 />
@@ -186,7 +220,8 @@ onMounted(() => {
               <div class="grow">
                 <input
                   id="newPassword"
-                  type="password"
+                  v-model="tempPassword.new"
+                  :type="showPassword ? 'text' : 'password'"
                   class="w-full px-3 py-2"
                   placeholder="請輸入新密碼"
                 />
@@ -197,17 +232,40 @@ onMounted(() => {
               <div class="grow">
                 <input
                   id="checkPassword"
-                  type="password"
+                  v-model="tempPassword.newCheck"
+                  :type="showPassword ? 'text' : 'password'"
                   class="w-full px-3 py-2"
                   placeholder="再次輸入新密碼"
                 />
               </div>
             </div>
+            <div class="flex items-center">
+              <input
+                id="showAll"
+                v-model="showPassword"
+                type="checkbox"
+                class="mr-2 h-5 w-5 appearance-none rounded-sm border-secondary-1 outline outline-2 outline-secondary-1 after:relative after:block after:h-5/6 after:w-6/12 after:translate-x-[5px] checked:bg-secondary-1 checked:after:relative checked:after:rotate-45 checked:after:border-b-4 checked:after:border-r-4 checked:after:border-white"
+              />
+              <label for="showAll" class="flex items-center gap-2">顯示密碼</label>
+            </div>
             <div class="flex justify-between pt-6">
-              <button class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white">
+              <button
+                class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white"
+                @click.prevent="tempPassword = { old: '', new: '', newCheck: '' }"
+              >
                 取消
               </button>
-              <button class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white">
+              <button
+                class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white disabled:bg-neutral-400"
+                :disabled="
+                  tempPassword.new !== tempPassword.newCheck ||
+                  !tempPassword.new ||
+                  !tempPassword.newCheck ||
+                  !tempPassword.old ||
+                  tempPassword.new == tempPassword.old
+                "
+                @click.prevent="changePassword"
+              >
                 更新
               </button>
             </div>
