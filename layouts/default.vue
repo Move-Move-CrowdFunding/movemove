@@ -13,6 +13,7 @@ onMounted(() => {
     <div class="flex flex-1 flex-col">
       <slot />
     </div>
+    <GoTop />
     <Footer />
   </div>
 </template>

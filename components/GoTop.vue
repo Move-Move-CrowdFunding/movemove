@@ -8,7 +8,7 @@ const scrollToTop = () => {
 <template>
   <div
     title="返回最上層"
-    class="absolute -top-6 right-6 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-primary-1 shadow-md transition-all hover:bg-primary-2 active:bg-primary-2 lg:right-20"
+    class="fixed bottom-48 right-6 z-10 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-primary-1 shadow-md transition-all hover:bg-primary-2 active:bg-primary-2 lg:right-20"
     @click="scrollToTop"
   >
     <div
