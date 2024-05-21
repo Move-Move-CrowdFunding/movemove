@@ -1,17 +1,4 @@
 <script setup>
-const projectItem = ref({})
-const getProjectItem = async (id) => {
-  console.log('get data')
-  await getFetchData({
-    url: `/project/${id}`,
-    method: 'GET'
-  })
-    .then((res) => {
-      console.log(res)
-      projectItem.value = res.results
-    })
-    .catch((err) => console.log(err.msg))
-}
 const project = ref({
   id: '66058f16a069a14089afef0d',
   userId: '354ae03a-9801-42ba-afa4-287b3b10df18',
@@ -48,14 +35,9 @@ const diffInSeconds = project.value.endDate - new Date() / 1000
 const days = Math.floor(diffInSeconds / (24 * 3600))
 const hours = Math.floor((diffInSeconds % (24 * 3600)) / 3600)
 const minutes = Math.floor((diffInSeconds % 3600) / 60)
-
-onMounted(() => {
-  getProjectItem('66403c34b00d1fe281742a62')
-})
 </script>
 <template>
   <div class="">
-    {{ projectItem }}
     <div class="py-10 lg:rounded-b-[200px] lg:bg-secondary-5 lg:py-20">
       <div class="container grid gap-6 lg:grid-cols-2">
         <div
