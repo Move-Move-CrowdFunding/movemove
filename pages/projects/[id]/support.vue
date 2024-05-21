@@ -149,7 +149,7 @@ const tempData = ref({
               </p>
               <div class="flex items-center space-x-2">
                 <div
-                  v-if="projectItem.results.trackingStatus"
+                  v-if="tempData.money >= projectItem.results.feedbackMoney"
                   class="h-5 w-5 flex-shrink-0 bg-warning-700 [mask-image:url('~/assets/icons/check.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                 ></div>
                 <div
@@ -158,16 +158,22 @@ const tempData = ref({
                 ></div>
                 <p
                   :class="
-                    projectItem.results.trackingStatus ? 'text-warning-700' : 'text-neutral-600'
+                    tempData.money >= projectItem.results.feedbackMoney
+                      ? 'text-warning-700'
+                      : 'text-neutral-600'
                   "
                 >
-                  {{ projectItem.results.trackingStatus ? '已符合' : '未符合，差1元享回饋' }}
+                  <span v-if="tempData.money >= projectItem.results.feedbackMoney">已符合</span>
+                  <span v-else
+                    >未符合，差
+                    {{ projectItem.results.feedbackMoney - tempData.money }} 元享回饋</span
+                  >
                 </p>
               </div>
             </div>
           </div>
           <div
-            v-if="projectItem.results.trackingStatus"
+            v-if="tempData.money >= projectItem.results.feedbackMoney"
             class="space-y-6 peer-[&]:before:mb-4 peer-[&]:before:block peer-[&]:before:h-px peer-[&]:before:w-full peer-[&]:before:bg-neutral-200 peer-[&]:before:content-['']"
           >
             <div class="flex items-center space-x-3">

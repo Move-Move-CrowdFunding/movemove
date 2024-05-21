@@ -98,9 +98,12 @@ const minutes = Math.floor((diffInSeconds % 3600) / 60)
       <div>
         <div class="mb-6 rounded-3xl p-6 shadow-lg">
           <div class="mb-4 hidden gap-4 lg:flex">
-            <button class="grow rounded bg-secondary-2 py-4 text-xl text-white hover:bg-primary-1">
+            <NuxtLink
+              :to="`/projects/${project.id}/support`"
+              class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
+            >
               支持專案
-            </button>
+            </NuxtLink>
             <button
               class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
             >
@@ -163,9 +166,12 @@ const minutes = Math.floor((diffInSeconds % 3600) / 60)
     </div>
     <div class="sticky bottom-0 rounded-t-2xl bg-white py-6 lg:hidden">
       <div class="container flex gap-4">
-        <button class="grow rounded bg-secondary-2 py-4 text-xl text-white hover:bg-primary-1">
+        <NuxtLink
+          :to="`/projects/${project.id}/support`"
+          class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
+        >
           支持專案
-        </button>
+        </NuxtLink>
         <button
           class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
         >
