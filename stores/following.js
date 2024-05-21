@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 
 export const useFollowingStore = defineStore('following', () => {
-  const followingList = ref(['123'])
+  const followingList = ref(['66403c34b00d1fe281742a62', '123'])
 
   const toggleFollowing = (id) => {
     console.log(id)

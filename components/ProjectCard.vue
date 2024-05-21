@@ -64,7 +64,7 @@ const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒�
       >
       <div class="h-2 rounded-full bg-[#D9D9D9]">
         <div
-          class="h-2 rounded-full bg-primary-1"
+          class="h-2 max-w-full rounded-full bg-primary-1"
           :style="{ width: `${(100 * project.achievedMoney || 0) / project.targetMoney}%` }"
         ></div>
       </div>

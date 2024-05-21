@@ -8,51 +8,23 @@ const hotNavigation = {
   prevEl: '.hot-swiper-button-prev'
 }
 
-const projects = ref([
-  {
-    id: '123',
-    title: '愛心廚房｜溫飽無憂的一餐，舉辦食物援助計畫',
-    categoryKey: 3,
-    coverUrl:
-      'https://images.unsplash.com/photo-1593113616828-6f22bca04804?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    endDate: 1720000000,
-    targetMoney: 10,
-    achievedMoney: 2
-  },
-  {
-    id: '456',
-    title:
-      '扶助之手｜為學習障礙兒童鋪路供專業支持和個別化教育計畫,幫助學習障礙兒童鋪路供專業支持和個別化教育計畫',
-    categoryKey: 1,
-    coverUrl:
-      'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1232&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    endDate: 1720000000,
-    targetMoney: 10,
-    achievedMoney: 6
-  }
-])
-const apiProject = ref({})
+const homeData = ref({})
 
 // 取得提案列表
-const getProjects = async () => {
+const getHomeData = async () => {
   await getFetchData({
-    url: '/project/',
-    method: 'GET',
-    params: {
-      pageNo: 1,
-      pageSize: 10,
-      categoryKey: 0,
-      sort: 1
-    }
+    url: '/home/info',
+    method: 'GET'
   })
     .then((res) => {
-      apiProject.value = res
-      console.log('apiProject', apiProject.value)
+      homeData.value = res
     })
     .catch((err) => console.log(err))
 }
 onMounted(() => {
-  getProjects()
+  nextTick(() => {
+    getHomeData()
+  })
 })
 </script>
 <template>
@@ -137,7 +109,9 @@ onMounted(() => {
       <section class="container py-10 sm:pt-20">
         <div class="mb-6 flex h-[54px] items-center justify-between sm:mb-10">
           <h2 class="text-3xl sm:text-4xl">熱門提案</h2>
-          <NuxtLink to="/" class="hover:text-primary-1 active:text-secondary-1">查看更多</NuxtLink>
+          <NuxtLink to="/projects" class="hover:text-primary-1 active:text-secondary-1"
+            >查看更多</NuxtLink
+          >
         </div>
         <div class="relative">
           <Swiper
@@ -157,15 +131,9 @@ onMounted(() => {
               }
             }"
           >
-            <SwiperSlide v-for="project in projects" :key="project.id">
+            <SwiperSlide v-for="project in homeData.hotProjects" :key="project.id">
               <ProjectCard :project="project" />
             </SwiperSlide>
-            <SwiperSlide>6</SwiperSlide>
-            <SwiperSlide>6</SwiperSlide>
-            <SwiperSlide>6</SwiperSlide>
-            <SwiperSlide>6</SwiperSlide>
-            <SwiperSlide>6</SwiperSlide>
-            <SwiperSlide>6</SwiperSlide>
           </Swiper>
           <button class="hot-swiper-button-prev">
             <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
@@ -186,7 +154,6 @@ onMounted(() => {
             </svg>
           </button>
         </div>
-        <pre>{{ apiProject }}</pre>
       </section>
       <section
         class="bg-secondary-5 bg-[url('~/assets/images/index/bg/bg-sketch.png')] bg-no-repeat lg:bg-transparent lg:bg-none"
@@ -272,7 +239,7 @@ onMounted(() => {
       <h2 class="container mb-6 text-3xl sm:text-4xl lg:mb-10">推薦提案</h2>
       <div class="container">
         <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          <li v-for="project in projects" :key="project.id">
+          <li v-for="project in homeData.recommendProjects" :key="project.id">
             <ProjectCard :project="project" />
           </li>
         </ul>
@@ -285,7 +252,7 @@ onMounted(() => {
             <div
               class="text-4xl leading-[54px] lg:text-5xl lg:leading-[80px] xl:text-[64px] xl:leading-[144px]"
             >
-              1,260
+              {{ homeData.achievements?.projectTotal.toLocaleString() }}
             </div>
             <p class="sm:text-2xl">累積專案</p>
           </li>
@@ -293,7 +260,7 @@ onMounted(() => {
             <div
               class="text-4xl leading-[54px] lg:text-5xl lg:leading-[80px] xl:text-[64px] xl:leading-[144px]"
             >
-              257,245,082
+              {{ homeData.achievements?.amountTotal.toLocaleString() }}
             </div>
             <p class="sm:text-2xl">累積金額</p>
           </li>
@@ -301,7 +268,7 @@ onMounted(() => {
             <div
               class="text-4xl leading-[54px] lg:text-5xl lg:leading-[80px] xl:text-[64px] xl:leading-[144px]"
             >
-              97,945,982
+              {{ homeData.achievements?.peopleTotal.toLocaleString() }}
             </div>
             <p class="sm:text-2xl">累積贊助人數</p>
           </li>
@@ -313,26 +280,28 @@ onMounted(() => {
     </section>
 
     <div class="bg-group-2 bg-top bg-no-repeat">
-      <section class="bg-secondary-5 lg:bg-none">
+      <section class="lg:bg-none">
         <div class="container pb-10 pt-20 sm:pb-20 sm:pt-40">
           <div class="mb-6 flex h-[54px] items-center justify-between lg:mb-10">
             <h2 class="text-3xl sm:text-4xl">成功案例</h2>
-            <NuxtLink to="/" class="hover:text-primary-1 active:text-secondary-1"
+            <NuxtLink to="/projects" class="hover:text-primary-1 active:text-secondary-1"
               >查看更多</NuxtLink
             >
           </div>
           <ul class="grid gap-6 sm:gap-y-9 lg:grid-cols-2">
-            <li>
+            <li v-for="item in homeData.successProjects" :key="item._id">
               <NuxtLink
-                to="/"
+                :to="`/project/${item._id}`"
                 class="group grid grid-cols-3 overflow-hidden rounded-2xl border border-primary-3 bg-white duration-300 hover:border-primary-1 hover:shadow-lg lg:grid-cols-2 lg:rounded-[32px]"
               >
                 <div class="relative overflow-hidden">
                   <div
-                    class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center duration-300 group-hover:scale-110"
+                    class="absolute inset-0 bg-cover bg-center duration-300 group-hover:scale-110"
+                    :style="{ backgroundImage: `url('${item.coverUrl}')` }"
                   ></div>
                   <button
                     class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 fill-white duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
+                    :class="{ block: item.trackingStatus, hidden: !item.trackingStatus }"
                   >
                     <svg
                       width="24"
@@ -351,14 +320,14 @@ onMounted(() => {
                 </div>
                 <div class="col-span-2 space-y-2 p-3 lg:col-span-1 lg:space-y-4 lg:px-6 lg:py-10">
                   <h3 class="line-clamp-2 sm:text-[18px]">
-                    <div>長者健康促進計畫｜舉辦健康促進活動和健身課程</div>
+                    <div>{{ item.title }}</div>
                     <div class="text-transparent">.</div>
                   </h3>
                   <span
                     class="inline-block rounded-full border border-primary-1 px-1 text-xs text-primary-1 sm:px-2 sm:py-1 sm:text-base"
-                    >長者</span
+                    >{{ categoryKeys[item.categoryKey].name }}</span
                   >
-                  <p>NT$ 2,723,740</p>
+                  <p>{{ priceFormat(item.achievedMoney) }}</p>
                 </div>
               </NuxtLink>
             </li>

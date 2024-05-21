@@ -23,8 +23,7 @@ const projects = ref([
   }
 ])
 
-const apiProject = ref({})
-
+const apiProject = ref([])
 const getProjects = async () => {
   await getFetchData({
     url: '/project/',
@@ -48,7 +47,9 @@ const selectCategory = (key) => {
 }
 
 onMounted(() => {
-  getProjects()
+  nextTick(async () => {
+    await getProjects()
+  })
 })
 </script>
 <template>

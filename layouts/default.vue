@@ -8,9 +8,9 @@ onMounted(() => {
 })
 </script>
 <template>
-  <div class="relative flex flex-1 flex-col">
+  <div class="relative flex min-h-dvh flex-1 flex-col">
     <Header />
-    <div class="flex min-h-[`calc(100dvh_-_212px_-_72px)`] flex-1 flex-col">
+    <div class="flex flex-1 flex-col">
       <slot />
     </div>
     <Footer />
