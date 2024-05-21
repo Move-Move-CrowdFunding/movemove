@@ -20,7 +20,9 @@ const isLiked = followingStore.checkFollowing(project.id)
 
 const date = new Date()
 
-const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒少福利', '長者', '婦女']
+const toggleFollow = (id) => {
+  console.log(id)
+}
 </script>
 <template>
   <NuxtLink
@@ -37,6 +39,7 @@ const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒�
         v-if="isLogin.isLogin"
         class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': isLiked, 'fill-white': !isLiked }"
+        @click.prevent="toggleFollow(project.id)"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <g>
@@ -60,7 +63,7 @@ const categoryName = ['全部', '教育', '弱勢救助', '國際支援', '兒�
       </h3>
       <span
         class="inline-block rounded-full border border-primary-1 px-2 py-1 text-xs text-primary-1 sm:text-base"
-        >{{ categoryName[project.categoryKey] }}</span
+        >{{ categoryKeys[project.categoryKey]?.name }}</span
       >
       <div class="h-2 rounded-full bg-[#D9D9D9]">
         <div
