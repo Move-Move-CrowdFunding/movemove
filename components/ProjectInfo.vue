@@ -313,7 +313,7 @@ const isDisable =
           </div>
         </div>
       </div>
-      <div
+      <!-- <div
         v-if="inAdmin && tempData.state.state == 0"
         class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10 sm:flex-row"
       >
@@ -341,7 +341,7 @@ const isDisable =
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
       >
         送出
-      </button>
+      </button> -->
     </div>
   </div>
 </template>

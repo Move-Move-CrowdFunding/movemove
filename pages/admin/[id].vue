@@ -5,14 +5,89 @@ definePageMeta({
   layout: 'admin-layout'
 })
 
-const projectItem = ref({})
+interface ProjectItem {
+  _id: string
+  introduce: string
+  teamName: string
+  email: string
+  phone: string
+  title: string
+  categoryKey: number
+  targetMoney: number
+  startDate: number
+  endDate: number
+  describe: string
+  coverUrl: string
+  content: string
+  videoUrl: string
+  relatedUrl: string
+  feedbackItem: string
+  feedbackUrl: string
+  feedbackMoney: number
+  feedbackDate: number
+  reviewLog: {
+    _id: string
+    content: string
+    status: number
+    timestamp: number
+  }[]
+  state: {
+    state: number
+    content: string
+  }
+}
+
+const projectItem = ref<ProjectItem[]>([
+  {
+    _id: '',
+    introduce: '',
+    teamName: '',
+    email: '',
+    phone: '',
+    title: '',
+    categoryKey: 3,
+    targetMoney: 1000000,
+    startDate: 1715439897,
+    endDate: 1718118294,
+    describe:
+      '元月1日的石川大地震至今已經過快3個月。在櫻花開始綻放的季節，位於重災區的輪島市也持續動起來，只望能更早回到原本的日常生活。我們非常感謝在【田谷漆器店災後重建活動】開跑後得到超過 3,400名 朋友的支持！',
+    coverUrl: 'https://picsum.photos/id/61/200/300',
+    content:
+      '<p>台灣的朋友們，你們好。我是日本田谷漆器店第十代傳人-田谷昂大。有些人可能是第一次知道我們，請容許我稍微自我介紹。<br><br>我們是來自日本石川縣輪島市的「田谷漆器店」。創立於1818年，至今已有兩百年的歷史。肩負百年文化傳承的角色，我們一直遵循傳統的工法製作「輪島塗漆器」的同時，也不斷地探索開拓漆器的創新和可能性。</p>',
+    videoUrl: 'https://youtu.be/Iy69ifIf7jc?si=rX3_ZAdEhvgsUbu5',
+    relatedUrl: 'https://www.zeczenie.com/projects/Taya-shikkiten',
+    feedbackItem: '田谷漆器店感謝信',
+    feedbackUrl: '',
+    feedbackMoney: 1000,
+    feedbackDate: 1718118294,
+    reviewLog: [
+      {
+        _id: '6649a6405806444f8584d11c',
+        content: '請管管審核',
+        status: 0,
+        timestamp: 1715874668
+      }
+    ],
+    state: {
+      state: 0,
+      content: '請管管審核'
+    }
+  }
+])
+// const pageTitle = usePageTitleStore()
+
 const getProjectItem = async (id: string) => {
   await getFetchData({
     url: `/admin/projects/${id}`,
     method: 'GET'
   })
     .then((res) => {
-      projectItem.value = (res as ResponseData).results
+      projectItem.value = (res as ResponseData).results[0]
+      // const { title } = projectItem.value
+      // console.log('projectItem', projectItem.value)
+      // pageTitle.getCurrentTitle(projectItem.value[0].title)
+      // pageTitle.currentTitle = '111111'
+      // pageTitle.getCurrentTitle('eeee')
     })
     .catch((err) => console.log(err.msg))
 }
@@ -20,50 +95,42 @@ const getProjectItem = async (id: string) => {
 const route = useRoute()
 const { id } = route.params
 
-const tempData = ref({
-  introduce: '專業金援團隊，弱勢族群救星，幫助許多需要協助的家庭。',
-  teamName: '弱勢救星',
-  title: '愛心廚房｜溫飽無憂的一餐，舉辦食物援助計劃',
-  email: 'movemove@gmail.com',
-  categoryKey: 0,
-  phone: '0912345678',
-  targetMoney: 3000000,
-  content:
-    '<p>我們希望能幫助這些求助者，他們需要有個遮風避雨的住所，每月提供物資包與協助破損老舊的家，能得以維修,以減輕需要幫助的以及長輩們經濟開銷壓力。因此，發起修繕募資計畫，邀請社會大眾一同幫忙，協助清寒民眾與長輩房屋修繕，既使最初只能幫忙清理家園，讓長輩們有一個乾淨、舒適的生活環境，並定期提供長輩生活物資包，靠大家的力量，一同翻新清寒長輩與求助者們的生活。</p>',
-  coverUrl:
-    'https://images.unsplash.com/photo-1711722221946-e271830d5081?q=80&w=2235&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  describe: '一場無情的大火吞噬了整個社區，請幫助無家可歸的民眾。',
-  videoUrl: 'https://www.youtube.com/watch?v=YkVjY1F-Eoc',
-  startDate: 1712016024,
-  endDate: 1722016034,
-  relatedUrl: 'https://www.google.com.tw/',
-  feedbackItem: '限量精美小熊維尼 * 1',
-  feedbackUrl:
-    'https://plus.unsplash.com/premium_photo-1669632824466-09b2c595aa4c?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  feedbackMoney: 250,
-  feedbackDate: 1712016000,
-  state: {
-    state: 0,
-    content: ''
-  },
-  reviewLog: [
-    {
-      timestamp: 1700000000,
-      state: 0,
-      content: '提案送審'
-    },
-    {
-      timestamp: 1700000000,
-      state: -1,
-      content: '提案退回 - 請補上完整聯絡資訊'
-    },
-    {
-      timestamp: 1700000000,
-      state: 0,
-      content: '提案送審'
-    }
-  ]
-})
+// const tempData = ref({
+//   _id: '66401d4618d9a03d58194704',
+//   introduce:
+//     '「就算復原之路緩慢且遙遠，只要不放棄，一定能夠讓『輪島塗工藝』重新照亮整座輪島市。」KK Select與Iku老師誠摯邀請您一起參與田谷漆器店災後重建計畫。',
+//   teamName: 'Taiwan Stands With Ukraine',
+//   email: 'elsa@gamil.com',
+//   phone: '0955123123',
+//   title: '令和6年能登半島地震｜日本200年輪島塗老鋪田谷漆器店災後重建計畫，邁向下一個百年',
+//   categoryKey: 3,
+//   targetMoney: 1000000,
+//   startDate: 1715439897,
+//   endDate: 1718118294,
+//   describe:
+//     '元月1日的石川大地震至今已經過快3個月。在櫻花開始綻放的季節，位於重災區的輪島市也持續動起來，只望能更早回到原本的日常生活。我們非常感謝在【田谷漆器店災後重建活動】開跑後得到超過 3,400名 朋友的支持！',
+//   coverUrl: 'https://picsum.photos/id/61/200/300',
+//   content:
+//     '<p>台灣的朋友們，你們好。我是日本田谷漆器店第十代傳人-田谷昂大。有些人可能是第一次知道我們，請容許我稍微自我介紹。<br><br>我們是來自日本石川縣輪島市的「田谷漆器店」。創立於1818年，至今已有兩百年的歷史。肩負百年文化傳承的角色，我們一直遵循傳統的工法製作「輪島塗漆器」的同時，也不斷地探索開拓漆器的創新和可能性。</p>',
+//   videoUrl: 'https://youtu.be/Iy69ifIf7jc?si=rX3_ZAdEhvgsUbu5',
+//   relatedUrl: 'https://www.zeczec.com/projects/Taya-shikkiten',
+//   feedbackItem: '田谷漆器店感謝信',
+//   feedbackUrl: '',
+//   feedbackMoney: 1000,
+//   feedbackDate: 1718118294,
+//   reviewLog: [
+//     {
+//       _id: '6649a6405806444f8584d11c',
+//       content: '請管管審核',
+//       status: 0,
+//       timestamp: 1715874668
+//     }
+//   ],
+//   state: {
+//     state: 0,
+//     content: ''
+//   }
+// })
 
 onMounted(() => {
   nextTick(async () => {
@@ -77,8 +144,14 @@ onMounted(() => {
     返回上一頁
     <NuxtLink to="/admin">回到管理頁面</NuxtLink>
     <p>提案編號: {{ $route.params.id }}</p>
+    <!-- <pre>{{ projectItem }}</pre> -->
     <div class="rounded-xl bg-neutral-50">
-      <ProjectInfo :temp-data="tempData" />
+      <ProjectInfo :temp-data="projectItem" />
     </div>
   </div>
 </template>
+<style lang="scss" scoped>
+:deep(.container) {
+  @apply w-full max-w-[inherit] p-4;
+}
+</style>
