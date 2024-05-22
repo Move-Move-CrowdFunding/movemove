@@ -18,7 +18,7 @@ defineProps({
     <div
       class="absolute bottom-[7px] right-[7px] flex h-3 w-3 items-center justify-center overflow-hidden rounded-full bg-[#FF0000] text-sm text-neutral-50"
     >
-      <p v-if="count > 100" class="scale-[0.4]">99+</p>
+      <p v-if="count > 99" class="scale-[0.4]">99+</p>
       <p v-else class="scale-[0.5]">
         {{ count }}
       </p>
