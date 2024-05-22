@@ -1,23 +1,21 @@
 <script setup lang="ts">
 const isLogin = useIsLoginStore()
 const pageTitle = usePageTitleStore()
+
+// const route = useRoute()
+// const { id } = route.params
 const links = ref([
   {
-    label: 'Home',
+    label: '後台管理',
     icon: 'i-heroicons-home',
     to: '/admin'
   },
   {
-    label: '後台管理',
-    icon: 'i-heroicons-square-3-stack-3d',
-    to: '/admin'
-  },
-  {
     label: pageTitle.currentTitle,
-    icon: 'i-heroicons-link',
-    to: '/admin'
+    icon: 'i-heroicons-link'
   }
 ])
+
 // console.log('admin pageTitle', pageTitle.currentTitle)
 // const currentTitle = usePageTitleStore()
 

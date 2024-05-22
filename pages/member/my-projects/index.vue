@@ -142,7 +142,7 @@ const pageNo = ref(1)
 const changePage = (page) => {
   pageNo.value = page
   console.log(pageNo.value)
-  // getProjects()
+  // getAdminProjects()
 }
 const states = ref([
   { state: 'ongoing', name: '募資中' },

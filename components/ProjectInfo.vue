@@ -11,7 +11,7 @@ const props = defineProps({
     required: true
   }
 })
-const { tempData } = props
+const { tempData } = toRefs(props)
 
 const dateInput = ref({
   startDate: dayjs(tempData.startDate * 1000).format('YYYY-MM-DD'),
@@ -33,6 +33,8 @@ tempData.feedbackDate = computed(() => {
 
 const isDisable =
   inAdmin || tempData.value?.state?.state === 0 || tempData.value?.state?.state === 1
+
+// console.log('tempData', tempData)
 </script>
 <template>
   <div>

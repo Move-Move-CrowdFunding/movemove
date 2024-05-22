@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getAdminProjects } from '@/apis/admin'
 definePageMeta({
   layout: 'admin-layout'
 })
@@ -142,7 +143,7 @@ const pending = ref(true)
 const getProjects = async (query: any) => {
   pending.value = true
 
-  const { data, error } = await useGetProjects(query.value)
+  const { data, error } = await getAdminProjects(query.value)
   if (error.value) return
 
   projectList.value = data.value?.results
