@@ -12,13 +12,13 @@ const props = defineProps({
 const pagination = computed(() => {
   return props.pagination
 })
-const emit = defineEmits(['customEvent', 'emit'])
+const emit = defineEmits(['page'])
 watch(page, () => {
   emit('page', page.value)
 })
 </script>
 <template>
-  <div class="flex justify-center py-10 lg:py-20">
+  <div id="pagination" class="container py-10 lg:py-20">
     <UPagination
       v-model="page"
       :max="5"
@@ -28,4 +28,13 @@ watch(page, () => {
     </UPagination>
   </div>
 </template>
-<style scoped></style>
+<style scoped lang="scss">
+#pagination {
+  .flex {
+    @apply justify-center gap-4;
+  }
+  :deep(button:focus) {
+    @apply bg-primary-1;
+  }
+}
+</style>

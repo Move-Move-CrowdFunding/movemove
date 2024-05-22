@@ -94,7 +94,7 @@ onClickOutside(dropdown, () => {
               <ListMenu
                 ref="dropdownMenu"
                 :class="menuIsShow ? 'block' : 'hidden'"
-                class="absolute right-[50%] top-[56px] w-[112px] translate-x-1/2 shadow-xl"
+                class="absolute right-0 top-[56px] w-[112px] translate-x-6 shadow-xl"
                 :menu-list="menuList"
               />
             </div>

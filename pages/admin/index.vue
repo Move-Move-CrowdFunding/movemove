@@ -144,7 +144,7 @@ const getProjects = async (query: any) => {
   const { data, error } = await useGetProjects(query.value)
   if (error.value) return
   projectList.value = data.value?.results
-
+  console.log(data.value)
   responsePagination.value.pageNo = parseInt(data.value?.pagination.pageNo)
   responsePagination.value.pageSize = parseInt(data.value?.pagination.pageSize)
   responsePagination.value.totalPage = parseInt(data.value?.pagination.totalPage)
