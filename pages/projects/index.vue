@@ -1,5 +1,6 @@
 <script setup>
 const pageNo = ref(1)
+const pagination = ref({})
 const selectedCategory = ref(0)
 const selectCategory = (key) => {
   pageNo.value = 1
@@ -11,15 +12,19 @@ const showExpired = ref(false)
 const apiProject = ref([])
 const getProjects = async () => {
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}`,
     method: 'GET'
   })
     .then((res) => {
       apiProject.value = res.results
+      pagination.value = res.pagination
     })
     .catch((err) => console.log(err))
 }
-
+const changePage = (page) => {
+  pageNo.value = page
+  getProjects()
+}
 onMounted(() => {
   nextTick(async () => {
     await getProjects()
@@ -75,6 +80,7 @@ onMounted(() => {
         <ProjectCard :project="project" />
       </li>
     </ul>
+    <Pagination :pagination="pagination" @page="changePage" />
   </div>
 </template>
 
