@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { onClickOutside } from '@vueuse/core'
+import { getMemberNotificationUnread } from '@/apis/member'
+
+const notificationsCount = ref(0)
 
 const dropdown = ref(null)
 const dropdownMenu = ref(null)
@@ -18,6 +21,14 @@ const toggleMenu = () => {
 const mobileMenuIsShow = ref(false)
 onClickOutside(dropdown, () => {
   menuIsShow.value = false
+})
+
+onMounted(() => {
+  nextTick(async () => {
+    const { data } = await getMemberNotificationUnread()
+    const { count } = data.value?.results
+    notificationsCount.value = count
+  })
 })
 </script>
 <template>
@@ -60,21 +71,11 @@ onClickOutside(dropdown, () => {
                 <NuxtLink to="/projects" class="block p-2">探索</NuxtLink>
                 <NuxtLink to="/create" class="block p-2">提案</NuxtLink>
               </div>
-              <BaseButton
+              <NotificationsIcon
                 v-if="isLogin.isLogin"
-                tag="nuxtLink"
-                to="/member/notifications"
-                class="relative hidden h-full flex-shrink-0 items-center justify-center p-2 md:flex"
-              >
-                <div
-                  class="bg-neutral-2 h-6 w-6 flex-shrink-0 overflow-hidden bg-secondary-2 [mask-image:url('~/assets/icons/notifications.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
-                ></div>
-                <div
-                  class="absolute bottom-[7px] right-[7px] flex h-3 w-3 items-center justify-center overflow-hidden rounded-full bg-[#FF0000] text-sm text-neutral-50"
-                >
-                  <p class="scale-[0.5]">99</p>
-                </div>
-              </BaseButton>
+                :count="notificationsCount"
+                class="hidden md:flex"
+              />
             </div>
             <BaseButton
               v-if="!isLogin.isLogin"
@@ -136,21 +137,11 @@ onClickOutside(dropdown, () => {
                 ></div>
               </div>
             </div>
-            <BaseButton
+            <NotificationsIcon
               v-if="isLogin.isLogin"
-              tag="nuxtLink"
-              to="/member/notifications"
-              class="relative flex h-full flex-shrink-0 items-center justify-center p-2 md:hidden"
-            >
-              <div
-                class="bg-neutral-2 h-6 w-6 flex-shrink-0 overflow-hidden bg-secondary-2 [mask-image:url('~/assets/icons/notifications.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
-              ></div>
-              <div
-                class="absolute bottom-[7px] right-[7px] flex h-3 w-3 items-center justify-center overflow-hidden rounded-full bg-[#FF0000] text-sm text-neutral-50"
-              >
-                <p class="scale-[0.5]">99</p>
-              </div>
-            </BaseButton>
+              :count="notificationsCount"
+              class="flex md:hidden"
+            />
             <div class="block p-2 md:hidden" @click="mobileMenuIsShow = !mobileMenuIsShow">
               <div
                 class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/menu.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
