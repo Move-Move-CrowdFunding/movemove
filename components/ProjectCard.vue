@@ -14,9 +14,8 @@ const props = defineProps({
   }
 })
 const { project } = props
-const followingStore = useFollowingStore()
-
-const isLiked = followingStore.checkFollowing(project.id)
+// const followingStore = useFollowingStore()
+// const isLiked = followingStore.checkFollowing(project.id)
 
 const date = new Date()
 
@@ -38,7 +37,7 @@ const toggleFollow = (id) => {
       <button
         v-if="isLogin.isLogin"
         class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
-        :class="{ 'fill-primary-1': isLiked, 'fill-white': !isLiked }"
+        :class="{ 'fill-primary-1': project.trackingStatus, 'fill-white': !project.trackingStatus }"
         @click.prevent="toggleFollow(project.id)"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

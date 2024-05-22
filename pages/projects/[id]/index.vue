@@ -1,4 +1,16 @@
 <script setup>
+const route = useRoute()
+const getProject = async () => {
+  await getFetchData({
+    url: `/project/${route.params.id}`,
+    method: 'GET'
+  })
+    .then((res) => {
+      console.log(res)
+      project.value = res.results
+    })
+    .catch((err) => console.log(err))
+}
 const project = ref({
   id: '66058f16a069a14089afef0d',
   userId: '354ae03a-9801-42ba-afa4-287b3b10df18',
@@ -35,13 +47,19 @@ const diffInSeconds = project.value.endDate - new Date() / 1000
 const days = Math.floor(diffInSeconds / (24 * 3600))
 const hours = Math.floor((diffInSeconds % (24 * 3600)) / 3600)
 const minutes = Math.floor((diffInSeconds % 3600) / 60)
+onMounted(() => {
+  nextTick(async () => {
+    await getProject()
+  })
+})
 </script>
 <template>
   <div class="">
     <div class="py-10 lg:rounded-b-[200px] lg:bg-secondary-5 lg:py-20">
-      <div class="container grid gap-6 lg:grid-cols-2">
+      <div class="container grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div
-          class="rounded-3xl bg-[url('https://images.unsplash.com/photo-1562259929-b4e1fd3aef09?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center"
+          class="h-60 rounded-3xl bg-cover bg-center lg:h-auto"
+          :style="{ backgroundImage: `url(${project.coverUrl})` }"
         ></div>
         <div class="space-y-4">
           <div>
@@ -85,10 +103,7 @@ const minutes = Math.floor((diffInSeconds % 3600) / 60)
       <div class="lg:col-span-2">
         <h3 class="mb-4 text-xl lg:text-2xl">提案介紹</h3>
         <p class="mb-6">{{ project.content }}</p>
-        <img
-          src="https://images.unsplash.com/photo-1711722221946-e271830d5081?q=80&w=2235&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt=""
-        />
+        <img :src="project.coverUrl" alt="" />
         <iframe
           v-if="project.videoUrl"
           class="mt-2 aspect-video w-full"
@@ -129,7 +144,8 @@ const minutes = Math.floor((diffInSeconds % 3600) / 60)
         <div class="rounded-3xl p-4 shadow-lg lg:p-6">
           <div class="flex items-center gap-10">
             <div
-              class="h-20 w-20 rounded-full bg-[url('https://images.unsplash.com/photo-1663250714112-13cef88e4221?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center"
+              class="h-20 w-20 rounded-full bg-[url('')] bg-cover bg-center"
+              :style="{ backgroundImage: `url(${project.coverUrl})` }"
             ></div>
             <div>
               <div class="mb-4 text-2xl">{{ project.teamName }}</div>

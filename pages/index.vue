@@ -1,4 +1,6 @@
 <script setup>
+const isLogin = useIsLoginStore()
+
 const bannerNavigation = {
   nextEl: '.banner-swiper-button-next',
   prevEl: '.banner-swiper-button-prev'
@@ -300,8 +302,12 @@ onMounted(() => {
                     :style="{ backgroundImage: `url('${item.coverUrl}')` }"
                   ></div>
                   <button
+                    v-if="isLogin.isLogin"
                     class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 fill-white duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
-                    :class="{ block: item.trackingStatus, hidden: !item.trackingStatus }"
+                    :class="{
+                      'fill-primary-1': item.trackingStatus,
+                      'fill-white': !item.trackingStatus
+                    }"
                   >
                     <svg
                       width="24"

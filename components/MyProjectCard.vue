@@ -13,6 +13,7 @@ const props = defineProps({
   }
 })
 const { data, state } = props
+const emit = defineEmits(['showSupportList'])
 </script>
 
 <template>
@@ -72,6 +73,7 @@ const { data, state } = props
         <button
           v-else-if="state === 'ongoing' || state === 'ended'"
           class="ml-auto flex items-center rounded-full bg-secondary-2 p-1 px-2 text-white duration-100 hover:bg-primary-1"
+          @click="emit('showSupportList', data.id)"
         >
           <div class="flex h-6 w-6 items-center justify-center">
             <Icon name="mdi:user" color="white" width="24" height="24" class="" />
