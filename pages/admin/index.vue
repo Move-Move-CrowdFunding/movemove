@@ -158,6 +158,10 @@ const getProjects = async (query: any) => {
   responsePagination.value.search = data.value?.pagination.search
 }
 
+const changePage = (page: number) => {
+  pageNo.value = page
+}
+
 // 監聽 每頁幾筆
 watch(pageSize, async () => {
   await getProjects(formData)
@@ -254,7 +258,8 @@ onMounted(() => {
         <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
         <span>筆</span>
       </div>
-      <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" />
+      <!-- <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" /> -->
+      <Pagination :pagination="responsePagination" @page="changePage" />
     </div>
     <UTable
       :ui="{
@@ -350,18 +355,22 @@ onMounted(() => {
         <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
         <span>筆</span>
       </div>
-      <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" />
+      <!-- <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" /> -->
+      <Pagination :pagination="responsePagination" @page="changePage" />
     </div>
   </div>
 </template>
 <style lang="scss">
+:deep(.custom-pagination) {
+  @apply py-0;
+}
+tr {
+  @apply transition-all;
+}
 thead {
   tr {
     @apply [&:first-child]:hover:bg-neutral-50;
   }
-}
-tr {
-  @apply transition-all;
 }
 .loader {
   --color: rgb(var(--color-primary-400));
