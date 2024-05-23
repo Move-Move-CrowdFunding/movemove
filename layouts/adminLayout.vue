@@ -1,9 +1,7 @@
 <script setup lang="ts">
 const isLogin = useIsLoginStore()
-const pageTitle = usePageTitleStore()
 
-// const route = useRoute()
-// const { id } = route.params
+const pageTitle = usePageTitleStore()
 const links = ref([
   {
     label: '後台管理',
@@ -11,14 +9,12 @@ const links = ref([
     to: '/admin'
   },
   {
-    label: pageTitle.currentTitle,
-    icon: 'i-heroicons-link'
+    label: pageTitle.title
   }
 ])
-
-// console.log('admin pageTitle', pageTitle.currentTitle)
-// const currentTitle = usePageTitleStore()
-
+watchEffect(() => {
+  links.value[1].label = pageTitle.currentTitle
+})
 onMounted(() => {
   nextTick(() => {
     isLogin.checkLogin()
@@ -33,7 +29,7 @@ onMounted(() => {
         class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between bg-neutral-50 p-4 shadow-md"
       >
         <BaseLogo
-          class="mx-auto h-[24px] w-[135px] overflow-hidden whitespace-nowrap bg-secondary-1 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] md:mx-0"
+          class="h-[24px] w-[135px] overflow-hidden whitespace-nowrap bg-secondary-1 indent-[100%] [mask-image:url('~/assets/icons/logo.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain] md:mx-0"
           target="_blank"
         />
         <UButton
@@ -54,11 +50,8 @@ onMounted(() => {
         }"
       >
         <div class="space-y-3">
-          <PageHeader :links="links" page-head="後台管理" />
-          <!-- <h2 class="flex-shrink-0 py-6 font-semibold text-neutral-800">管理 - 提案列表</h2>
-          <div class="bg-neutral-50 p-3">
-            <UBreadcrumb :links="links" />
-          </div> -->
+          <PageHeader :page-head="pageTitle.currentTitle" :links="links" />
+
           <slot />
         </div>
       </UContainer>

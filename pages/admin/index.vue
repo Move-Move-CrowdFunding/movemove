@@ -194,7 +194,10 @@ const resetSearch = () => {
 
 const getStatus = (status: number) => statusList.value.find((item) => item.value === status)
 
+const pageTitle = usePageTitleStore()
+
 onMounted(() => {
+  pageTitle.currentTitle = '提案列表'
   nextTick(() => {
     checkPermission()
   })
@@ -202,15 +205,10 @@ onMounted(() => {
 </script>
 <template>
   <div class="flex flex-1 flex-col overflow-y-auto">
-    <!-- <h2 class="flex-shrink-0 py-6 font-semibold text-neutral-800">管理 - 提案列表</h2> -->
-    <!-- <div class="bg-neutral-50 p-3">
-      <UBreadcrumb :links="links" />
-    </div> -->
     <div
-      class="mb-4 flex w-full flex-wrap justify-start space-x-8 rounded-xl bg-neutral-100/70 bg-neutral-50 px-4 py-4 shadow-sm"
+      class="flex w-full flex-wrap justify-start space-x-8 rounded-xl bg-neutral-100/70 bg-neutral-50 px-4 py-4 shadow-sm"
     >
       <div class="flex items-center space-x-2 whitespace-nowrap">
-        <!-- <span class="text-sm">搜尋</span> -->
         <UInput
           v-model.trim="formData.search"
           icon="i-heroicons-magnifying-glass-20-solid"
@@ -262,12 +260,12 @@ onMounted(() => {
       :ui="{
         wrapper: 'min-h-[300px] rounded-xl bg-neutral-50 shadow-sm',
         th: {
-          base: 'whitespace-nowrap',
+          base: 'whitespace-nowrap ',
           padding:
             'py-2 px-3 [&:first-child]:pl-6 [&:first-child]:pr-3 [&:last-child]:pr-6 [&:last-child]:pl-3'
         },
         tr: {
-          base: ' hover:bg-neutral-100/60'
+          base: 'hover:bg-neutral-100/60'
         },
         td: {
           base: 'whitespace-normal',
@@ -357,6 +355,11 @@ onMounted(() => {
   </div>
 </template>
 <style lang="scss">
+thead {
+  tr {
+    @apply [&:first-child]:hover:bg-neutral-50;
+  }
+}
 tr {
   @apply transition-all;
 }
