@@ -14,6 +14,7 @@ const checkPermission = async () => {
 }
 const getTempUser = (data) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
+  console.log(tempUser.value)
 }
 const editUser = async () => {
   await getFetchData({
@@ -61,6 +62,33 @@ const changePassword = async () => {
   console.log(tempPassword)
 }
 const showPassword = ref(false)
+
+const uploadedFile = ref(null)
+const uploadFile = async () => {
+  console.log('upload')
+  console.log(uploadedFile.value.files[0])
+
+  const formData = new FormData()
+  formData.append('資料屬性(根據後端決定)', uploadedFile.value.files[0])
+
+  await getFetchData({
+    url: '/upload',
+    method: 'POST',
+    params: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+    .then((res) => {
+      console.log(res.results.imageUrl)
+      tempUser.value.avatar = res.results.imageUrl
+      isLogin.getUserData()
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 onMounted(() => {
   nextTick(() => {
     checkPermission()
@@ -74,11 +102,28 @@ onMounted(() => {
       <div class="mx-auto lg:w-[800px]">
         <div class="mb-6 flex items-center px-3 lg:px-6">
           <div
-            class="relative mr-4 block h-20 w-20 rounded-full bg-cover bg-center sm:mr-10"
-            :style="{ 'background-image': `url('${isLogin.userData.avatar}')` }"
+            class="group relative mr-4 block h-20 w-20 rounded-full bg-cover bg-center sm:mr-10"
+            :style="{ 'background-image': `url('${tempUser.avatar}')` }"
           >
-            <!-- <button class="absolute bottom-0 right-0 block h-6 w-6 bg-secondary-1 text-white">
-              0
+            <div class="absolute bottom-0 right-0 hidden group-hover:block">
+              <label
+                for="uploadImage"
+                class="flex cursor-pointer items-center justify-center rounded bg-secondary-1 p-0.5 text-white hover:bg-primary-1"
+              >
+                <Icon name="material-symbols:upload" width="20" height="20" color="white" />
+              </label>
+              <input
+                id="uploadImage"
+                ref="uploadedFile"
+                type="file"
+                class="hidden"
+                @change="uploadFile"
+              />
+            </div>
+
+            <!-- <button class=" p-0.5 bg-secondary-1 hover:bg-primary-1 text-white rounded flex items-center justify-center" @click="uploadFile">
+              
+              <Icon name="material-symbols:upload" width="20" height="20" color="white" />
             </button> -->
           </div>
           <div>
@@ -103,7 +148,7 @@ onMounted(() => {
           </button>
         </div>
         <div class="bg-secondary-5 px-3 py-10 lg:px-6">
-          <div v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
+          <Form v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
             <div class="flex items-center space-x-4">
               <label for="username" class="w-1/4 font-bold sm:w-1/6">真實姓名</label>
               <div class="grow">
@@ -201,7 +246,7 @@ onMounted(() => {
                 更新
               </button>
             </div>
-          </div>
+          </Form>
           <form v-else action="" class="space-y-4">
             <div class="flex items-center space-x-4">
               <label for="oldPassword" class="w-1/4 font-bold sm:w-1/6">舊密碼</label>
