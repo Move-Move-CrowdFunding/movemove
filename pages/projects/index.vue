@@ -12,7 +12,7 @@ const showExpired = ref(false)
 const apiProject = ref([])
 const getProjects = async () => {
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=1`,
     method: 'GET'
   })
     .then((res) => {
