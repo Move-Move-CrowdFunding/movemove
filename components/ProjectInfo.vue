@@ -34,7 +34,37 @@ tempData.feedbackDate = computed(() => {
 const isDisable =
   inAdmin || tempData.value?.state?.state === 0 || tempData.value?.state?.state === 1
 
-// console.log('tempData', tempData)
+const coverUpload = ref(null)
+const feedbackUpload = ref(null)
+const uploadFile = async (item) => {
+  const formData = new FormData()
+  formData.append('coverUpload', coverUpload.value.files[0])
+  if (item === 'cover') {
+    formData.append('coverUpload', coverUpload.value.files[0])
+  } else {
+    formData.append('feedbackUpload', feedbackUpload.value.files[0])
+  }
+  await getFetchData({
+    url: '/upload',
+    method: 'POST',
+    params: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+    .then((res) => {
+      if (item === 'cover') {
+        tempData.coverUrl = res.results.imageUrl
+      } else {
+        tempData.feedbackUrl = res.results.imageUrl
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+// const emit = defineEmits(['createProject'])
 </script>
 <template>
   <div>
@@ -189,7 +219,7 @@ const isDisable =
             <label for="describe">提案簡介</label>
             <textarea
               id="describe"
-              v-model="tempData.introduce"
+              v-model="tempData.describe"
               placeholder="請簡短敘述提案內容, 最長不超過 80 字"
               class="block w-full"
               :disabled="isDisable"
@@ -197,17 +227,26 @@ const isDisable =
           </div>
           <div class="mb-6">
             <label for="">封面照片</label>
-            <div class="flex items-center rounded border pl-1">
-              <button
-                class="rounded bg-secondary-2 px-3 py-2 text-white disabled:bg-neutral-300"
-                :disabled="isDisable"
-              >
-                請選擇檔案
-              </button>
+            <div class="flex items-stretch rounded border">
+              <label for="coverUpload" :disabled="isDisable" class="m-1">
+                <div
+                  class="flex h-full cursor-pointer items-center rounded bg-secondary-2 px-3 py-2 text-white hover:bg-secondary-1 disabled:bg-neutral-300"
+                >
+                  選擇檔案
+                </div>
+              </label>
               <input
-                id="feedbackUrl"
+                id="coverUpload"
+                ref="coverUpload"
+                type="file"
+                class="hidden"
+                :disabled="isDisable"
+                @change="uploadFile('cover')"
+              />
+              <input
                 v-model="tempData.coverUrl"
                 type="text"
+                placeholder="或輸入圖片網址"
                 class="grow border-white"
                 :disabled="isDisable"
               />
@@ -241,7 +280,7 @@ const isDisable =
             <iframe
               v-if="tempData.videoUrl"
               class="mt-2 aspect-video w-full"
-              :src="`https://www.youtube.com/embed/${tempData.videoUrl.split('v=')[1]}`"
+              :src="`https://www.youtube.com/embed/${tempData.videoUrl.split('&')[0].split('v=')[1]}`"
             ></iframe>
           </div>
           <div class="mb-6">
@@ -271,16 +310,25 @@ const isDisable =
           <div class="mb-6">
             <label for="feedbackUrl">回饋品圖片</label>
             <div class="flex items-center rounded border pl-1">
-              <button
-                class="rounded bg-secondary-2 px-3 py-2 text-white disabled:bg-neutral-300"
-                :disabled="isDisable"
-              >
-                請選擇檔案
-              </button>
+              <label for="feedbackUpload" :disabled="isDisable" class="m-1">
+                <div
+                  class="flex h-full cursor-pointer items-center rounded bg-secondary-2 px-3 py-2 text-white hover:bg-secondary-1 disabled:bg-neutral-300"
+                >
+                  選擇檔案
+                </div>
+              </label>
               <input
-                id="feedbackUrl"
+                id="feedbackUpload"
+                ref="feedbackUpload"
+                type="file"
+                class="hidden"
+                :disabled="isDisable"
+                @change="uploadFile('feedback')"
+              />
+              <input
                 v-model="tempData.feedbackUrl"
                 type="text"
+                placeholder="或輸入圖片網址"
                 class="grow border-white"
                 :disabled="isDisable"
               />
@@ -328,7 +376,7 @@ const isDisable =
       <button
         v-if="!tempData.state"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
-        @click="$router.push({ path: '/create/success' })"
+        @click="emit('createProject', tempData)"
       >
         發起提案
       </button>
