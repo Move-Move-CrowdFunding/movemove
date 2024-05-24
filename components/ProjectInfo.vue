@@ -248,6 +248,7 @@ const emit = defineEmits(['createProject'])
                 type="text"
                 placeholder="或輸入圖片網址"
                 class="grow border-white"
+                :disabled="isDisable"
               />
             </div>
             <img :src="tempData.coverUrl" class="mt-1" />
@@ -329,6 +330,7 @@ const emit = defineEmits(['createProject'])
                 type="text"
                 placeholder="或輸入圖片網址"
                 class="grow border-white"
+                :disabled="isDisable"
               />
             </div>
             <img :src="tempData.feedbackUrl" class="mt-1" />

@@ -62,7 +62,7 @@ const toggleFollow = (id) => {
       </h3>
       <span
         class="inline-block rounded-full border border-primary-1 px-2 py-1 text-xs text-primary-1 sm:text-base"
-        >{{ categoryKeys[project.categoryKey]?.name }}</span
+        >{{ categoryKeys[project.categoryKey - 1]?.name }}</span
       >
       <div class="h-2 rounded-full bg-[#D9D9D9]">
         <div
