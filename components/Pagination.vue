@@ -6,6 +6,21 @@ const page = ref(1)
 const props = defineProps({
   pagination: {
     type: Object
+  },
+  size: {
+    type: String,
+    default: 'md'
+  },
+  max: {
+    type: Number,
+    default: 5
+  },
+  containerClass: {
+    type: String
+  },
+  paginationClass: {
+    type: String,
+    default: 'custom-pagination gap-4'
   }
 })
 
@@ -18,18 +33,18 @@ watch(page, () => {
 })
 </script>
 <template>
-  <div id="pagination" class="container flex items-center justify-center py-10 lg:py-20">
+  <div id="pagination" :class="props.containerClass">
     <UPagination
       v-model="page"
       :ui="{
         base: 'min-w-[44px] justify-center m-0',
         rounded: 'rounded-md'
       }"
-      size="xl"
-      :max="5"
+      :size="props.size"
+      :max="props.max"
       :page-count="pagination.pageSize"
       :total="pagination.count"
-      class="custom-pagination gap-4"
+      :class="props.paginationClass"
     >
     </UPagination>
   </div>

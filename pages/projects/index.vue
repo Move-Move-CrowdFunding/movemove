@@ -5,12 +5,12 @@ const selectedCategory = ref(0)
 const selectCategory = (key) => {
   pageNo.value = 1
   selectedCategory.value = key
-  getProjects()
+  getAdminProjects()
 }
 const sort = ref(1)
 const showExpired = ref(false)
 const apiProject = ref([])
-const getProjects = async () => {
+const getAdminProjects = async () => {
   await getFetchData({
     url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=1`,
     method: 'GET'
@@ -23,11 +23,11 @@ const getProjects = async () => {
 }
 const changePage = (page) => {
   pageNo.value = page
-  getProjects()
+  getAdminProjects()
 }
 onMounted(() => {
   nextTick(async () => {
-    await getProjects()
+    await getAdminProjects()
   })
 })
 </script>
@@ -66,11 +66,11 @@ onMounted(() => {
           v-model="showExpired"
           type="checkbox"
           class="mr-2 h-5 w-5 appearance-none rounded-sm border-secondary-1 outline outline-2 outline-secondary-1 after:relative after:block after:h-5/6 after:w-6/12 after:translate-x-[5px] checked:bg-secondary-1 checked:after:relative checked:after:rotate-45 checked:after:border-b-4 checked:after:border-r-4 checked:after:border-white"
-          @change="getProjects"
+          @change="getAdminProjects"
         />
         <label for="showAll" class="flex items-center gap-2">顯示已結束提案</label>
       </div>
-      <select id="" v-model="sort" name="" class="px-2 py-1" @change="getProjects">
+      <select id="" v-model="sort" name="" class="px-2 py-1" @change="getAdminProjects">
         <option value="1">由新到舊</option>
         <option value="2">由舊到新</option>
       </select>
@@ -80,7 +80,12 @@ onMounted(() => {
         <ProjectCard :project="project" />
       </li>
     </ul>
-    <Pagination :pagination="pagination" @page="changePage" />
+    <Pagination
+      container-class="container flex items-center justify-center py-10 lg:py-20"
+      size="xl"
+      :pagination="pagination"
+      @page="changePage"
+    />
   </div>
 </template>
 

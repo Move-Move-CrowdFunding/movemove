@@ -11,7 +11,7 @@ const props = defineProps({
     required: true
   }
 })
-const { tempData } = props
+const { tempData } = toRefs(props)
 
 const dateInput = ref({
   startDate: dayjs(tempData.startDate * 1000).format('YYYY-MM-DD'),
@@ -64,7 +64,7 @@ const uploadFile = async (item) => {
     })
 }
 
-const emit = defineEmits(['createProject'])
+// const emit = defineEmits(['createProject'])
 </script>
 <template>
   <div>
@@ -160,7 +160,7 @@ const emit = defineEmits(['createProject'])
               好的標題應該要好記、好搜尋、吸引人想點進去看，並讓瀏覽者能在最短的時間內瞭解專案的核心理念。
             </p>
           </div>
-          <div class="mb-6 grid grid-cols-2 gap-3">
+          <div class="mb-6 grid grid-cols-2 gap-8">
             <div>
               <label for="categoryKey">分類</label>
               <select
@@ -178,7 +178,7 @@ const emit = defineEmits(['createProject'])
             </div>
             <div>
               <label for="targetMoney">提案目標</label>
-              <div class="flex items-center">
+              <div class="flex items-center space-x-2">
                 <input
                   id="targetMoney"
                   v-model="tempData.targetMoney"
@@ -194,7 +194,7 @@ const emit = defineEmits(['createProject'])
           </div>
           <div class="mb-6">
             <label for="">預計時間</label>
-            <div class="flex items-center">
+            <div class="flex items-center space-x-2">
               <input
                 id="startDate"
                 v-model="dateInput.startDate"
@@ -337,7 +337,7 @@ const emit = defineEmits(['createProject'])
           </div>
           <div class="mb-6">
             <label for="feedbackMoney">回饋門檻</label>
-            <div class="flex items-center">
+            <div class="flex items-center space-x-2">
               <input
                 id="feedbackMoney"
                 v-model="tempData.feedbackMoney"
@@ -363,7 +363,7 @@ const emit = defineEmits(['createProject'])
           </div>
         </div>
       </div>
-      <div
+      <!-- <div
         v-if="inAdmin && tempData.state.state == 0"
         class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10 sm:flex-row"
       >
@@ -391,7 +391,7 @@ const emit = defineEmits(['createProject'])
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
       >
         送出
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
@@ -406,6 +406,6 @@ label {
 input,
 textarea,
 select {
-  @apply rounded border p-3;
+  @apply min-h-[50px] rounded border p-3;
 }
 </style>
