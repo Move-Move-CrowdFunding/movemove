@@ -46,7 +46,7 @@ const pageTitle = usePageTitleStore()
 const getProjectItem = async (id: string) => {
   const { data, error } = await getAdminProjectItem(id)
   if (error.value) return
-  projectItem.value = data.value.results[0]
+  projectItem.value = data.value.results
   pageTitle.title = projectItem.value.title
 }
 const route = useRoute()
@@ -62,7 +62,7 @@ onMounted(() => {
 <template>
   <div class="flex flex-col space-y-6">
     <div class="rounded-xl bg-neutral-50">
-      <h2 class="flex-shrink-0 border-b p-4 text-xl font-semibold text-neutral-800">
+      <h2 class="flex-shrink-0 border-b p-4 text-xl font-semibold text-secondary-2">
         {{ pageTitle.title }}
       </h2>
       <ProjectInfo :temp-data="projectItem" />
@@ -71,6 +71,6 @@ onMounted(() => {
 </template>
 <style lang="scss" scoped>
 :deep(.container) {
-  @apply w-full max-w-[inherit] p-4;
+  @apply w-full max-w-[inherit] px-4 pb-10 pt-4;
 }
 </style>

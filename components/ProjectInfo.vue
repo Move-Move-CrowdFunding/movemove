@@ -160,7 +160,7 @@ const uploadFile = async (item) => {
               好的標題應該要好記、好搜尋、吸引人想點進去看，並讓瀏覽者能在最短的時間內瞭解專案的核心理念。
             </p>
           </div>
-          <div class="mb-6 grid grid-cols-2 gap-3">
+          <div class="mb-6 grid grid-cols-2 gap-8">
             <div>
               <label for="categoryKey">分類</label>
               <select
@@ -178,7 +178,7 @@ const uploadFile = async (item) => {
             </div>
             <div>
               <label for="targetMoney">提案目標</label>
-              <div class="flex items-center">
+              <div class="flex items-center space-x-2">
                 <input
                   id="targetMoney"
                   v-model="tempData.targetMoney"
@@ -194,7 +194,7 @@ const uploadFile = async (item) => {
           </div>
           <div class="mb-6">
             <label for="">預計時間</label>
-            <div class="flex items-center">
+            <div class="flex items-center space-x-2">
               <input
                 id="startDate"
                 v-model="dateInput.startDate"
@@ -337,7 +337,7 @@ const uploadFile = async (item) => {
           </div>
           <div class="mb-6">
             <label for="feedbackMoney">回饋門檻</label>
-            <div class="flex items-center">
+            <div class="flex items-center space-x-2">
               <input
                 id="feedbackMoney"
                 v-model="tempData.feedbackMoney"
@@ -406,6 +406,6 @@ label {
 input,
 textarea,
 select {
-  @apply rounded border p-3;
+  @apply min-h-[50px] rounded border p-3;
 }
 </style>

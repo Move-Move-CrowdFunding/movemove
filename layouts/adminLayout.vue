@@ -35,8 +35,7 @@ onMounted(() => {
         <UButton
           icon="i-heroicons-arrow-right-on-rectangle-20-solid"
           size="md"
-          color="primary"
-          variant="outline"
+          class="border border-secondary-3 bg-neutral-50 text-secondary-3 transition-all hover:bg-secondary-3 hover:text-neutral-50"
           :trailing="false"
           @click="logout"
           >登出</UButton

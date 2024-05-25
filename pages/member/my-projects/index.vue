@@ -197,7 +197,12 @@ const states = ref([
         </UTable>
       </div>
     </div>
-    <Pagination :pagination="results.pagination" @page="changePage" />
+    <Pagination
+      container-class="container flex items-center justify-center py-10 lg:py-20"
+      size="xl"
+      :pagination="results.pagination"
+      @page="changePage"
+    />
   </div>
 </template>
 

@@ -80,7 +80,12 @@ onMounted(() => {
         <ProjectCard :project="project" />
       </li>
     </ul>
-    <Pagination :pagination="pagination" @page="changePage" />
+    <Pagination
+      container-class="container flex items-center justify-center py-10 lg:py-20"
+      size="xl"
+      :pagination="pagination"
+      @page="changePage"
+    />
   </div>
 </template>
 

@@ -210,11 +210,12 @@ onMounted(() => {
 <template>
   <div class="flex flex-1 flex-col overflow-y-auto">
     <div
-      class="flex w-full flex-wrap justify-start space-x-8 rounded-xl bg-neutral-100/70 bg-neutral-50 px-4 py-4 shadow-sm"
+      class="mb-4 grid w-full grid-cols-2 justify-start gap-x-4 gap-y-6 rounded-xl bg-neutral-100/70 bg-neutral-50 p-4 shadow-sm lg:grid-cols-6 lg:gap-x-8"
     >
-      <div class="flex items-center space-x-2 whitespace-nowrap">
+      <div class="col-span-2 flex items-center space-x-2 whitespace-nowrap lg:col-span-2">
         <UInput
           v-model.trim="formData.search"
+          size="md"
           icon="i-heroicons-magnifying-glass-20-solid"
           autocomplete="off"
           :ui="{ icon: { trailing: { pointer: '' } } }"
@@ -222,50 +223,46 @@ onMounted(() => {
           placeholder="請輸入提案標題或編號"
         />
       </div>
-      <div class="flex items-center space-x-2 whitespace-nowrap">
+      <div class="col-span-2 flex items-center space-x-2 whitespace-nowrap md:col-span-1">
         <span class="text-sm">狀態</span>
-        <USelect v-model.number="filterStatus" :options="statusList" option-attribute="name" />
+        <USelect
+          v-model.number="filterStatus"
+          size="md"
+          class="w-full"
+          :options="statusList"
+          option-attribute="name"
+        />
       </div>
-      <div class="flex items-center space-x-2 whitespace-nowrap">
+      <div class="col-span-2 flex items-center space-x-2 whitespace-nowrap md:col-span-1">
         <span class="text-sm">新舊排序</span>
-        <USelect v-model="sortDesc" :options="sortList" option-attribute="name" />
+        <USelect
+          v-model="sortDesc"
+          size="md"
+          class="w-full"
+          :options="sortList"
+          option-attribute="name"
+        />
       </div>
       <UButton
         icon="i-heroicons-arrow-path"
-        class="!mr-4 ml-auto"
-        size="sm"
-        color="gray"
+        class="col-span-2 w-full border border-neutral-400 bg-neutral-100 text-neutral-500 transition-all hover:bg-neutral-200 md:col-span-1 lg:[width:max-content]"
+        size="md"
         @click="resetSearch"
         >重設搜尋條件</UButton
       >
       <UButton
         icon="i-heroicons-magnifying-glass"
-        class="!ml-auto"
+        class="col-span-2 !ml-auto w-full bg-secondary-2 transition-all hover:bg-primary-1 md:col-span-1 lg:[width:max-content]"
         size="md"
-        color="primary"
         @click="search"
         >搜尋</UButton
       >
     </div>
-    <div class="flex justify-end space-x-6 px-0 py-6 text-neutral-700">
-      <div class="mr-auto flex items-center space-x-2 text-sm">
-        <span>總共</span>
-        <p>{{ responsePagination.count }}</p>
-        <span>筆資料</span>
-      </div>
-      <div class="flex items-center space-x-2 text-sm">
-        <span>每頁</span>
-        <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
-        <span>筆</span>
-      </div>
-      <!-- <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" /> -->
-      <Pagination :pagination="responsePagination" @page="changePage" />
-    </div>
     <UTable
       :ui="{
-        wrapper: 'min-h-[300px] rounded-xl bg-neutral-50 shadow-sm',
+        wrapper: 'rounded-xl bg-neutral-50 shadow-sm',
         th: {
-          base: 'whitespace-nowrap ',
+          base: 'whitespace-nowrap',
           padding:
             'py-2 px-3 [&:first-child]:pl-6 [&:first-child]:pr-3 [&:last-child]:pr-6 [&:last-child]:pl-3'
         },
@@ -284,7 +281,7 @@ onMounted(() => {
     >
       <template #loading-state>
         <div class="flex h-32 items-center justify-center">
-          <i class="loader --6" />
+          <i class="loader" />
         </div>
       </template>
       <template #no-data="{ index }">
@@ -304,7 +301,6 @@ onMounted(() => {
           >
         </div>
       </template>
-
       <template #coverUrl-data="{ row }">
         <img
           :src="row.coverUrl"
@@ -319,10 +315,12 @@ onMounted(() => {
         </div>
       </template>
       <template #target-data="{ row }">
-        <div class="flex flex-wrap overflow-hidden whitespace-normal [word-break:break-word]">
-          <p>{{ row.feedbackMoney }}</p>
+        <div
+          class="flex flex-wrap overflow-hidden whitespace-nowrap font-semibold text-neutral-700 [word-break:break-word]"
+        >
+          <p>${{ row.feedbackMoney }}</p>
           <div class="mx-1">/</div>
-          <p>{{ row.targetMoney }}</p>
+          <p>${{ row.targetMoney }}</p>
         </div>
       </template>
       <template #teamName-data="{ row }">
@@ -344,26 +342,42 @@ onMounted(() => {
         </div>
       </template>
     </UTable>
-    <div class="flex justify-end space-x-6 px-0 py-6 text-neutral-700">
-      <div class="mr-auto flex items-center space-x-2 text-sm">
-        <span>總共</span>
-        <p>{{ responsePagination.count }}</p>
-        <span>筆資料</span>
+    <div
+      class="flex flex-wrap items-center space-y-6 px-0 py-6 text-neutral-700 lg:flex-row lg:flex-nowrap lg:justify-end lg:space-x-6 lg:space-y-0"
+    >
+      <div class="flex w-full items-center justify-center md:w-1/2">
+        <div
+          class="flex w-full flex-wrap items-center justify-center space-x-2 text-sm lg:mr-auto lg:justify-start lg:[width:max-content]"
+        >
+          <span>總共</span>
+          <p>{{ responsePagination.count }}</p>
+          <span>筆資料</span>
+        </div>
       </div>
-      <div class="flex items-center space-x-2 text-sm">
-        <span>每頁</span>
-        <USelect v-model.number="pageSize" :options="pageList" option-attribute="name" />
-        <span>筆</span>
+      <div class="flex w-full items-center justify-center md:!mt-0 md:w-1/2">
+        <div
+          class="flex items-center justify-center space-x-2 text-sm [max-width:max-content] md:w-full md:[max-width:inherit] lg:justify-end"
+        >
+          <span class="flex-shrink-0">每頁</span>
+          <USelect
+            v-model.number="pageSize"
+            class="w-full lg:[width:max-content]"
+            size="md"
+            :options="pageList"
+            option-attribute="name"
+          />
+          <span class="flex-shrink-0">筆</span>
+        </div>
       </div>
-      <!-- <UPagination v-model="pageNo" :page-count="pageSize" :total="responsePagination.count" /> -->
-      <Pagination :pagination="responsePagination" @page="changePage" />
+      <Pagination
+        class="mx-auto md:mt-6 lg:mt-0"
+        :pagination="responsePagination"
+        @page="changePage"
+      />
     </div>
   </div>
 </template>
 <style lang="scss">
-:deep(.custom-pagination) {
-  @apply py-0;
-}
 tr {
   @apply transition-all;
 }
@@ -373,50 +387,19 @@ thead {
   }
 }
 .loader {
-  --color: rgb(var(--color-primary-400));
-  --size-mid: 6vmin;
-  --size-dot: 1.5vmin;
-  --size-bar: 0.4vmin;
-  --size-square: 3vmin;
+  --loader: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
 
-  position: relative;
-  display: block;
-  display: grid;
-  width: 50%;
-  place-items: center;
-}
-.loader::before,
-.loader::after {
-  content: '';
-  box-sizing: border-box;
-  position: absolute;
+  aspect-ratio: 1;
+  mask: var(--loader);
+  mask-composite: source-out;
+  mask-composite: subtract;
+
+  @apply w-[50px] animate-[l3_1s_infinite_linear] rounded-full bg-neutral-400 p-2;
 }
 
-/**
-    loader --6
-**/
-.loader.--6::before {
-  top: calc(50% - var(--size-square));
-  left: calc(50% - var(--size-square));
-  width: var(--size-square);
-  height: var(--size-square);
-  background-color: var(--color);
-  animation: loader-6 2.4s cubic-bezier(0, 0, 0.24, 1.21) infinite;
-}
-
-@keyframes loader-6 {
-  0%,
-  100% {
-    transform: none;
-  }
-  25% {
-    transform: translateX(100%);
-  }
-  50% {
-    transform: translateX(100%) translateY(100%);
-  }
-  75% {
-    transform: translateY(100%);
+@keyframes l3 {
+  to {
+    transform: rotate(1turn);
   }
 }
 </style>
