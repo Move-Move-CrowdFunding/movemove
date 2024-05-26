@@ -122,12 +122,7 @@ const submitLogin = async () => {
                 忘記密碼
               </p>
             </div>
-            <BaseButton
-              class="rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50"
-              @click="submitLogin"
-            >
-              登入
-            </BaseButton>
+            <UButton size="lg" @click="submitLogin"> 登入 </UButton>
           </div>
         </div>
       </template>
@@ -149,9 +144,7 @@ const submitLogin = async () => {
                 >回登入頁</a
               >
             </div>
-            <BaseButton class="rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50">
-              獲取新密碼
-            </BaseButton>
+            <UButton size="lg"> 獲取新密碼 </UButton>
           </div>
         </div>
       </template>
@@ -194,15 +187,15 @@ const submitLogin = async () => {
                 >
               </p>
             </div>
-            <BaseButton
-              class="rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50"
-              @click="submitSignUp"
-            >
-              註冊
-            </BaseButton>
+            <UButton size="lg" @click="submitSignUp"> 註冊 </UButton>
           </div>
         </div>
       </template>
     </div>
   </div>
 </template>
+<style lang="scss" scoped>
+button {
+  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 text-neutral-50 transition hover:bg-primary-2;
+}
+</style>

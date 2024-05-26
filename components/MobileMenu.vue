@@ -11,12 +11,11 @@ const categoryMenuList = ref(
     }
   })
 )
-
 const modelValue = defineModel()
 </script>
 <template>
   <div
-    class="fixed bottom-0 left-0 right-0 top-[72px] flex w-full flex-1 translate-y-[calc(-72px_+_-100%)] flex-col overflow-y-auto overflow-x-hidden bg-neutral-100 transition-all duration-300 ease-in-out lg:hidden"
+    class="fixed bottom-0 left-0 right-0 top-[72px] flex w-full flex-1 translate-y-[calc(-72px_+_-100%)] flex-col overflow-y-auto overflow-x-hidden bg-neutral-100 transition-all duration-300 ease-in-out md:hidden lg:hidden"
     :class="{ '!-translate-y-0': modelValue }"
   >
     <div class="flex flex-1 flex-col overflow-hidden">
@@ -24,10 +23,7 @@ const modelValue = defineModel()
         v-if="isLogin.isLogin"
         class="peer flex items-center space-x-6 border-b border-neutral-100 bg-neutral-50 px-3 py-4"
       >
-        <Avatar
-          :src="isLogin.userData.avatar"
-          class="h-[60px] w-[60px] flex-shrink-0 overflow-hidden rounded-full object-cover"
-        />
+        <Avatar :src="isLogin.userData.avatar" class="h-[60px] w-[60px]" />
         <div class="space-y-2 overflow-hidden text-neutral-900">
           <h5 class="overflow-hidden text-ellipsis whitespace-nowrap">
             {{ isLogin.userData.nickName }}
@@ -62,28 +58,25 @@ const modelValue = defineModel()
           </ul>
         </div>
         <div class="bg-neutral-50 peer-[&]:mt-2">
-          <BaseButton
+          <UButton
             v-if="!isLogin.isLogin"
-            class="flex flex-shrink-0 items-center space-x-2 px-3 py-6 text-neutral-600"
+            class="flex flex-shrink-0 items-center space-x-2 rounded-none bg-neutral-50 px-3 py-6 text-base font-normal text-neutral-600"
             tag="nuxtLink"
             to="/login"
-          >
-            <span>登入/註冊</span>
-          </BaseButton>
-          <BaseButton
+            >登入/註冊
+          </UButton>
+          <UButton
             v-else
-            class="flex flex-shrink-0 items-center space-x-2 px-3 py-6 text-neutral-600"
+            class="flex flex-shrink-0 items-center space-x-2 rounded-none bg-neutral-50 px-3 py-6 text-base font-normal text-neutral-600"
             tag="nuxtLink"
             to="/"
             @click="logout"
           >
-            <template #prepend>
-              <div
-                class="h-6 w-6 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/logout.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
-              ></div>
-            </template>
-            <span>登出</span>
-          </BaseButton>
+            <div
+              class="h-6 w-6 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/logout.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+            ></div>
+            登出
+          </UButton>
         </div>
       </div>
     </div>

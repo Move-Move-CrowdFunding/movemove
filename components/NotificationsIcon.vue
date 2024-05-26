@@ -7,10 +7,10 @@ defineProps({
 })
 </script>
 <template>
-  <BaseButton
+  <UButton
     tag="nuxtLink"
     to="/member/notifications"
-    class="relative h-full flex-shrink-0 items-center justify-center p-2"
+    class="relative h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2 shadow-none transition-all hover:bg-secondary-3/20 focus:outline-0"
   >
     <div
       class="bg-neutral-2 h-6 w-6 flex-shrink-0 overflow-hidden bg-secondary-2 [mask-image:url('~/assets/icons/notifications.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
@@ -23,5 +23,5 @@ defineProps({
         {{ count }}
       </p>
     </div>
-  </BaseButton>
+  </UButton>
 </template>
