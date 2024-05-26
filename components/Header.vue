@@ -10,7 +10,6 @@ const menuIsShow = ref(false)
 const menuList = ref(menuMapList)
 
 const isLogin = useIsLoginStore()
-
 const searchIsShow = ref(false)
 
 const toggleMenu = () => {
@@ -25,15 +24,17 @@ onClickOutside(dropdown, () => {
 
 onMounted(() => {
   nextTick(async () => {
-    const { data } = await getMemberNotificationUnread()
-    const { count } = data.value?.results
-    notificationsCount.value = count
+    if (isLogin.isLogin) {
+      const { data } = await getMemberNotificationUnread()
+      const { count } = data.value?.results
+      notificationsCount.value = count
+    }
   })
 })
 </script>
 <template>
   <header class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between md:shadow-none">
-    <div class="relative z-10 w-full bg-neutral-50 shadow-md">
+    <div class="relative z-50 w-full bg-neutral-50 shadow-md">
       <div class="relative z-10 mx-auto px-3 py-4 lg:container">
         <div class="relative flex items-center justify-between space-x-4">
           <BaseLogo
@@ -50,26 +51,26 @@ onMounted(() => {
                 placeholder="搜尋 提案關鍵字"
                 name=""
               />
-              <BaseButton
+              <UButton
                 v-show="false"
                 class="flex h-full flex-shrink-0 items-center justify-center p-2"
               >
                 <div
                   class="h-6 w-6 flex-shrink-0 bg-neutral-900 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                 ></div>
-              </BaseButton>
-              <BaseButton
-                class="flex h-full flex-shrink-0 items-center justify-center border-l border-neutral-400 p-2"
+              </UButton>
+              <UButton
+                class="flex h-full flex-shrink-0 items-center justify-center rounded-none border-l border-neutral-400 bg-neutral-50 p-2 transition-all hover:bg-secondary-3/20"
               >
                 <div
                   class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/search.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                 ></div>
-              </BaseButton>
+              </UButton>
             </div>
             <div class="flex space-x-4">
               <div class="flex space-x-4">
-                <NuxtLink to="/projects" class="block p-2">探索</NuxtLink>
-                <NuxtLink to="/create" class="block p-2">提案</NuxtLink>
+                <NuxtLink to="/projects" class="block p-2 hover:text-secondary-2">探索</NuxtLink>
+                <NuxtLink to="/create" class="block p-2 hover:text-secondary-2">提案</NuxtLink>
               </div>
               <NotificationsIcon
                 v-if="isLogin.isLogin"
@@ -77,20 +78,20 @@ onMounted(() => {
                 class="hidden md:flex"
               />
             </div>
-            <BaseButton
+            <UButton
               v-if="!isLogin.isLogin"
-              class="rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50"
+              class="rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 transition-all hover:bg-primary-1"
               to="/login"
               tag="nuxtLink"
             >
               登入/註冊
-            </BaseButton>
+            </UButton>
             <div class="relative cursor-pointer" @click="toggleMenu">
               <Avatar
                 v-if="isLogin.isLogin"
                 ref="dropdown"
                 src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                class="h-10 w-10 overflow-hidden rounded-full object-cover"
+                class="h-[40px] w-[40px]"
               />
               <ListMenu
                 ref="dropdownMenu"
@@ -116,20 +117,22 @@ onMounted(() => {
                     placeholder="搜尋 提案關鍵字"
                     name=""
                   />
-                  <BaseButton class="flex h-full flex-shrink-0 items-center justify-center p-2">
+                  <UButton
+                    class="flex h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2 shadow-none"
+                  >
                     <div
                       class="h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                     ></div>
-                  </BaseButton>
+                  </UButton>
                 </div>
-                <BaseButton
-                  class="-mr-1 ml-2 flex h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2"
+                <UButton
+                  class="-mr-1 ml-2 flex h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2 shadow-none"
                   @click="searchIsShow = false"
                 >
                   <div
                     class="h-6 w-6 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:_36px]"
                   ></div>
-                </BaseButton>
+                </UButton>
               </div>
               <div class="ml-auto block p-2 md:hidden" @click="searchIsShow = true">
                 <div
