@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import { onClickOutside } from '@vueuse/core'
 import { menuMapList } from '@/utils/menuMaps'
 import { getMemberNotificationUnread } from '@/apis/member'
 
@@ -14,7 +13,10 @@ const notificationsCount = ref(0)
 const isLogin = useIsLoginStore()
 const searchIsShow = ref(false)
 
-const mobileMenuIsShow = ref(false)
+const mobileState = useMenuStore()
+const mobileMenuToggle = () => {
+  mobileState.mobileMenuShow = !mobileState.mobileMenuShow
+}
 
 const dropdownMenuList = computed<DropdownMenu[][]>(() => {
   const mapMenuList: DropdownMenu[] = menuMapList.map((item) => {
@@ -35,6 +37,31 @@ const dropdownMenuList = computed<DropdownMenu[][]>(() => {
   })
   return [mapMenuList]
 })
+
+const searchKeyword = ref('')
+
+// 是否顯示 input 清除按鈕
+const isSearchDeleteBtnShow = computed(() => {
+  return searchKeyword.value.length > 0
+})
+const clearSearchKeyword = () => {
+  searchKeyword.value = ''
+}
+const searchJumpTo = () => {
+  if (searchKeyword.value.trim()) {
+    navigateTo({
+      path: `/projects`,
+      query: {
+        pageNo: 1,
+        pageSize: 10,
+        categoryKey: 0,
+        isExpired: 'false',
+        sort: 1,
+        keyword: searchKeyword.value
+      }
+    })
+  }
+}
 
 onMounted(() => {
   nextTick(async () => {
@@ -62,24 +89,28 @@ onMounted(() => {
             >
               <input
                 id=""
-                class="text-netural-600 placeholder:text-netural-50 w-full py-2 pl-2 pr-4 outline-none transition-all"
+                v-model="searchKeyword"
+                class="text-netural-600 placeholder:text-netural-50 w-full px-2 pl-2 pr-0 outline-none transition-all"
                 type="text"
                 placeholder="搜尋 提案關鍵字"
                 name=""
               />
               <UButton
-                v-show="false"
-                class="flex h-full flex-shrink-0 items-center justify-center p-2"
+                :class="isSearchDeleteBtnShow ? 'flex' : 'hidden'"
+                class="h-full flex-shrink-0 items-center justify-center bg-inherit p-2 shadow-none hover:bg-inherit"
+                title="清除搜尋內容"
+                @click="clearSearchKeyword"
               >
                 <div
                   class="h-6 w-6 flex-shrink-0 bg-neutral-900 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                 ></div>
               </UButton>
               <UButton
-                class="flex h-full flex-shrink-0 items-center justify-center rounded-none border-l border-neutral-400 bg-neutral-50 p-2 transition-all hover:bg-secondary-3/20"
+                class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-none border-l border-neutral-400 bg-neutral-50 p-2 transition-all hover:bg-secondary-3/20"
+                @click="searchJumpTo"
               >
                 <div
-                  class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/search.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+                  class="bg-neutral-2 h-[18px] w-[18px] flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/search.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                 ></div>
               </UButton>
             </div>
@@ -119,7 +150,7 @@ onMounted(() => {
               :items="dropdownMenuList"
               :popper="{ offsetDistance: 17, placement: 'top' }"
             >
-              <Avatar :src="isLogin.userData.avatar" class="h-[40px] w-[40px]" />
+              <Avatar default-image-size="sm" :src="isLogin.userData.avatar" />
             </UDropdown>
           </div>
           <div class="flex flex-row">
@@ -133,13 +164,17 @@ onMounted(() => {
                   ></div>
                   <input
                     id=""
+                    v-model="searchKeyword"
                     class="text-netural-600 placeholder:text-netural-50 peer w-full py-2 pl-1 pr-2 outline-none transition-all"
                     type="text"
                     placeholder="搜尋 提案關鍵字"
                     name=""
+                    @keyup.enter="searchJumpTo"
                   />
                   <UButton
-                    class="flex h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2 shadow-none"
+                    :class="isSearchDeleteBtnShow ? 'flex' : 'hidden'"
+                    class="h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2 shadow-none hover:bg-inherit"
+                    @click="clearSearchKeyword"
                   >
                     <div
                       class="h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
@@ -166,7 +201,7 @@ onMounted(() => {
               :count="notificationsCount"
               class="flex md:hidden"
             />
-            <div class="block p-2 md:hidden" @click="mobileMenuIsShow = !mobileMenuIsShow">
+            <div class="block p-2 md:hidden" @click="mobileMenuToggle">
               <div
                 class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-secondary-2 [mask-image:url('~/assets/icons/menu.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
               ></div>
@@ -175,6 +210,6 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <MobileMenu v-model="mobileMenuIsShow" />
+    <MobileMenu v-model="mobileState.mobileMenuShow" />
   </header>
 </template>
