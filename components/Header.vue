@@ -1,25 +1,39 @@
 <script setup lang="ts">
-import { onClickOutside } from '@vueuse/core'
+// import { onClickOutside } from '@vueuse/core'
+import { menuMapList } from '@/utils/menuMaps'
 import { getMemberNotificationUnread } from '@/apis/member'
 
-const notificationsCount = ref(0)
+interface DropdownMenu {
+  label: string
+  to?: string
+  click?: () => void
+}
 
-const dropdown = ref(null)
-const dropdownMenu = ref(null)
-const menuIsShow = ref(false)
-const menuList = ref(menuMapList)
+const notificationsCount = ref(0)
 
 const isLogin = useIsLoginStore()
 const searchIsShow = ref(false)
 
-const toggleMenu = () => {
-  if (dropdownMenu.value) {
-    menuIsShow.value = !menuIsShow.value
-  }
-}
 const mobileMenuIsShow = ref(false)
-onClickOutside(dropdown, () => {
-  menuIsShow.value = false
+
+const dropdownMenuList = computed<DropdownMenu[][]>(() => {
+  const mapMenuList: DropdownMenu[] = menuMapList.map((item) => {
+    return {
+      label: item.name,
+      to: item.url
+    }
+  })
+  if (isLogin.userData.auth) {
+    mapMenuList.push({
+      label: '後台',
+      to: '/admin'
+    })
+  }
+  mapMenuList.push({
+    label: '登出',
+    click: logout
+  })
+  return [mapMenuList]
 })
 
 onMounted(() => {
@@ -33,7 +47,9 @@ onMounted(() => {
 })
 </script>
 <template>
-  <header class="sticky left-0 right-0 top-0 z-10 flex items-center justify-between md:shadow-none">
+  <header
+    class="sticky left-0 right-0 top-0 z-[60] flex items-center justify-between md:shadow-none"
+  >
     <div class="relative z-50 w-full bg-neutral-50 shadow-md">
       <div class="relative z-10 mx-auto px-3 py-4 lg:container">
         <div class="relative flex items-center justify-between space-x-4">
@@ -86,20 +102,25 @@ onMounted(() => {
             >
               登入/註冊
             </UButton>
-            <div class="relative cursor-pointer" @click="toggleMenu">
-              <Avatar
-                v-if="isLogin.isLogin"
-                ref="dropdown"
-                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-                class="h-[40px] w-[40px]"
-              />
-              <ListMenu
-                ref="dropdownMenu"
-                :class="menuIsShow ? 'block' : 'hidden'"
-                class="absolute right-0 top-[56px] w-[112px] translate-x-6 shadow-xl"
-                :menu-list="menuList"
-              />
-            </div>
+            <UDropdown
+              v-if="isLogin.isLogin"
+              :ui="{
+                container: 'w-[112px]',
+                base: 'flex flex-col bg-neutral-50 text-center !ring-0',
+                rounded: 'rounded-none',
+                padding: 'p-0',
+                item: {
+                  base: 'block !px-6 !py-2 hover:text-secondary-2',
+                  size: 'text-base',
+                  active: 'hover:rounded-none bg-neutral-50'
+                },
+                shadow: 'shadow-xl'
+              }"
+              :items="dropdownMenuList"
+              :popper="{ offsetDistance: 17, placement: 'top' }"
+            >
+              <Avatar :src="isLogin.userData.avatar" class="h-[40px] w-[40px]" />
+            </UDropdown>
           </div>
           <div class="flex flex-row">
             <div class="flex flex-row bg-neutral-50">
