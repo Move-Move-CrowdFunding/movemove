@@ -14,7 +14,6 @@ const checkPermission = async () => {
 }
 const getTempUser = (data) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
-  console.log(tempUser.value)
 }
 const editUser = async () => {
   await getFetchData({
@@ -59,15 +58,11 @@ const changePassword = async () => {
       console.log(err)
       alert(err.message)
     })
-  console.log(tempPassword)
 }
 const showPassword = ref(false)
 
 const uploadedFile = ref(null)
 const uploadFile = async () => {
-  console.log('upload')
-  console.log(uploadedFile.value.files[0])
-
   const formData = new FormData()
   formData.append('資料屬性(根據後端決定)', uploadedFile.value.files[0])
 
@@ -80,9 +75,8 @@ const uploadFile = async () => {
     }
   })
     .then((res) => {
-      console.log(res.results.imageUrl)
       tempUser.value.avatar = res.results.imageUrl
-      isLogin.getUserData()
+      editUser()
     })
     .catch((err) => {
       console.log(err)
@@ -120,11 +114,6 @@ onMounted(() => {
                 @change="uploadFile"
               />
             </div>
-
-            <!-- <button class=" p-0.5 bg-secondary-1 hover:bg-primary-1 text-white rounded flex items-center justify-center" @click="uploadFile">
-              
-              <Icon name="material-symbols:upload" width="20" height="20" color="white" />
-            </button> -->
           </div>
           <div>
             <div class="mb-3 text-xl font-bold lg:text-3xl">{{ isLogin.userData.nickName }}</div>
