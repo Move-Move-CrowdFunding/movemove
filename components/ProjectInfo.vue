@@ -11,25 +11,18 @@ const props = defineProps({
     required: true
   }
 })
-const { tempData } = toRefs(props)
+const { tempData } = props
 
 const dateInput = ref({
   startDate: dayjs(tempData.startDate * 1000).format('YYYY-MM-DD'),
   endDate: dayjs(tempData.endDate * 1000).format('YYYY-MM-DD'),
   feedbackDate: dayjs(tempData.feedbackDate * 1000).format('YYYY-MM-DD')
 })
-tempData.startDate = computed(() => {
-  const date = new Date(dateInput.value.startDate)
-  return date.getTime() / 1000
-})
-tempData.endDate = computed(() => {
-  const date = new Date(dateInput.value.endDate)
-  return date.getTime() / 1000
-})
-tempData.feedbackDate = computed(() => {
-  const date = new Date(dateInput.value.feedbackDate)
-  return date.getTime() / 1000
-})
+
+const changeDate = (item) => {
+  const date = new Date(dateInput.value[item])
+  tempData[item] = date.getTime() / 1000
+}
 
 const isDisable =
   inAdmin || tempData.value?.state?.state === 0 || tempData.value?.state?.state === 1
@@ -64,7 +57,7 @@ const uploadFile = async (item) => {
     })
 }
 
-// const emit = defineEmits(['createProject'])
+const emit = defineEmits(['createProject'])
 </script>
 <template>
   <div>
@@ -79,7 +72,6 @@ const uploadFile = async (item) => {
           <p class="">失敗</p>
         </div>
       </div>
-
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12">
         <div class="order-2 lg:order-1">
           <h2 class="">提案人資料</h2>
@@ -160,7 +152,7 @@ const uploadFile = async (item) => {
               好的標題應該要好記、好搜尋、吸引人想點進去看，並讓瀏覽者能在最短的時間內瞭解專案的核心理念。
             </p>
           </div>
-          <div class="mb-6 grid grid-cols-2 gap-8">
+          <div class="mb-6 grid grid-cols-2 gap-3">
             <div>
               <label for="categoryKey">分類</label>
               <select
@@ -178,7 +170,7 @@ const uploadFile = async (item) => {
             </div>
             <div>
               <label for="targetMoney">提案目標</label>
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center">
                 <input
                   id="targetMoney"
                   v-model="tempData.targetMoney"
@@ -194,13 +186,14 @@ const uploadFile = async (item) => {
           </div>
           <div class="mb-6">
             <label for="">預計時間</label>
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center">
               <input
                 id="startDate"
                 v-model="dateInput.startDate"
                 type="date"
                 class="grow"
                 :disabled="isDisable"
+                @change="changeDate('startDate')"
               />
               <span>→</span>
               <input
@@ -209,6 +202,7 @@ const uploadFile = async (item) => {
                 type="date"
                 class="grow"
                 :disabled="isDisable"
+                @change="changeDate('endDate')"
               />
             </div>
             <p class="mt-2 text-xs">
@@ -337,7 +331,7 @@ const uploadFile = async (item) => {
           </div>
           <div class="mb-6">
             <label for="feedbackMoney">回饋門檻</label>
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center">
               <input
                 id="feedbackMoney"
                 v-model="tempData.feedbackMoney"
@@ -359,11 +353,12 @@ const uploadFile = async (item) => {
               placeholder="請輸入寄出日期"
               class="block w-full"
               :disabled="isDisable"
+              @change="changeDate('feedbackDate')"
             />
           </div>
         </div>
       </div>
-      <!-- <div
+      <div
         v-if="inAdmin && tempData.state.state == 0"
         class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10 sm:flex-row"
       >
@@ -391,7 +386,7 @@ const uploadFile = async (item) => {
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
       >
         送出
-      </button> -->
+      </button>
     </div>
   </div>
 </template>
@@ -406,6 +401,6 @@ label {
 input,
 textarea,
 select {
-  @apply min-h-[50px] rounded border p-3;
+  @apply rounded border p-3;
 }
 </style>

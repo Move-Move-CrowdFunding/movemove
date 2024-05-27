@@ -20,12 +20,15 @@ const { project } = props
 const date = new Date()
 
 const toggleFollow = (id) => {
-  console.log(id)
+  if (id) {
+    console.log(id)
+  }
 }
 </script>
 <template>
-  <NuxtLink
-    :to="`/projects/${project.id || ''}`"
+  <component
+    :is="project.id ? 'NuxtLink' : 'div'"
+    :to="project.id ? `/projects/${project.id}` : null"
     target="_blank"
     class="group block overflow-hidden rounded-3xl border border-primary-3 duration-300 hover:border-primary-1 hover:shadow-lg lg:rounded-[32px]"
   >
@@ -36,7 +39,7 @@ const toggleFollow = (id) => {
       ></div>
       <button
         v-if="isLogin.isLogin"
-        class="group absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
+        class="group absolute right-1 top-1 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': project.trackingStatus, 'fill-white': !project.trackingStatus }"
         @click.prevent="toggleFollow(project.id)"
       >
@@ -79,5 +82,5 @@ const toggleFollow = (id) => {
         </p>
       </div>
     </div>
-  </NuxtLink>
+  </component>
 </template>
