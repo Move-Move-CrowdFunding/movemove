@@ -165,71 +165,20 @@ onMounted(() => {
           <h2 class="text-3xl sm:text-4xl">提案類別</h2>
           <div class="col-span-3">
             <ul class="grid grid-cols-2 gap-6 lg:grid-cols-3">
-              <li
-                class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
-              >
-                <img src="~/assets/images/index/category/mobile-1.png" alt="" class="sm:hidden" />
-                <img
-                  src="~/assets/images/index/category/desktop-1.png"
-                  alt=""
-                  class="hidden sm:block"
-                />
-                <p>教育</p>
-              </li>
-              <li
-                class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
-              >
-                <img src="~/assets/images/index/category/mobile-2.png" alt="" class="sm:hidden" />
-                <img
-                  src="~/assets/images/index/category/desktop-2.png"
-                  alt=""
-                  class="hidden sm:block"
-                />
-                <p>弱勢救助</p>
-              </li>
-              <li
-                class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
-              >
-                <img src="~/assets/images/index/category/mobile-3.png" alt="" class="sm:hidden" />
-                <img
-                  src="~/assets/images/index/category/desktop-3.png"
-                  alt=""
-                  class="hidden sm:block"
-                />
-                <p>國際支援</p>
-              </li>
-              <li
-                class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
-              >
-                <img src="~/assets/images/index/category/mobile-4.png" alt="" class="sm:hidden" />
-                <img
-                  src="~/assets/images/index/category/desktop-4.png"
-                  alt=""
-                  class="hidden sm:block"
-                />
-                <p>兒少福利</p>
-              </li>
-              <li
-                class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
-              >
-                <img src="~/assets/images/index/category/mobile-5.png" alt="" class="sm:hidden" />
-                <img
-                  src="~/assets/images/index/category/desktop-5.png"
-                  alt=""
-                  class="hidden sm:block"
-                />
-                <p>長者</p>
-              </li>
-              <li
-                class="flex items-center gap-3 rounded-2xl bg-white px-4 font-bold leading-normal sm:rounded-3xl sm:px-8 sm:text-2xl"
-              >
-                <img src="~/assets/images/index/category/mobile-6.png" alt="" class="sm:hidden" />
-                <img
-                  src="~/assets/images/index/category/desktop-6.png"
-                  alt=""
-                  class="hidden sm:block"
-                />
-                <p>婦女</p>
+              <li v-for="(item, index) in categoryKeys" :key="index">
+                <NuxtLink
+                  :to="`/projects?category=${item.key}`"
+                  target="_blank"
+                  class="flex items-center gap-3 rounded-2xl border border-white bg-white px-4 font-bold leading-normal duration-300 hover:border-primary-1 sm:rounded-3xl sm:px-8 sm:text-2xl"
+                >
+                  <img :src="`/images/category/mobile-${index + 1}.png`" alt="" class="sm:hidden" />
+                  <img
+                    :src="`/images/category/desktop-${index + 1}.png`"
+                    alt=""
+                    class="hidden sm:block"
+                  />
+                  <p>{{ item.name }}</p>
+                </NuxtLink>
               </li>
             </ul>
           </div>
