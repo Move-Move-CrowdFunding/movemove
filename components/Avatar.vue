@@ -7,14 +7,26 @@ defineProps({
   alt: {
     type: String,
     default: ''
+  },
+  defaultImageSize: {
+    type: String,
+    default: 'lg'
   }
 })
 </script>
 <template>
-  <div class="flex-shrink-0">
+  <div
+    class="flex-shrink-0"
+    :class="defaultImageSize === 'lg' ? 'h-[60px] w-[60px]' : 'h-[40px] w-[40px]'"
+  >
     <div
       v-if="!src"
-      class="m-auto flex h-[58px] w-[58px] flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-neutral-200 before:block before:h-12 before:w-12 before:bg-neutral-200 before:content-[''] before:[mask-image:url('~/assets/icons/avatar.svg')] before:[mask-position:center] before:[mask-repeat:no-repeat] before:[mask-size:contain]"
+      class="m-auto flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-neutral-200 before:block before:bg-neutral-200 before:content-[''] before:[mask-image:url('~/assets/icons/avatar.svg')] before:[mask-position:center] before:[mask-repeat:no-repeat] before:[mask-size:contain]"
+      :class="
+        defaultImageSize === 'lg'
+          ? 'h-[58px] w-[58px] before:h-12 before:w-12'
+          : 'h-[40px] w-[40px] before:h-9 before:w-9'
+      "
     ></div>
     <img
       v-else
@@ -22,14 +34,6 @@ defineProps({
       :alt="alt"
       :src="src"
     />
-    <div class="absolute bottom-0 right-0 hidden group-hover:block">
-      <label
-        for="uploadImage"
-        class="flex cursor-pointer items-center justify-center rounded bg-secondary-1 p-0.5 text-white hover:bg-primary-1"
-      >
-        <Icon name="material-symbols:upload" width="20" height="20" color="white" />
-      </label>
-    </div>
     <slot name="upload" />
   </div>
 </template>
