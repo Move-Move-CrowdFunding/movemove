@@ -1,11 +1,18 @@
 <script setup>
 const route = useRoute()
+const router = useRouter()
 const pageNo = ref(1)
 const pagination = ref({})
 const selectedCategory = ref(Number(route.query.category))
 const selectCategory = (key) => {
   pageNo.value = 1
   selectedCategory.value = key
+  router.push({
+    query: {
+      ...route.query,
+      category: key
+    }
+  })
   getAdminProjects()
 }
 const sort = ref(1)
