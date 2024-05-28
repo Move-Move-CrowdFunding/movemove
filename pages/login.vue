@@ -72,7 +72,7 @@ const submitLogin = async () => {
 </script>
 <template>
   <div
-    class="flex min-h-dvh w-full flex-col overflow-y-auto overflow-x-hidden bg-[url('https://s3-alpha-sig.figma.com/img/63b9/c4de/1d365aa54c32994571885671912f4ecc?Expires=1716163200&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=LloJcbNY89E8mGl5d3O02BCigmRlCShJ0Iuut0CI5jrVoMthIgWrsq5d4ssi--zTMVIYAvpmsi25~oHkWGPwXElEpzzSZKBLWJZmo6UUudhjfySXj8EqFvF3WsO29dEb48dg~-HOfTBSyxTLtt0R6P8t-uAlWR~UOKl70dmBqoJ5iADxZsmAnjPFPv9VHTv-wrl8aYMhX8wC0FaDGCusmF9y~JBwAE3T91o1MoODDBq9muq5KLOsxTbmQWHGhom4T6rrp4O6IUTaGirfVwb~tvHvmzc1gkCRumpoozw7YiaGzm99lEA~-4RYUf1HSoPH41Ixkc9KNaThHqHjM9pXzg__')] bg-cover bg-center before:absolute before:inset-0 before:backdrop-blur-sm before:content-[''] md:flex-row md:items-start md:justify-start"
+    class="flex min-h-dvh w-full flex-col overflow-y-auto overflow-x-hidden bg-[url('~/assets/images/login.jpeg')] bg-cover bg-center before:absolute before:inset-0 before:backdrop-blur-sm before:content-[''] md:flex-row md:items-start md:justify-start"
   >
     <div
       class="flex min-h-dvh w-full flex-1 flex-col items-center justify-center overflow-auto py-8 before:absolute before:bottom-0 before:left-0 before:right-0 before:top-0 before:block before:bg-neutral-50/65 before:content-[''] md:flex-row md:py-4 md:before:left-[inherit] md:before:w-1/2"
