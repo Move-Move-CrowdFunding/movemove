@@ -24,8 +24,7 @@ const changeDate = (item) => {
   tempData[item] = date.getTime() / 1000
 }
 
-const isDisable =
-  inAdmin || tempData.value?.state?.state === 0 || tempData.value?.state?.state === 1
+const isDisable = inAdmin || tempData.value?.status === 0 || tempData.value?.status === 1
 
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
@@ -62,7 +61,7 @@ const emit = defineEmits(['createProject'])
 <template>
   <div>
     <div class="container py-10">
-      <div v-if="tempData?.state?.state === -1" class="border-2 border-secondary-2">
+      <div v-if="tempData?.status === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">
           <span>審核失敗</span>
           <span>2024/1/23</span>
@@ -130,7 +129,7 @@ const emit = defineEmits(['createProject'])
             <ul>
               <li v-for="item in tempData.reviewLog" :key="item">
                 {{ $timeformat(item.timestamp) }}
-                {{ item.state === 0 ? '➖' : item.state === -1 ? '✖️' : '✔️' }}
+                {{ item.status === 0 ? '➖' : item.status === -1 ? '✖️' : '✔️' }}
                 {{ item.content }}
               </li>
             </ul>
@@ -359,7 +358,7 @@ const emit = defineEmits(['createProject'])
         </div>
       </div>
       <div
-        v-if="inAdmin && tempData.state.state == 0"
+        v-if="inAdmin && tempData.status == 0"
         class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10 sm:flex-row"
       >
         <input type="text" class="w-full" />
@@ -369,20 +368,20 @@ const emit = defineEmits(['createProject'])
         </div>
       </div>
       <button
-        v-if="!tempData.state"
+        v-if="!tempData.status"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         @click="emit('createProject', tempData)"
       >
         發起提案
       </button>
       <button
-        v-if="tempData?.state?.state === 1 && !inAdmin"
+        v-if="tempData?.status === 1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
       >
         結束提案
       </button>
       <button
-        v-if="tempData?.state?.state === -1 && !inAdmin"
+        v-if="tempData?.status === -1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
       >
         送出
