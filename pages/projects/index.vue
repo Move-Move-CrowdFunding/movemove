@@ -1,7 +1,8 @@
 <script setup>
+const route = useRoute()
 const pageNo = ref(1)
 const pagination = ref({})
-const selectedCategory = ref(0)
+const selectedCategory = ref(Number(route.query.category))
 const selectCategory = (key) => {
   pageNo.value = 1
   selectedCategory.value = key
