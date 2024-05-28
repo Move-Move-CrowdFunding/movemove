@@ -69,6 +69,24 @@ const submitLogin = async () => {
       alert((err as ResponseData).message)
     })
 }
+
+const forgotPasswordForm = ref('')
+const forgotPassword = () => {
+  getFetchData({
+    url: '/user/forget-password',
+    method: 'POST',
+    params: {
+      email: forgotPasswordForm.value
+    }
+  })
+    .then((res) => {
+      alert((res as ResponseData).message)
+      forgotPasswordForm.value = ''
+    })
+    .catch((err) => {
+      alert((err as ResponseData).message)
+    })
+}
 </script>
 <template>
   <div
@@ -135,7 +153,12 @@ const submitLogin = async () => {
           <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
             <h3 class="peer text-center text-lg text-neutral-900">忘記密碼</h3>
             <div class="space-y-6 peer-[&]:mt-6">
-              <BaseInputField input-title="E-mail" placeholder="請輸入 E-mail" is-required />
+              <BaseInputField
+                v-model="forgotPasswordForm"
+                input-title="E-mail"
+                placeholder="請輸入 E-mail"
+                is-required
+              />
             </div>
             <div class="flex items-center justify-between">
               <a
@@ -144,7 +167,7 @@ const submitLogin = async () => {
                 >回登入頁</a
               >
             </div>
-            <UButton size="lg"> 獲取新密碼 </UButton>
+            <UButton size="lg" @click="forgotPassword"> 獲取新密碼 </UButton>
           </div>
         </div>
       </template>
