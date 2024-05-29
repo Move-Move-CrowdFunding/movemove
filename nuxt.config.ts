@@ -17,7 +17,8 @@ export default defineNuxtConfig({
     'nuxt-swiper',
     '@pinia/nuxt',
     '@nuxt/ui',
-    'dayjs-nuxt'
+    'dayjs-nuxt',
+    '@vee-validate/nuxt'
   ],
   typescript: {
     typeCheck: true
@@ -35,6 +36,17 @@ export default defineNuxtConfig({
     }
   },
   dayjs: {},
+  veeValidate: {
+    // 啟用 auto imports
+    autoImports: true,
+    // 更換 components 名稱
+    componentNames: {
+      Form: 'VeeForm',
+      Field: 'VeeField',
+      FieldArray: 'VeeFieldArray',
+      ErrorMessage: 'VeeErrorMessage'
+    }
+  },
   css: ['~/assets/style/root.scss'],
   runtimeConfig: {
     public: {

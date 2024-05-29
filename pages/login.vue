@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import * as yup from 'yup'
 import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'custom-layout'
@@ -6,7 +7,7 @@ definePageMeta({
 
 const isLogin = useIsLoginStore()
 
-const currentView = ref('login')
+const currentView = ref('register')
 
 const loginForm = ref({
   email: '',
@@ -17,6 +18,16 @@ const registerForm = ref({
   email: '',
   password: '',
   confirmPassword: ''
+})
+
+const schema = yup.object().shape({
+  nickName: yup.string().required(),
+  email: yup.string().required(),
+  password: yup.string().min(6).required()
+  // passwordConfirmation: yup
+  //   .string()
+  //   .required()
+  //   .oneOf([yup.ref('password')], 'Passwords do not match')
 })
 
 // 註冊
@@ -87,6 +98,16 @@ const forgotPassword = () => {
       alert((err as ResponseData).message)
     })
 }
+
+// function isRequired(value: string) {
+//   if (value && value.trim()) {
+//     return true
+//   }
+//   return 'This is required'
+// }
+function onSubmit(values: string) {
+  alert(JSON.stringify(values, null, 2))
+}
 </script>
 <template>
   <div
@@ -103,12 +124,20 @@ const forgotPassword = () => {
         />
       </div>
       <!-- 登入 -->
+
       <template v-if="currentView === 'login'">
         <div
           class="relative z-10 flex w-full justify-center p-6 md:h-full md:w-1/2 md:items-center"
         >
           <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
             <h3 class="peer text-center text-lg text-neutral-900">登入</h3>
+            <!-- <VeeForm @submit="onSubmit">
+              <VeeField name="email" type="email" rules="required|email" />
+              <VeeErrorMessage name="email" />
+              <VeeField name="password" type="password" :rules="checkPassword" />
+              <VeeErrorMessage name="password" />
+              <button type="submit">submit</button>
+            </VeeForm> -->
             <div class="space-y-6 peer-[&]:mt-6">
               <BaseInputField
                 v-model="loginForm.email"
@@ -178,6 +207,71 @@ const forgotPassword = () => {
           class="relative z-10 flex w-full justify-center p-6 md:h-full md:w-1/2 md:items-center"
         >
           <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
+            <VeeForm
+              v-slot="{ errors }"
+              :validation-schema="schema"
+              :initial-values="loginForm"
+              @submit="onSubmit"
+            >
+              <CustomInput
+                placeholder="請輸入 名稱"
+                label="名稱"
+                name="nickName"
+                type="text"
+                is-required
+              />
+              <CustomInput
+                placeholder="請輸入 E-mail"
+                label="E-mail"
+                name="email"
+                type="text"
+                is-required
+                rules="required|email"
+              />
+              <CustomInput
+                placeholder="請輸入 密碼"
+                label="密碼"
+                name="password"
+                type="password"
+                is-required
+              />
+              {{ errors }}
+              <UButton size="lg" @click="onSubmit"> 註冊 </UButton>
+            </VeeForm>
+            <!-- <VeeForm :validation-schema="schema" @submit="onSubmit">
+              <div class="flex w-full flex-shrink-0 flex-col space-y-2">
+                <label for="email" class="text-neutral-800">
+                  E-mail
+                  <span class="text-warning-500">*</span>
+                </label>
+                <VeeField
+                  id="email"
+                  v-model="loginForm.email"
+                  class="peer relative min-h-12 w-full appearance-none rounded-[3px] border border-neutral-400 p-3 outline-offset-0 transition-all focus:outline-0 focus:outline-offset-0"
+                  name="email"
+                  type="text"
+                  placeholder="E-mail"
+                />
+                <VeeErrorMessage class="text-warning-500 peer-invalid:visible" name="password" />
+              </div>
+              <div class="flex w-full flex-shrink-0 flex-col space-y-2">
+                <label for="password" class="text-neutral-800">
+                  密碼
+                  <span class="text-warning-500">*</span>
+                </label>
+                <VeeField
+                  id="password"
+                  v-model="loginForm.password"
+                  class="peer relative min-h-12 w-full appearance-none rounded-[3px] border border-neutral-400 p-3 outline-offset-0 transition-all focus:outline-0 focus:outline-offset-0"
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                />
+                <VeeErrorMessage class="text-warning-500 peer-invalid:visible" name="password" />
+              </div>
+
+              <button type="submit">Submit</button>
+            </VeeForm> -->
             <h3 class="peer text-center text-lg text-neutral-900">註冊</h3>
             <div class="space-y-6 peer-[&]:mt-6">
               <BaseInputField
