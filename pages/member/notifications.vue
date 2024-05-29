@@ -1,4 +1,16 @@
-<script setup>
+<script setup lang="ts">
+import type { ResponseData } from '~/types/response'
+
+// interface NotificationItem {
+//   id: string
+//   content: string
+//   createTime: number
+//   project: {
+//     id: string
+//     title: string
+//     coverUrl: string
+//   }
+// }
 const { $dateformat } = useNuxtApp()
 
 const isLogin = useIsLoginStore()
@@ -7,26 +19,30 @@ const tempUser = ref({})
 
 const notificationsList = ref([
   {
-    id: 1,
-    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+    id: '1',
+    content: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
     createTime: 1728492012,
-    coverUrl:
-      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-  },
-  {
-    id: 2,
-    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    createTime: 1728492012,
-    coverUrl:
-      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-  },
-  {
-    id: 3,
-    title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    createTime: 1728492012,
-    coverUrl:
-      'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    project: {
+      id: '1',
+      title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+      coverUrl:
+        'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    }
   }
+  // {
+  //   id: 2,
+  //   title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+  //   createTime: 1728492012,
+  //   coverUrl:
+  //     'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  // },
+  // {
+  //   id: 3,
+  //   title: '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
+  //   createTime: 1728492012,
+  //   coverUrl:
+  //     'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?q=80&w=1566&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  // }
 ])
 
 // 目前頁數
@@ -43,12 +59,22 @@ const checkPermission = async () => {
     await navigateTo('/login')
   }
 }
-const getTempUser = (data) => {
+
+const getNotifications = async () => {
+  await getFetchData({
+    url: '/member/notification',
+    method: 'GET'
+  }).then((res) => {
+    notificationsList.value = (res as ResponseData).results
+  })
+}
+const getTempUser = (data: any) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
 }
 onMounted(() => {
   nextTick(() => {
     checkPermission()
+    getNotifications()
   })
 })
 </script>
@@ -72,7 +98,7 @@ onMounted(() => {
             >
               <div class="relative h-56 w-full overflow-hidden lg:h-full">
                 <div
-                  :style="`background-image: url('${item.coverUrl}')`"
+                  :style="`background-image: url('${item.project.coverUrl}')`"
                   class="absolute inset-0 bg-cover bg-center duration-300 group-hover:scale-110"
                 ></div>
               </div>
@@ -83,7 +109,7 @@ onMounted(() => {
                 <h3 class="line-clamp-4 sm:text-[18px] md:line-clamp-2">
                   你發起的「<span
                     class="text-secondary-2 underline md:no-underline md:hover:underline"
-                    >{{ item.title }}</span
+                    >{{ item.project.title }}</span
                   >」已通過審核開始募資！
                 </h3>
               </div>
