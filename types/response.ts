@@ -1,5 +1,6 @@
 export interface ResponseData {
   status: string
   message: string
-  results: any
+  results?: any
+  [key: string]: any
 }
