@@ -17,7 +17,11 @@ const tempData = ref({
   feedbackItem: '',
   feedbackUrl: '',
   feedbackMoney: 0,
-  feedbackDate: NaN
+  feedbackDate: NaN,
+  state: {
+    state: 0,
+    content: ''
+  }
 })
 
 const createProject = async (tempData) => {
