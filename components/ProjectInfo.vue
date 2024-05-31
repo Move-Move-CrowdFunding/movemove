@@ -13,6 +13,11 @@ const props = defineProps({
 })
 const { tempData } = props
 
+const maxCreateTimeObject = tempData?.state?.reduce((max, current) => {
+  return current.createTime > max.createTime ? current : max
+}, tempData.state[0])
+tempData.status = maxCreateTimeObject?.status
+
 const dateInput = ref({
   startDate: dayjs(tempData.startDate * 1000).format('YYYY-MM-DD'),
   endDate: dayjs(tempData.endDate * 1000).format('YYYY-MM-DD'),
@@ -24,7 +29,7 @@ const changeDate = (item) => {
   tempData[item] = date.getTime() / 1000
 }
 
-const isDisable = inAdmin || tempData.value?.status === 0 || tempData.value?.status === 1
+const isDisable = inAdmin || tempData?.status === 0 || tempData?.status === 1
 
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
@@ -368,7 +373,7 @@ const emit = defineEmits(['createProject'])
         </div>
       </div>
       <button
-        v-if="!tempData.status"
+        v-if="!tempData?.state"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         @click="emit('createProject', tempData)"
       >
