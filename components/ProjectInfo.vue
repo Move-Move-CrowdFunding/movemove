@@ -11,25 +11,37 @@ const props = defineProps({
     required: true
   }
 })
+
 const { tempData } = toRefs(props)
 
-const maxCreateTimeObject = tempData?.state?.reduce((max, current) => {
-  return current.createTime > max.createTime ? current : max
-}, tempData.state[0])
-tempData.status = maxCreateTimeObject?.status
+// const maxCreateTimeObject = tempData?.state?.reduce((max, current) => {
+//   return current.createTime > max.createTime ? current : max
+// }, tempData.state[0])
+// tempData.value.status = maxCreateTimeObject?.status
 
+// 10 天後
+const tenDaysLater = ref(dayjs(dayjs()).add(11, 'day').format('YYYY-MM-DD'))
+
+// 10 天 + 7 天
+const sevenDaysAfterTenDays = ref(dayjs(tenDaysLater.value).add(7, 'day').format('YYYY-MM-DD'))
+
+// 綁定日期
 const dateInput = ref({
-  startDate: dayjs(tempData.startDate * 1000).format('YYYY-MM-DD'),
-  endDate: dayjs(tempData.endDate * 1000).format('YYYY-MM-DD'),
-  feedbackDate: dayjs(tempData.feedbackDate * 1000).format('YYYY-MM-DD')
+  startDate: tenDaysLater.value || tempData.value.startDate,
+  endDate: sevenDaysAfterTenDays.value || tempData.value.endDate,
+  feedbackDate: tempData.value.feedbackDate || ''
 })
 
+tempData.value.startDate = dayjs(dateInput.value.startDate).unix()
+tempData.value.endDate = dayjs(dateInput.value.endDate).unix()
+tempData.value.feedbackDate = dayjs(dateInput.value.feedbackDate).unix() || 0
 const changeDate = (item) => {
   const date = new Date(dateInput.value[item])
-  tempData[item] = date.getTime() / 1000
+  tempData.value[item] = date.getTime() / 1000
 }
 
-const isDisable = inAdmin || tempData?.status === 0 || tempData?.status === 1
+const isDisable =
+  inAdmin || tempData.value?.state?.state === 0 || tempData.value?.state?.state === 1
 
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
@@ -51,9 +63,9 @@ const uploadFile = async (item) => {
   })
     .then((res) => {
       if (item === 'cover') {
-        tempData.coverUrl = res.results.imageUrl
+        tempData.value.coverUrl = res.results.imageUrl
       } else {
-        tempData.feedbackUrl = res.results.imageUrl
+        tempData.value.feedbackUrl = res.results.imageUrl
       }
     })
     .catch((err) => {
@@ -85,7 +97,7 @@ const reviewProjectId = (approve) => {
 <template>
   <div>
     <div class="container py-10">
-      <div v-if="tempData?.state?.state === -1" class="border-2 border-secondary-2">
+      <div v-if="tempData.value?.state?.state === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">
           <span>審核失敗</span>
           <span>2024/1/23</span>
@@ -396,20 +408,20 @@ const reviewProjectId = (approve) => {
         </div>
       </div>
       <button
-        v-if="!tempData?.state"
+        v-if="tempData.value?.state?.state === 0 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         @click="emit('createProject', tempData)"
       >
         發起提案
       </button>
       <button
-        v-if="tempData?.state?.state === 1 && !inAdmin"
+        v-if="tempData.value?.state?.state === 1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
       >
         結束提案
       </button>
       <button
-        v-if="tempData?.state?.state === -1 && !inAdmin"
+        v-if="tempData.value?.state?.state === -1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
       >
         送出

@@ -34,7 +34,7 @@ const createProject = async (tempData) => {
   })
     .then((res) => {
       console.log(res)
-      // router.push({ path: `/create/success` })
+      navigateTo('/create/success')
     })
     .catch((err) => {
       console.log(err)
