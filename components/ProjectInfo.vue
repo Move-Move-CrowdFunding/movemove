@@ -35,7 +35,6 @@ const coverUpload = ref(null)
 const feedbackUpload = ref(null)
 const uploadFile = async (item) => {
   const formData = new FormData()
-  formData.append('coverUpload', coverUpload.value.files[0])
   if (item === 'cover') {
     formData.append('coverUpload', coverUpload.value.files[0])
   } else {
