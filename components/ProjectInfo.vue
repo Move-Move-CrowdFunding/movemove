@@ -12,8 +12,9 @@ const props = defineProps({
   }
 })
 
-const { tempData } = toRefs(props)
-const newTempData = ref(tempData.value)
+// const { tempData } = toRefs(props)
+console.log('props.tempData', props.tempData)
+const newTempData = ref(props.tempData)
 // console.log(
 //   '!inAdmin && Array.isArray(newTempData.value.state)',
 //   !inAdmin && Array.isArray(newTempData.value.state)
@@ -38,9 +39,9 @@ const dateInput = ref({
   feedbackDate: newTempData.value.feedbackDate || ''
 })
 
-newTempData.value.startDate = dayjs(dateInput.value.startDate).unix()
-newTempData.value.endDate = dayjs(dateInput.value.endDate).unix()
-newTempData.value.feedbackDate = dayjs(dateInput.value.feedbackDate).unix() || 0
+// newTempData.value.startDate = dayjs(dateInput.value.startDate).unix()
+// newTempData.value.endDate = dayjs(dateInput.value.endDate).unix()
+// newTempData.value.feedbackDate = dayjs(dateInput.value.feedbackDate).unix() || 0
 const changeDate = (item) => {
   const date = new Date(dateInput.value[item])
   newTempData.value[item] = date.getTime() / 1000
@@ -412,7 +413,7 @@ const reviewProjectId = (approve) => {
         </div>
       </div>
       <button
-        v-if="newTempData?.state === 0 && !inAdmin"
+        v-if="newTempData?.state?.state === 0 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         @click="emit('createProject', newTempData)"
       >
