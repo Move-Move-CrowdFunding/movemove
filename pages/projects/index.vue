@@ -13,14 +13,14 @@ const selectCategory = (key) => {
       category: key
     }
   })
-  getAdminProjects()
+  getProjects()
 }
 const sort = ref(1)
 const showExpired = ref(false)
 const apiProject = ref([])
-const getAdminProjects = async () => {
+const getProjects = async () => {
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=1`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=10`,
     method: 'GET'
   })
     .then((res) => {
@@ -31,11 +31,11 @@ const getAdminProjects = async () => {
 }
 const changePage = (page) => {
   pageNo.value = page
-  getAdminProjects()
+  getProjects()
 }
 onMounted(() => {
   nextTick(async () => {
-    await getAdminProjects()
+    await getProjects()
   })
 })
 </script>
@@ -74,11 +74,11 @@ onMounted(() => {
           v-model="showExpired"
           type="checkbox"
           class="mr-2 h-5 w-5 appearance-none rounded-sm border-secondary-1 outline outline-2 outline-secondary-1 after:relative after:block after:h-5/6 after:w-6/12 after:translate-x-[5px] checked:bg-secondary-1 checked:after:relative checked:after:rotate-45 checked:after:border-b-4 checked:after:border-r-4 checked:after:border-white"
-          @change="getAdminProjects"
+          @change="getProjects"
         />
         <label for="showAll" class="flex items-center gap-2">顯示已結束提案</label>
       </div>
-      <select id="" v-model="sort" name="" class="px-2 py-1" @change="getAdminProjects">
+      <select id="" v-model="sort" name="" class="px-2 py-1" @change="getProjects">
         <option value="1">由新到舊</option>
         <option value="2">由舊到新</option>
       </select>
