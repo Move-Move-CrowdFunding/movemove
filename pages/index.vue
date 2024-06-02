@@ -115,7 +115,7 @@ onMounted(() => {
             >查看更多</NuxtLink
           >
         </div>
-        <div v-if="homeData.hotProjects.length > 3" class="relative">
+        <div class="relative">
           <Swiper
             id="hot-swiper"
             :modules="[SwiperNavigation, SwiperPagination]"
@@ -123,7 +123,7 @@ onMounted(() => {
             :slides-per-view="1.3"
             :space-between="24"
             :navigation="hotNavigation"
-            :pagination="{ clickable: true }"
+            :pagination="{ clickable: homeData.hotProjects.length > 3 }"
             :breakpoints="{
               '640': {
                 slidesPerView: 2.3
@@ -156,14 +156,6 @@ onMounted(() => {
             </svg>
           </button>
         </div>
-        <ul v-else class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          <li v-for="project in homeData.hotProjects" :key="project.id">
-            <ProjectCard :project="project" />
-          </li>
-          <li v-for="project in homeData.hotProjects" :key="project.id">
-            <ProjectCard :project="project" />
-          </li>
-        </ul>
       </section>
       <section
         class="bg-secondary-5 bg-[url('~/assets/images/index/bg/bg-sketch.png')] bg-no-repeat lg:bg-transparent lg:bg-none"

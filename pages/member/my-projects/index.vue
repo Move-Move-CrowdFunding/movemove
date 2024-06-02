@@ -180,6 +180,7 @@ onMounted(() => {
       </div>
     </div>
     <Pagination
+      v-if="results.list.length"
       container-class="container flex items-center justify-center py-10 lg:py-20"
       size="xl"
       :pagination="pagination"
