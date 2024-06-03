@@ -28,13 +28,16 @@ const getFollowing = () => {
 
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
-  await isLogin.getUserData()
-  if (isLogin.userData.email) {
-    getFollowing()
-  } else {
-    await navigateTo('/login')
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
   }
+  getFollowing()
 }
+
 onMounted(() => {
   nextTick(() => {
     checkPermission()

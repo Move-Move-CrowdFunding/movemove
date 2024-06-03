@@ -1,6 +1,20 @@
 <script setup>
 const contractOneChecked = ref(false)
 const contractTwoChecked = ref(false)
+const isLogin = useIsLoginStore()
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+    }
+  }
+}
+onMounted(() => {
+  nextTick(() => {
+    checkPermission()
+  })
+})
 </script>
 <template>
   <div>

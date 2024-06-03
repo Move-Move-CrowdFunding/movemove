@@ -36,6 +36,20 @@ const createProject = async (tempData) => {
       console.log(err)
     })
 }
+
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+    }
+  }
+}
+onMounted(() => {
+  nextTick(() => {
+    checkPermission()
+  })
+})
 </script>
 <template>
   <div>

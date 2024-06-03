@@ -67,7 +67,7 @@ onMounted(() => {
         {{ item.name }}
       </button>
     </div>
-    <div class="mb-4 flex justify-between">
+    <div v-if="apiProject?.length" class="mb-4 flex justify-between">
       <div class="flex items-center">
         <input
           id="showAll"
@@ -83,12 +83,15 @@ onMounted(() => {
         <option value="2">由舊到新</option>
       </select>
     </div>
-    <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul v-if="apiProject?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in apiProject" :key="project.id">
         <ProjectCard :project="project" />
       </li>
     </ul>
+    <div v-else class="text-center">找不到相符條件的資料</div>
+
     <Pagination
+      v-if="apiProject?.length"
       container-class="container flex items-center justify-center py-10 lg:py-20"
       size="xl"
       :pagination="pagination"

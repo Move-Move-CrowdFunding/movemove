@@ -3,8 +3,8 @@ import { defineStore } from 'pinia'
 export const useIsLoginStore = defineStore('isLogin', () => {
   const isLogin = ref(false)
 
-  const checkLogin = () => {
-    getFetchData({
+  const checkLogin = async () => {
+    await getFetchData({
       url: '/user/check-login',
       method: 'POST'
     })

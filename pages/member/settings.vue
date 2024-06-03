@@ -5,12 +5,14 @@ const isLogin = useIsLoginStore()
 const tempUser = ref({})
 
 const checkPermission = async () => {
-  await isLogin.getUserData()
-  if (isLogin.userData.email) {
-    getTempUser(isLogin.userData)
-  } else {
-    await navigateTo('/login')
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
   }
+  getTempUser(isLogin.userData)
 }
 const getTempUser = (data) => {
   tempUser.value = JSON.parse(JSON.stringify(data))

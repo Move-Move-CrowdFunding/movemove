@@ -171,10 +171,16 @@ watch(pageSize, async () => {
 watch(pageNo, async () => {
   await getProjects(formData)
 })
-const isLogin = useIsLoginStore()
 
+const isLogin = useIsLoginStore()
 const checkPermission = async () => {
-  await isLogin.getUserData()
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
+  }
   if (isLogin.userData.auth) {
     await getProjects(formData)
   } else {

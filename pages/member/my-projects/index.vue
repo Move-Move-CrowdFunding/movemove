@@ -3,12 +3,14 @@
 
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
-  await isLogin.getUserData()
-  if (isLogin.userData.email) {
-    await getMyProjects()
-  } else {
-    await navigateTo('/login')
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
   }
+  await getMyProjects()
 }
 
 const results = ref({
