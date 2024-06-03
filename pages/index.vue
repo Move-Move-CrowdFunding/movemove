@@ -37,7 +37,7 @@ onMounted(() => {
         :modules="[SwiperNavigation, SwiperPagination]"
         :loop="true"
         :centered-slides="true"
-        :pagination="true"
+        :pagination="homeData.hotProjects.length > 3"
         :navigation="bannerNavigation"
         :slides-per-view="1"
         :breakpoints="{
@@ -156,14 +156,6 @@ onMounted(() => {
             </svg>
           </button>
         </div>
-        <ul v-else class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          <li v-for="project in homeData.hotProjects" :key="project.id">
-            <ProjectCard :project="project" />
-          </li>
-          <li v-for="project in homeData.hotProjects" :key="project.id">
-            <ProjectCard :project="project" />
-          </li>
-        </ul>
       </section>
       <section
         class="bg-secondary-5 bg-[url('~/assets/images/index/bg/bg-sketch.png')] bg-no-repeat lg:bg-transparent lg:bg-none"
