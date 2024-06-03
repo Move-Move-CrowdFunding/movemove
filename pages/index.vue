@@ -37,7 +37,7 @@ onMounted(() => {
         :modules="[SwiperNavigation, SwiperPagination]"
         :loop="true"
         :centered-slides="true"
-        :pagination="homeData.hotProjects.length > 3"
+        :pagination="homeData.hotProjects?.length > 3"
         :navigation="bannerNavigation"
         :slides-per-view="1"
         :breakpoints="{
@@ -115,7 +115,7 @@ onMounted(() => {
             >查看更多</NuxtLink
           >
         </div>
-        <div v-if="homeData.hotProjects.length > 3" class="relative">
+        <div v-if="homeData.hotProjects?.length > 3" class="relative">
           <Swiper
             id="hot-swiper"
             :modules="[SwiperNavigation, SwiperPagination]"
