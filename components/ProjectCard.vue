@@ -14,6 +14,9 @@ const props = defineProps({
   }
 })
 const { project } = props
+if (project._id) {
+  project.id = project._id
+}
 // const followingStore = useFollowingStore()
 // const isLiked = followingStore.checkFollowing(project.id)
 
@@ -28,7 +31,6 @@ const toggleFollow = (id) => {
 <template>
   <NuxtLink
     :to="project.id ? `/projects/${project.id}` : null"
-    target="_blank"
     class="group block overflow-hidden rounded-3xl border border-primary-3 duration-300 hover:border-primary-1 hover:shadow-lg lg:rounded-[32px]"
   >
     <div class="relative overflow-hidden">

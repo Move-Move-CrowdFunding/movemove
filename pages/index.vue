@@ -37,7 +37,7 @@ onMounted(() => {
         :modules="[SwiperNavigation, SwiperPagination]"
         :loop="true"
         :centered-slides="true"
-        :pagination="homeData.hotProjects?.length > 3"
+        :pagination="true"
         :navigation="bannerNavigation"
         :slides-per-view="1"
         :breakpoints="{
@@ -123,7 +123,7 @@ onMounted(() => {
             :slides-per-view="1.3"
             :space-between="24"
             :navigation="hotNavigation"
-            :pagination="{ clickable: homeData.hotProjects.length > 3 }"
+            :pagination="true"
             :breakpoints="{
               '640': {
                 slidesPerView: 2.3
@@ -137,7 +137,7 @@ onMounted(() => {
               <ProjectCard :project="project" />
             </SwiperSlide>
           </Swiper>
-          <button class="hot-swiper-button-prev">
+          <button v-if="homeData.hotProjects.length > 3" class="hot-swiper-button-prev">
             <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
               <g>
                 <path
@@ -146,7 +146,7 @@ onMounted(() => {
               </g>
             </svg>
           </button>
-          <button class="hot-swiper-button-next">
+          <button v-if="homeData.hotProjects.length > 3" class="hot-swiper-button-next">
             <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
               <g>
                 <path
@@ -168,7 +168,6 @@ onMounted(() => {
               <li v-for="(item, index) in categoryKeys" :key="index">
                 <NuxtLink
                   :to="`/projects?category=${item.key}`"
-                  target="_blank"
                   class="flex items-center gap-3 rounded-2xl border border-white bg-white px-4 font-bold leading-normal duration-300 hover:border-primary-1 sm:rounded-3xl sm:px-8 sm:text-2xl"
                 >
                   <img :src="`/images/category/mobile-${index + 1}.png`" alt="" class="sm:hidden" />
