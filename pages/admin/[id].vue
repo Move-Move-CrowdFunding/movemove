@@ -50,6 +50,7 @@ const getProjectItem = async (id: string) => {
   })
     .then((res) => {
       projectItem.value = (res as ResponseData).results
+      // console.log('projectItem', projectItem.value)
       pageTitle.title = projectItem.value.title
     })
     .catch((err: any) => {

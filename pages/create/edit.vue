@@ -17,16 +17,14 @@ const tempData = ref({
   feedbackItem: '',
   feedbackUrl: '',
   feedbackMoney: 0,
-  feedbackDate: NaN,
-  state: {
-    state: 0,
-    content: ''
-  }
+  feedbackDate: NaN
+  // state: {
+  //   state: 0,
+  //   content: ''
+  // }
 })
 
 const createProject = async (tempData) => {
-  console.log(tempData)
-
   await getFetchData({
     url: '/project',
     method: 'POST',

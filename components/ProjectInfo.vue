@@ -1,10 +1,11 @@
 <script setup>
-import { useDayjs } from '#dayjs'
-const dayjs = useDayjs()
+// import { useDayjs } from '#dayjs'
+// const dayjs = useDayjs()
 
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
-
+// const inCreate = route.fullPath.includes('create/edit')
+// console.log('inCreate', inCreate)
 const props = defineProps({
   tempData: {
     type: Object,
@@ -12,32 +13,41 @@ const props = defineProps({
   }
 })
 
-// const { tempData } = toRefs(props)
-console.log('props.tempData', props.tempData)
-const newTempData = ref(props.tempData)
-// console.log(
-//   '!inAdmin && Array.isArray(newTempData.value.state)',
-//   !inAdmin && Array.isArray(newTempData.value.state)
-// )
-if (!inAdmin && Array.isArray(newTempData.value.state)) {
-  const maxCreateTimeObject = newTempData.value?.state?.reduce((max, current) => {
-    return current.createTime > max.createTime ? current : max
-  }, newTempData.value.state[0])
-  newTempData.value.status = maxCreateTimeObject?.status
-}
+const newTempData = computed(() => props.tempData)
+
+const latestLog = computed(() => {
+  if (!inAdmin) {
+    return newTempData.value && newTempData.value?.state
+      ? newTempData.value?.state[newTempData.value?.state.length - 1]
+      : []
+  }
+  return newTempData.value && newTempData.value?.reviewLog
+    ? newTempData.value?.reviewLog[newTempData.value?.reviewLog.length - 1]
+    : []
+})
 
 // 10 天後
-const tenDaysLater = ref(dayjs(dayjs()).add(11, 'day').format('YYYY-MM-DD'))
+// const tenDaysLater = ref(dayjs(dayjs()).add(11, 'day').format('YYYY-MM-DD'))
 
 // 10 天 + 7 天
-const sevenDaysAfterTenDays = ref(dayjs(tenDaysLater.value).add(7, 'day').format('YYYY-MM-DD'))
+// const sevenDaysAfterTenDays = ref(dayjs(tenDaysLater.value).add(7, 'day').format('YYYY-MM-DD'))
 
+// TODO: 日期顯示有問題
 // 綁定日期
-const dateInput = ref({
-  startDate: tenDaysLater.value || newTempData.value.startDate,
-  endDate: sevenDaysAfterTenDays.value || newTempData.value.endDate,
-  feedbackDate: newTempData.value.feedbackDate || ''
+const dateInput = computed(() => {
+  return {
+    startDate: newTempData.value.startDate,
+    endDate: newTempData.value.endDate,
+    feedbackDate: newTempData.value.feedbackDate || ''
+  }
 })
+// const dateInput = computed(() => {
+//   return {
+//     startDate: inCreate ? newTempData.value.startDate : tenDaysLater.value,
+//     endDate: inCreate ? newTempData.value.endDate : sevenDaysAfterTenDays.value,
+//     feedbackDate: newTempData.value.feedbackDate || ''
+//   }
+// })
 
 // newTempData.value.startDate = dayjs(dateInput.value.startDate).unix()
 // newTempData.value.endDate = dayjs(dateInput.value.endDate).unix()
@@ -47,7 +57,7 @@ const changeDate = (item) => {
   newTempData.value[item] = date.getTime() / 1000
 }
 
-const isDisable = inAdmin || newTempData.value?.status === 0 || newTempData.value?.status === 1
+const isDisable = inAdmin || latestLog.value?.status === 0 || latestLog.value?.status === 1
 
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
@@ -83,7 +93,7 @@ const emit = defineEmits(['createProject'])
 const reviewContent = ref('')
 const reviewProjectId = (approve) => {
   getFetchData({
-    url: `/admin/projects/${tempData.value._id}`,
+    url: `/admin/projects/${newTempData.value._id}`,
     method: 'POST',
     params: {
       approve,
@@ -102,14 +112,16 @@ const reviewProjectId = (approve) => {
 <template>
   <div>
     <div class="container py-10">
-      <div v-if="newTempData?.status === -1" class="border-2 border-secondary-2">
+      <pre>{{ dateInput }}</pre>
+      <pre>{{ latestLog }}</pre>
+      <div v-if="latestLog?.status === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">
           <span>審核失敗</span>
-          <span>2024/1/23</span>
+          <span>{{ $dateformat(latestLog?.createTime || latestLog?.timestamp) }}</span>
         </div>
         <div class="bg-white p-3">
           <p class="">失敗原因：</p>
-          <p class="">失敗</p>
+          <p class="">{{ latestLog.content }}</p>
         </div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12">
@@ -167,11 +179,17 @@ const reviewProjectId = (approve) => {
           </div>
           <div v-if="inAdmin">
             <h2>檢核紀錄</h2>
-            <ul>
-              <li v-for="item in newTempData.reviewLog" :key="item">
-                {{ $timeformat(item.timestamp) }}
-                {{ item.state?.state === 0 ? '➖' : item.state?.state === -1 ? '✖️' : '✔️' }}
-                {{ item.content }}
+            <ul class="space-y-2">
+              <li
+                v-for="item in newTempData.reviewLog"
+                :key="item"
+                class="flex items-start space-x-1"
+              >
+                <span class="min-w-[158px] flex-shrink-0">{{ $timeformat(item.timestamp) }}</span>
+                <span class="w-6 flex-shrink-0 text-center">{{
+                  item?.status === 0 ? '➖' : item?.status === -1 ? '✖️' : '✔️'
+                }}</span>
+                <div>{{ item.content }}</div>
               </li>
             </ul>
           </div>
@@ -399,7 +417,7 @@ const reviewProjectId = (approve) => {
         </div>
       </div>
       <div
-        v-if="inAdmin && newTempData?.state?.state === 0"
+        v-if="inAdmin && latestLog?.status === 0"
         class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10 sm:flex-row"
       >
         <input v-model="reviewContent" type="text" class="w-full" />
@@ -412,21 +430,25 @@ const reviewProjectId = (approve) => {
           </button>
         </div>
       </div>
+      <!-- 4.2.1 提案內容(編輯提案) -->
+      <!-- 已退回會再重新編輯 -->
       <button
-        v-if="newTempData?.state?.state === 0 && !inAdmin"
+        v-if="!latestLog?.status && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         @click="emit('createProject', newTempData)"
       >
         發起提案
       </button>
+
+      <!-- 4.2.2 查看提案內容(審核已通過，不可編輯，只能結束提案) -->
       <button
-        v-if="newTempData?.status === 1 && !inAdmin"
+        v-if="latestLog?.status === 1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
       >
         結束提案
       </button>
       <button
-        v-if="newTempData?.status === -1 && !inAdmin"
+        v-if="latestLog?.status === -1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
       >
         送出
