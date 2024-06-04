@@ -8,11 +8,11 @@ export const useIsLoginStore = defineStore('isLogin', () => {
       url: '/user/check-login',
       method: 'POST'
     })
-      .then((res) => {
+      .then(async (res) => {
         console.log(res.message)
         // alert((res as ResponseData).message)
         isLogin.value = true
-        getUserData()
+        await getUserData()
       })
       .catch((err) => {
         console.log(err.message)
