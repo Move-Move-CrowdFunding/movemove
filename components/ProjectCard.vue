@@ -15,12 +15,15 @@ const props = defineProps({
     }
   }
 })
-const { project } = toRefs(props)
+const { project } = props
+if (project._id) {
+  project.id = project._id
+}
 // const followingStore = useFollowingStore()
 // const isLiked = followingStore.checkFollowing(project.id)
 const date = new Date()
 const countdownDay = computed(() => {
-  return dayjs.unix(project.value.endDate).diff(dayjs(), 'day')
+  return dayjs.unix(project.value?.endDate).diff(dayjs(), 'day')
 })
 const toggleFollow = (id) => {
   if (id) {
@@ -32,7 +35,6 @@ const toggleFollow = (id) => {
   <component
     :is="project.id ? 'NuxtLink' : 'div'"
     :to="project.id ? `/projects/${project.id}` : null"
-    target="_blank"
     class="group block overflow-hidden rounded-3xl border border-primary-3 duration-300 hover:border-primary-1 hover:shadow-lg lg:rounded-[32px]"
   >
     <div class="relative overflow-hidden">
@@ -55,7 +57,7 @@ const toggleFollow = (id) => {
         </svg>
       </button>
       <div
-        v-if="project.endDate < date.getTime() / 1000"
+        v-if="project?.endDate < date.getTime() / 1000"
         class="absolute inset-0 flex items-center justify-center bg-neutral-200/80"
       >
         已結束
@@ -78,7 +80,7 @@ const toggleFollow = (id) => {
       </div>
       <div class="flex justify-between">
         <p>NT$ {{ project.achievedMoney || 0 }}</p>
-        <p v-if="project.endDate < date.getTime() / 1000">已結束</p>
+        <p v-if="project?.endDate < date.getTime() / 1000">已結束</p>
         <p v-else>
           倒數
           <span>{{ countdownDay }}</span>

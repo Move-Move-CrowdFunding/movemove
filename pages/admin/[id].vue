@@ -50,7 +50,6 @@ const getProjectItem = async (id: string) => {
   })
     .then((res) => {
       projectItem.value = (res as ResponseData).results
-      // console.log('projectItem', projectItem.value)
       pageTitle.title = projectItem.value.title
     })
     .catch((err: any) => {
@@ -58,10 +57,26 @@ const getProjectItem = async (id: string) => {
     })
 }
 
+const isLogin = useIsLoginStore()
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
+  }
+  if (isLogin.userData.auth) {
+    await getProjectItem(id as string)
+  } else {
+    alert('無瀏覽權限，請先登入')
+    await navigateTo('/login')
+  }
+}
 onMounted(() => {
   pageTitle.currentTitle = '提案內容'
   nextTick(async () => {
-    await getProjectItem(id as string)
+    await checkPermission()
   })
 })
 </script>

@@ -1,4 +1,6 @@
 <script setup>
+const isLogin = useIsLoginStore()
+
 const tempData = ref({
   introduce: '',
   teamName: '',
@@ -31,13 +33,27 @@ const createProject = async (tempData) => {
     params: tempData
   })
     .then((res) => {
-      console.log(res)
-      navigateTo('/create/success')
+      console.log(res.results.id)
+      // router.push({ path: `/create/success/${res.results.id}` })
     })
     .catch((err) => {
       console.log(err)
     })
 }
+
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+    }
+  }
+}
+onMounted(() => {
+  nextTick(() => {
+    checkPermission()
+  })
+})
 </script>
 <template>
   <div>
