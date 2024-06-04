@@ -24,9 +24,9 @@ const props = defineProps({
   }
 })
 
-const pagination = computed(() => {
-  return props.pagination
-})
+// const pagination = computed(() => {
+//   return props.pagination
+// })
 const emit = defineEmits(['page'])
 watch(page, () => {
   emit('page', page.value)
@@ -43,7 +43,7 @@ watch(page, () => {
       :size="props.size"
       :max="props.max"
       :page-count="pagination.pageSize"
-      :total="pagination.count"
+      :total="pagination?.count"
       :class="props.paginationClass"
     >
     </UPagination>

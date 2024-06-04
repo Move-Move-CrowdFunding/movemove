@@ -12,6 +12,7 @@ const getFollowing = async () => {
   } catch (error) {
     console.log(error)
   }
+  getFollowing()
 }
 
 const totalCount = computed(() => results.value?.pagination?.count || 0)

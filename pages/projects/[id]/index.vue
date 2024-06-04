@@ -78,7 +78,7 @@ onMounted(() => {
             <h2 class="text-4xl font-bold">{{ priceFormat(project.achievedMoney) }}</h2>
             <div class="relative rounded-full bg-neutral-300">
               <div
-                class="h-5 rounded-full bg-primary-2"
+                class="h-5 max-w-full rounded-full bg-primary-2"
                 :style="{ width: `${(project.achievedMoney * 100) / project.targetMoney}%` }"
               ></div>
               <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"

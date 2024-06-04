@@ -1,4 +1,6 @@
 <script setup>
+const route = useRoute()
+
 const project = ref({
   teamName: '弱勢救星',
   email: 'movemove@gmail.com',
@@ -48,12 +50,32 @@ const project = ref({
     }
   ]
 })
+const getProject = async () => {
+  console.log('getProject')
+  await getFetchData({
+    url: `/project/${route.params.id}`,
+    method: 'GET'
+  })
+    .then((res) => {
+      console.log(res)
+      project.value = res.results
+    })
+    .catch((err) => console.log(err))
+}
+onMounted(() => {
+  nextTick(async () => {
+    await getProject()
+  })
+})
 </script>
 <template>
   <div>
     <CreateSteps :step="3" />
     <div class="container py-10">
+      665ee38359a03fd30bb27ae0
       <h1 class="mb-8 text-3xl font-bold">提案發起成功</h1>
+      <pre>{{ project }}</pre>
+      {{ route.params.id }}
       <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 xl:grid-cols-3">
         <div class="xl:col-span-2">
           <ul>
