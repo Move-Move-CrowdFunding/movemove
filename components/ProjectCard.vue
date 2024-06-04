@@ -1,4 +1,6 @@
 <script setup>
+import { useDayjs } from '#dayjs'
+const dayjs = useDayjs()
 const isLogin = useIsLoginStore()
 
 defineProps({
@@ -13,9 +15,10 @@ defineProps({
     }
   }
 })
-
 const date = new Date()
-
+const countdownDay = computed(() => {
+  return dayjs.unix(project.value?.endDate).diff(dayjs(), 'day')
+})
 const toggleFollow = (id) => {
   if (id) {
     console.log(id)
@@ -29,14 +32,13 @@ const toggleFollow = (id) => {
   >
     <div class="relative overflow-hidden">
       <div
-        class="relative h-[168px] bg-cover bg-center duration-300 group-hover:scale-110 lg:h-[274px]"
+        class="relative h-[168px] bg-neutral-200 bg-cover bg-center duration-300 group-hover:scale-110 lg:h-[274px]"
         :style="{ backgroundImage: 'url(' + project.coverUrl + ')' }"
       ></div>
       <button
         v-if="isLogin.isLogin"
         class="group absolute right-1 top-1 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': project.trackingStatus, 'fill-white': !project.trackingStatus }"
-        :disabled="!project.id"
         @click.prevent="toggleFollow(project.id)"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -48,7 +50,7 @@ const toggleFollow = (id) => {
         </svg>
       </button>
       <div
-        v-if="project.endDate < date.getTime() / 1000"
+        v-if="project?.endDate < date.getTime() / 1000"
         class="absolute inset-0 flex items-center justify-center bg-neutral-200/80"
       >
         已結束
@@ -71,12 +73,10 @@ const toggleFollow = (id) => {
       </div>
       <div class="flex justify-between">
         <p>NT$ {{ project.achievedMoney || 0 }}</p>
-        <p v-if="project.endDate < date.getTime() / 1000">已結束</p>
+        <p v-if="project?.endDate < date.getTime() / 1000">已結束</p>
         <p v-else>
           倒數
-          <span>{{
-            Math.floor((project.endDate - date.getTime() / 1000) / 60 / 60 / 24) || 0
-          }}</span>
+          <span>{{ countdownDay }}</span>
           天
         </p>
       </div>
