@@ -153,7 +153,7 @@ const reviewProjectId = (approve) => {
           </div>
           <div v-if="!inAdmin">
             <h2>專案卡預覽</h2>
-            <ProjectCard :project="newTempData" />
+            <ProjectCard :project="tempData" class="pointer-events-none" />
           </div>
           <div v-if="inAdmin">
             <h2>檢核紀錄</h2>

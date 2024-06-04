@@ -3,7 +3,7 @@ import { useDayjs } from '#dayjs'
 const dayjs = useDayjs()
 const isLogin = useIsLoginStore()
 
-const props = defineProps({
+defineProps({
   project: {
     type: Object,
     required: true
@@ -15,12 +15,6 @@ const props = defineProps({
     }
   }
 })
-const { project } = props
-if (project._id) {
-  project.id = project._id
-}
-// const followingStore = useFollowingStore()
-// const isLiked = followingStore.checkFollowing(project.id)
 const date = new Date()
 const countdownDay = computed(() => {
   return dayjs.unix(project.value?.endDate).diff(dayjs(), 'day')
@@ -32,9 +26,8 @@ const toggleFollow = (id) => {
 }
 </script>
 <template>
-  <component
-    :is="project.id ? 'NuxtLink' : 'div'"
-    :to="project.id ? `/projects/${project.id}` : null"
+  <NuxtLink
+    :to="`/projects/${project.id}`"
     class="group block overflow-hidden rounded-3xl border border-primary-3 duration-300 hover:border-primary-1 hover:shadow-lg lg:rounded-[32px]"
   >
     <div class="relative overflow-hidden">
@@ -88,5 +81,5 @@ const toggleFollow = (id) => {
         </p>
       </div>
     </div>
-  </component>
+  </NuxtLink>
 </template>
