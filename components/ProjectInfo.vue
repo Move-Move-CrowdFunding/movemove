@@ -1,10 +1,8 @@
 <script setup>
-// import { useDayjs } from '#dayjs'
-// const dayjs = useDayjs()
-
+import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
-// const inCreate = route.fullPath.includes('create/edit')
+const inCreate = route.fullPath.includes('create/edit')
 // console.log('inCreate', inCreate)
 const props = defineProps({
   tempData: {
@@ -26,32 +24,14 @@ const latestLog = computed(() => {
     : []
 })
 
-// 10 天後
-// const tenDaysLater = ref(dayjs(dayjs()).add(11, 'day').format('YYYY-MM-DD'))
-
-// 10 天 + 7 天
-// const sevenDaysAfterTenDays = ref(dayjs(tenDaysLater.value).add(7, 'day').format('YYYY-MM-DD'))
-
-// TODO: 日期顯示有問題
 // 綁定日期
 const dateInput = computed(() => {
   return {
-    startDate: newTempData.value.startDate,
-    endDate: newTempData.value.endDate,
-    feedbackDate: newTempData.value.feedbackDate || ''
+    startDate: inCreate ? tenDaysLater : dateFormat(newTempData.value.startDate),
+    endDate: inCreate ? sevenDaysAfterTenDays : dateFormat(newTempData.value.endDate),
+    feedbackDate: dateFormat(newTempData.value.feedbackDate)
   }
 })
-// const dateInput = computed(() => {
-//   return {
-//     startDate: inCreate ? newTempData.value.startDate : tenDaysLater.value,
-//     endDate: inCreate ? newTempData.value.endDate : sevenDaysAfterTenDays.value,
-//     feedbackDate: newTempData.value.feedbackDate || ''
-//   }
-// })
-
-// newTempData.value.startDate = dayjs(dateInput.value.startDate).unix()
-// newTempData.value.endDate = dayjs(dateInput.value.endDate).unix()
-// newTempData.value.feedbackDate = dayjs(dateInput.value.feedbackDate).unix() || 0
 const changeDate = (item) => {
   const date = new Date(dateInput.value[item])
   newTempData.value[item] = date.getTime() / 1000
@@ -112,12 +92,10 @@ const reviewProjectId = (approve) => {
 <template>
   <div>
     <div class="container py-10">
-      <pre>{{ dateInput }}</pre>
-      <pre>{{ latestLog }}</pre>
       <div v-if="latestLog?.status === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">
           <span>審核失敗</span>
-          <span>{{ $dateformat(latestLog?.createTime || latestLog?.timestamp) }}</span>
+          <span>{{ dateFormat(latestLog?.createTime || latestLog?.timestamp) }}</span>
         </div>
         <div class="bg-white p-3">
           <p class="">失敗原因：</p>
@@ -185,7 +163,7 @@ const reviewProjectId = (approve) => {
                 :key="item"
                 class="flex items-start space-x-1"
               >
-                <span class="min-w-[158px] flex-shrink-0">{{ $timeformat(item.timestamp) }}</span>
+                <span class="min-w-[158px] flex-shrink-0">{{ timeFormat(item.timestamp) }}</span>
                 <span class="w-6 flex-shrink-0 text-center">{{
                   item?.status === 0 ? '➖' : item?.status === -1 ? '✖️' : '✔️'
                 }}</span>
@@ -217,7 +195,7 @@ const reviewProjectId = (approve) => {
                 id="categoryKey"
                 v-model="newTempData.categoryKey"
                 name=""
-                class="block w-full"
+                class="block min-h-[50px] w-full disabled:bg-neutral-100/60"
                 :disabled="isDisable"
               >
                 <option value="0" disabled>請選擇分類</option>
@@ -228,7 +206,7 @@ const reviewProjectId = (approve) => {
             </div>
             <div>
               <label for="targetMoney">提案目標</label>
-              <div class="flex items-center">
+              <div class="flex items-center space-x-2">
                 <input
                   id="targetMoney"
                   v-model="newTempData.targetMoney"
@@ -244,7 +222,7 @@ const reviewProjectId = (approve) => {
           </div>
           <div class="mb-6">
             <label for="">預計時間</label>
-            <div class="flex items-center">
+            <div class="flex items-center space-x-2">
               <input
                 id="startDate"
                 v-model="dateInput.startDate"
@@ -389,7 +367,7 @@ const reviewProjectId = (approve) => {
           </div>
           <div class="mb-6">
             <label for="feedbackMoney">回饋門檻</label>
-            <div class="flex items-center">
+            <div class="flex items-center space-x-2">
               <input
                 id="feedbackMoney"
                 v-model="newTempData.feedbackMoney"
@@ -430,8 +408,6 @@ const reviewProjectId = (approve) => {
           </button>
         </div>
       </div>
-      <!-- 4.2.1 提案內容(編輯提案) -->
-      <!-- 已退回會再重新編輯 -->
       <button
         v-if="!latestLog?.status && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
@@ -439,8 +415,6 @@ const reviewProjectId = (approve) => {
       >
         發起提案
       </button>
-
-      <!-- 4.2.2 查看提案內容(審核已通過，不可編輯，只能結束提案) -->
       <button
         v-if="latestLog?.status === 1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
