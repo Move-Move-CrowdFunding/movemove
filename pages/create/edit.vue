@@ -1,4 +1,6 @@
 <script setup>
+const isLogin = useIsLoginStore()
+
 const tempData = ref({
   introduce: '',
   teamName: '',
@@ -29,8 +31,8 @@ const createProject = async (tempData) => {
     params: tempData
   })
     .then((res) => {
-      console.log(res)
-      // router.push({ path: `/create/success` })
+      console.log(res.results.id)
+      // router.push({ path: `/create/success/${res.results.id}` })
     })
     .catch((err) => {
       console.log(err)
