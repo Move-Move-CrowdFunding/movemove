@@ -6,7 +6,6 @@ import whyImage3 from '~/assets/images/projects/why3.png'
 import whyImage4 from '~/assets/images/projects/why4.png'
 import whyImage5 from '~/assets/images/projects/why5.png'
 import whyImage6 from '~/assets/images/projects/why6.png'
-import whyBG4 from '~/assets/images/projects/whyBG4.png'
 </script>
 
 <template>
@@ -117,7 +116,7 @@ import whyBG4 from '~/assets/images/projects/whyBG4.png'
     </div>
   </section>
   <section
-    class="bg-left-bottom bg-no-repeat py-20 lg:bg-[url('~/assets/images/projects/whyBG3.png')]"
+    class="bg-[position:left_bottom,_right_15px_top_40px] bg-no-repeat py-20 lg:bg-[url('~/assets/images/projects/whyBG3.png'),_url('~/assets/images/projects/whyBG4.png')]"
   >
     <div class="container relative">
       <div
@@ -144,17 +143,17 @@ import whyBG4 from '~/assets/images/projects/whyBG4.png'
             作為平台服務費。
           </p>
         </div>
+        <!-- <img
+          class="absolute end-0 top-0 -z-10 hidden -translate-y-1/2 translate-x-1/2 lg:inline"
+          :src="whyBG4"
+          alt="heart"
+        /> -->
       </div>
       <div class="flex items-center justify-center">
         <NuxtLink to="/create/contract" class="rounded-lg bg-[#4767A2] px-10 py-4 text-white"
           >發起提案</NuxtLink
         >
       </div>
-      <img
-        class="absolute end-0 top-0 hidden -translate-y-1/2 translate-x-1/2 lg:inline"
-        :src="whyBG4"
-        alt="heart"
-      />
     </div>
   </section>
 </template>

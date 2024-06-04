@@ -164,11 +164,11 @@ onMounted(() => {
         <div class="container grid grid-cols-1 gap-6 py-10 sm:py-40 lg:grid-cols-4">
           <h2 class="text-3xl sm:text-4xl">提案類別</h2>
           <div class="col-span-3">
-            <ul class="grid grid-cols-2 gap-6 lg:grid-cols-3">
+            <ul class="grid grid-cols-2 gap-6 xl:grid-cols-3">
               <li v-for="(item, index) in categoryKeys" :key="index">
                 <NuxtLink
                   :to="`/projects?category=${item.key}`"
-                  class="flex items-center gap-3 rounded-2xl border border-white bg-white px-4 font-bold leading-normal duration-300 hover:border-primary-1 sm:rounded-3xl sm:px-8 sm:text-2xl"
+                  class="flex h-full flex-col items-center gap-3 rounded-2xl border border-white bg-white px-4 py-3 font-bold leading-normal shadow-lg duration-300 hover:border-primary-1 sm:rounded-3xl sm:px-8 sm:text-2xl lg:flex-row"
                 >
                   <img :src="`/images/category/mobile-${index + 1}.png`" alt="" class="sm:hidden" />
                   <img
@@ -176,7 +176,7 @@ onMounted(() => {
                     alt=""
                     class="hidden sm:block"
                   />
-                  <p>{{ item.name }}</p>
+                  <p class="">{{ item.name }}</p>
                 </NuxtLink>
               </li>
             </ul>
