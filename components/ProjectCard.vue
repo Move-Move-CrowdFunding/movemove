@@ -1,7 +1,7 @@
 <script setup>
 const isLogin = useIsLoginStore()
 
-const props = defineProps({
+defineProps({
   project: {
     type: Object,
     required: true
@@ -13,15 +13,6 @@ const props = defineProps({
     }
   }
 })
-// const { project } = props
-const project = computed(() => {
-  return props.project
-})
-if (project._id) {
-  project.id = project._id
-}
-// const followingStore = useFollowingStore()
-// const isLiked = followingStore.checkFollowing(project.id)
 
 const date = new Date()
 
@@ -33,7 +24,7 @@ const toggleFollow = (id) => {
 </script>
 <template>
   <NuxtLink
-    :to="project.id && project.state[0].status === 1 ? `/projects/${project.id}` : null"
+    :to="`/projects/${project.id}`"
     class="group block overflow-hidden rounded-3xl border border-primary-3 duration-300 hover:border-primary-1 hover:shadow-lg lg:rounded-[32px]"
   >
     <div class="relative overflow-hidden">
@@ -45,7 +36,7 @@ const toggleFollow = (id) => {
         v-if="isLogin.isLogin"
         class="group absolute right-1 top-1 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': project.trackingStatus, 'fill-white': !project.trackingStatus }"
-        :disabled="!project.id || project.state[0].status !== 1"
+        :disabled="!project.id"
         @click.prevent="toggleFollow(project.id)"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

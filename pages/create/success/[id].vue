@@ -33,11 +33,26 @@ const getProject = async () => {
       console.log(res)
       project.value = res.results
     })
-    .catch((err) => console.log(err))
+    .catch(async (err) => {
+      console.log(err)
+      alert(err.message)
+      await navigateTo('/index')
+    })
+}
+
+const isLogin = useIsLoginStore()
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+    }
+  }
+  await getProject()
 }
 onMounted(() => {
-  nextTick(async () => {
-    await getProject()
+  nextTick(() => {
+    checkPermission()
   })
 })
 </script>
@@ -45,9 +60,9 @@ onMounted(() => {
   <div>
     <CreateSteps :step="3" />
     <div class="container py-10">
-      <h1 class="mb-8 text-3xl font-bold">提案發起成功</h1>
       <div class="grid grid-cols-1 gap-10 sm:grid-cols-2 xl:grid-cols-3">
         <div class="xl:col-span-2">
+          <h1 class="mb-8 text-3xl font-bold">提案發起成功</h1>
           <ul>
             <li class="mb-6">
               <div class="font-bold">提案標題：</div>
@@ -76,7 +91,7 @@ onMounted(() => {
           </div>
         </div>
         <div>
-          <ProjectCard :project="project" />
+          <ProjectCard :project="project" class="pointer-events-none" />
         </div>
       </div>
     </div>
