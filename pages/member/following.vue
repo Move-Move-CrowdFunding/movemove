@@ -1,48 +1,37 @@
 <script setup>
-const followingList = ref([])
-const getFollowing = () => {
-  followingList.value = [
-    {
-      id: '123',
-      title: '愛心廚房｜溫飽無憂的一餐，舉辦食物援助計畫',
-      categoryKey: 3,
-      coverUrl:
-        'https://images.unsplash.com/photo-1593113616828-6f22bca04804?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      endDate: 1720000000,
-      targetMoney: 10,
-      achievedMoney: 2
-    },
-    {
-      id: '456',
-      title:
-        '扶助之手｜為學習障礙兒童鋪路供專業支持和個別化教育計畫,幫助學習障礙兒童鋪路供專業支持和個別化教育計畫',
-      categoryKey: 1,
-      coverUrl:
-        'https://images.unsplash.com/photo-1509062522246-3755977927d7?q=80&w=1232&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      endDate: 1700000000,
-      targetMoney: 10,
-      achievedMoney: 6
-    }
-  ]
-}
+const route = useRoute()
+const router = useRouter()
+const results = ref([])
+const followingList = computed(() => results.value.results || [])
 
-const isLogin = useIsLoginStore()
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-      return
-    }
+const getFollowing = async () => {
+  try {
+    results.value = await getFetchData({
+      url: `/member/collection?pageNo=${pageNo.value}&pageSize=${pageSize.value}`
+    })
+  } catch (error) {
+    console.log(error)
   }
   getFollowing()
 }
 
-onMounted(() => {
-  nextTick(() => {
-    checkPermission()
-  })
-})
+const totalCount = computed(() => results.value?.pagination?.count || 0)
+const pageNo = computed(() => route.query.pageNo * 1 || 1)
+const pageSize = computed(() => route.query.pageSize * 1 || 6)
+
+const pn = ref(1)
+watch(
+  pageNo,
+  (val) => {
+    pn.value = val
+    nextTick(() => getFollowing())
+  },
+  { immediate: true }
+)
+
+const updateUrl = () => {
+  router.push({ query: { pageNo: pn.value } })
+}
 </script>
 <template>
   <div class="container py-10 lg:py-20">
@@ -52,5 +41,14 @@ onMounted(() => {
         <ProjectCard :project="project" />
       </li>
     </ul>
+    <div class="mt-5 flex items-center justify-center">
+      <UPagination
+        v-model="pn"
+        :page-count="pageSize"
+        :total="totalCount"
+        :model-value="pn"
+        @click="updateUrl"
+      />
+    </div>
   </div>
 </template>

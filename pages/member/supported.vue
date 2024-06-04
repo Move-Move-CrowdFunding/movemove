@@ -1,45 +1,43 @@
 <script setup>
 import { useDayjs } from '#dayjs'
 const dayjs = useDayjs()
+const route = useRoute()
+const router = useRouter()
 
-const items = [
-  {
-    id: '_NDWQODQ123DSWA',
-    money: 3000,
-    receiver: 'YC',
-    address: 'YC家',
-    receiverPhone: '0987654321',
-    email: 'YC@gmail.com',
-    feedbackDate: 1730492012,
-    createTime: 1728442012,
-    project: {
-      title:
-        '為部落兒童購買繪本書籍|為部落兒童購買繪本書籍|為部落兒童購買繪本書籍|為部落兒童購買繪本書籍',
-      feedbackItem: '繪本',
-      categoryKey: 1
-    }
-  },
-  {
-    id: '_NDWQODQ123DSWA',
-    money: 1000,
-    receiver: 'YCYCYCYCYC',
-    address: 'YCYCYCYCYC家',
-    receiverPhone: '0987654321',
-    email: 'YCYCYCYCYC@gmail.com',
-    feedbackDate: 1728492012,
-    createTime: 1728442012,
-    project: {
-      title: '為部落兒童購買繪本書籍',
-      feedbackItem: '小朋友手繪感謝小卡',
-      categoryKey: 3
-    }
+const SupportData = ref([])
+const items = computed(() => SupportData.value?.results || [])
+const totalCount = computed(() => SupportData.value?.pagination?.count || 0)
+const pageNo = computed(() => route.query.pageNo * 1 || 1)
+const pageSize = computed(() => route.query.pageSize * 1 || 10)
+
+const getSupportData = async () => {
+  try {
+    const results = await getFetchData({
+      url: `/member/support?pageNo=${pageNo.value}&pageSize=${pageSize.value}`
+    })
+    SupportData.value = results
+  } catch (error) {
+    console.log(error)
   }
-]
+}
+
+const pn = ref(1)
+watch(
+  pageNo,
+  (val) => {
+    pn.value = val
+    nextTick(() => getSupportData())
+  },
+  { immediate: true }
+)
+
+const updateUrl = () => {
+  router.push({ query: { pageNo: pn.value } })
+}
 </script>
 <template>
   <div class="bg-secondary-5 py-10 lg:py-20">
     <h1 class="container mb-6 text-3xl sm:text-4xl lg:mb-10">贊助記錄</h1>
-
     <UAccordion multiple :items="items" class="container">
       <template #default="{ item, open }">
         <UButton color="gray" variant="ghost" class="mt-2 p-0">
@@ -63,7 +61,7 @@ const items = [
               class="flex w-full shrink-0 items-center justify-between gap-4 sm:w-auto sm:flex-col sm:items-end sm:text-end"
             >
               <div class="text-xs">
-                {{ dayjs(item.createTime * 1000).format('YYYY/MM/DD HH:mm:ss') }}
+                {{ dayjs.unix(item.createTime).format('YYYY/MM/DD HH:mm:ss') }}
               </div>
               <div class="font-bold">NT$ {{ item.money }}</div>
             </div>
@@ -99,12 +97,11 @@ const items = [
             <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
               <div class="font-bold">預計寄送日期</div>
               <div class="sm:col-span-2 lg:col-span-4">
-                {{ dayjs(item.feedbackDate * 1000).format('YYYY/MM/DD') }}
+                {{ dayjs.unix(item.feedBackDate).format('YYYY/MM/DD') }}
               </div>
               <div class="text-right">
                 <NuxtLink
-                  :to="`/projects/${item.id}`"
-                  target="_blank"
+                  :to="`/projects/${item._id}`"
                   class="underline underline-offset-2 hover:text-primary-1"
                   >前往專案</NuxtLink
                 >
@@ -114,6 +111,15 @@ const items = [
         </div>
       </template>
     </UAccordion>
+    <div class="mt-5 flex items-center justify-center">
+      <UPagination
+        v-model="pn"
+        :page-count="pageSize"
+        :total="totalCount"
+        :model-value="pn"
+        @click="updateUrl"
+      />
+    </div>
   </div>
 </template>
 
