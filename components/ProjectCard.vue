@@ -3,7 +3,7 @@ import { useDayjs } from '#dayjs'
 const dayjs = useDayjs()
 const isLogin = useIsLoginStore()
 
-defineProps({
+const props = defineProps({
   project: {
     type: Object,
     required: true
@@ -17,7 +17,7 @@ defineProps({
 })
 const date = new Date()
 const countdownDay = computed(() => {
-  return dayjs.unix(project.value?.endDate).diff(dayjs(), 'day')
+  return dayjs.unix(props.project?.endDate).diff(dayjs(), 'day')
 })
 const toggleFollow = (id) => {
   if (id) {

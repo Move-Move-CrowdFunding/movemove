@@ -24,7 +24,6 @@ const project = ref({
   feedbackDate: 0
 })
 const getProject = async () => {
-  console.log('getProject')
   await getFetchData({
     url: `/member/project/${route.params.id}`,
     method: 'GET'

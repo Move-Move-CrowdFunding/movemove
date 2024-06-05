@@ -36,6 +36,8 @@ const changeDate = (item) => {
   const date = new Date(dateInput.value[item])
   newTempData.value[item] = date.getTime() / 1000
 }
+changeDate('startDate')
+changeDate('endDate')
 
 const isDisable = inAdmin || latestLog.value?.status === 0 || latestLog.value?.status === 1
 
