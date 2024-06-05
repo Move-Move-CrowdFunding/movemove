@@ -4,6 +4,13 @@ definePageMeta({
   layout: 'admin-layout'
 })
 
+interface ReviewLog {
+  _id: string
+  content: string
+  status: number
+  timestamp: number
+}
+
 interface ProjectsList {
   userId: string
   introduce: string
@@ -27,7 +34,7 @@ interface ProjectsList {
   createTime: number
   updateTime: number
   _id: number
-  status: boolean
+  reviewLog: ReviewLog[]
 }
 
 // 表格欄位名稱
@@ -63,7 +70,7 @@ const columns = [
     label: '提案人'
   },
   {
-    key: 'status',
+    key: 'reviewLog',
     label: '狀態',
     sortable: true
   }
@@ -114,8 +121,9 @@ const statusList = ref([
   { name: '核准', value: 1 },
   { name: '送審', value: 0 }
 ])
-const setStatusClass = (value: number) => {
-  switch (value) {
+const setStatusClass = (value: ReviewLog[]) => {
+  const status = latestLog(value)
+  switch (status) {
     case 2:
       return 'text-neutral-400 border-neutral-400'
     case -1:
@@ -127,14 +135,14 @@ const setStatusClass = (value: number) => {
   }
 }
 // 篩選狀態
-const filterStatus = ref(3)
+const filterState = ref(3)
 
 // 搜尋條件
 const formData = ref({
   pageNo,
   pageSize,
   sortDesc,
-  status: filterStatus,
+  state: filterState,
   search: ''
 })
 
@@ -189,20 +197,22 @@ const checkPermission = async () => {
   }
 }
 const search = async () => {
-  formData.value.status = filterStatus.value
+  formData.value.state = filterState.value
   formData.value.sortDesc = sortDesc.value
   await getProjects(formData)
 }
 const resetSearch = () => {
-  filterStatus.value = 3
+  filterState.value = 3
   formData.value.pageNo = 1
   formData.value.pageSize = 10
   formData.value.sortDesc = 'true'
-  formData.value.status = 3
+  formData.value.state = 3
   formData.value.search = ''
 }
 
-const getStatus = (status: number) => statusList.value.find((item) => item.value === status)
+const latestLog = (state: ReviewLog[]) => state[state.length - 1]?.status
+const getStatus = (state: ReviewLog[]) =>
+  statusList.value.find((item) => item.value === latestLog(state))
 
 const pageTitle = usePageTitleStore()
 
@@ -232,7 +242,7 @@ onMounted(() => {
       <div class="col-span-2 flex items-center space-x-2 whitespace-nowrap md:col-span-1">
         <span class="text-sm">狀態</span>
         <USelect
-          v-model.number="filterStatus"
+          v-model.number="filterState"
           size="md"
           class="w-full"
           :options="statusList"
@@ -334,12 +344,12 @@ onMounted(() => {
           {{ row.teamName }}
         </div>
       </template>
-      <template #status-data="{ row }">
+      <template #reviewLog-data="{ row }">
         <p
-          :class="setStatusClass(row.status)"
+          :class="setStatusClass(row.reviewLog)"
           class="w-[54px] overflow-hidden rounded border text-center"
         >
-          {{ getStatus(row.status)?.name }}
+          {{ getStatus(row?.reviewLog)?.name }}
         </p>
       </template>
       <template #empty-state>
