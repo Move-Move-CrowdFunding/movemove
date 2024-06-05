@@ -13,17 +13,13 @@ const tempData = ref({
   coverUrl: '',
   describe: '',
   videoUrl: '',
-  startDate: NaN,
-  endDate: NaN,
+  startDate: 0,
+  endDate: 0,
   relatedUrl: '',
   feedbackItem: '',
   feedbackUrl: '',
   feedbackMoney: 0,
   feedbackDate: NaN
-  // state: {
-  //   state: 0,
-  //   content: ''
-  // }
 })
 
 const createProject = async (tempData) => {
@@ -33,8 +29,7 @@ const createProject = async (tempData) => {
     params: tempData
   })
     .then((res) => {
-      console.log(res.results.id)
-      // router.push({ path: `/create/success/${res.results.id}` })
+      router.push({ path: `/create/success/${res.results.id}` })
     })
     .catch((err) => {
       console.log(err)
