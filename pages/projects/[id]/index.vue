@@ -100,8 +100,8 @@ onMounted(() => {
       </div>
     </div>
 
-    <div class="container grid gap-6 pb-10 lg:grid-cols-3 lg:py-20">
-      <div class="lg:col-span-2">
+    <div class="container grid gap-6 pb-10 lg:grid-cols-12 lg:py-20 xl:grid-cols-3">
+      <div class="lg:col-span-7 xl:col-span-2">
         <h3 class="mb-4 text-xl lg:text-2xl">提案介紹</h3>
         <p class="mb-6">{{ project.content }}</p>
         <img :src="project.coverUrl" alt="" />
@@ -111,7 +111,7 @@ onMounted(() => {
           :src="`https://www.youtube.com/embed/${project.videoUrl.split('v=')[1]}`"
         ></iframe>
       </div>
-      <div>
+      <div class="lg:col-span-5 xl:col-span-1">
         <div class="mb-6 rounded-3xl p-6 shadow-lg">
           <div class="mb-4 hidden gap-4 lg:flex">
             <NuxtLink
@@ -137,7 +137,9 @@ onMounted(() => {
               <p>單筆滿 NT$ {{ project.feedbackMoney }} 立即享回饋：</p>
               <p class="font-bold">{{ project.feedbackItem }}</p>
               <p class="text-neutral-600">
-                預計寄出日期：<span v-dateformat="project.feedbackDate"></span>
+                預計寄出日期：<span>{{
+                  dayjs(project.feedbackDate * 1000).format('YYYY/MM/DD')
+                }}</span>
               </p>
             </div>
           </div>
@@ -145,7 +147,7 @@ onMounted(() => {
         <div class="rounded-3xl p-4 shadow-lg lg:p-6">
           <div class="flex items-center gap-10">
             <div
-              class="h-20 w-20 rounded-full bg-[url('')] bg-cover bg-center"
+              class="h-20 w-20 shrink-0 rounded-full bg-[url('')] bg-cover bg-center"
               :style="{ backgroundImage: `url(${project.coverUrl})` }"
             ></div>
             <div>
