@@ -151,7 +151,10 @@ onMounted(() => {
             <div>
               <div class="mb-4 text-2xl">{{ project.teamName }}</div>
               <div class="flex">
-                <a href="#" class="text-primary-3 hover:text-primary-2">
+                <a
+                  :href="`tel:+886-${project.phone.slice(1)}`"
+                  class="text-primary-3 hover:text-primary-2"
+                >
                   <Icon name="mdi:phone" width="32" height="32" />
                 </a>
                 <Icon
@@ -160,7 +163,7 @@ onMounted(() => {
                   height="32"
                   class="text-neutral-400"
                 />
-                <a href="#" class="text-primary-3 hover:text-primary-2">
+                <a :href="`mailto:${project.email}`" class="text-primary-3 hover:text-primary-2">
                   <Icon name="mdi:email" width="32" height="32" />
                 </a>
                 <Icon
@@ -170,7 +173,11 @@ onMounted(() => {
                   class="text-neutral-400"
                 />
 
-                <a href="#" class="text-primary-3 hover:text-primary-2">
+                <a
+                  :href="project.relatedUrl"
+                  target="_blank"
+                  class="text-primary-3 hover:text-primary-2"
+                >
                   <Icon name="mdi:internet" width="32" height="32" />
                 </a>
               </div>
