@@ -2,7 +2,7 @@
 const modal = useModal()
 
 // MobileMenu 打開時 body 加上 overflow-hidden
-const mobileState = useMenuStore()
+const mobileState = useHeaderStore()
 const bodyClass = computed(() => (mobileState.mobileMenuShow ? 'overflow-hidden' : ''))
 useHead({
   bodyAttrs: {
