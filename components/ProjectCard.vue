@@ -37,7 +37,7 @@ const toggleFollow = (id) => {
       ></div>
       <button
         v-if="isLogin.isLogin"
-        class="group absolute right-1 top-1 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
+        class="group absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': project.trackingStatus, 'fill-white': !project.trackingStatus }"
         @click.prevent="toggleFollow(project.id)"
       >
