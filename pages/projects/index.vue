@@ -1,9 +1,13 @@
 <script setup>
 const route = useRoute()
 const router = useRouter()
+
+const searchKeyword = useHeaderStore()
+const searching = useHeaderStore()
+
 const pageNo = ref(1)
 const pagination = ref({})
-const selectedCategory = ref(Number(route.query.category))
+const selectedCategory = ref(route.query.categoryKey)
 const selectCategory = (key) => {
   pageNo.value = 1
   selectedCategory.value = key
@@ -13,19 +17,28 @@ const selectCategory = (key) => {
       category: key
     }
   })
+  searchKeyword.searchKeyword = ''
   getProjects()
 }
 const sort = ref(1)
-const showExpired = ref(false)
+const showExpired = ref(route.query.isExpired || 'false')
 const apiProject = ref([])
+
+watch(
+  () => searching.searching,
+  async () => {
+    await getProjects()
+  }
+)
 const getProjects = async () => {
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=10`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=10&keyword=${searchKeyword.searchKeyword}`,
     method: 'GET'
   })
     .then((res) => {
       apiProject.value = res.results
       pagination.value = res.pagination
+      searching.searching = false
     })
     .catch((err) => console.log(err))
 }
@@ -33,6 +46,7 @@ const changePage = (page) => {
   pageNo.value = page
   getProjects()
 }
+
 onMounted(() => {
   nextTick(async () => {
     await getProjects()
