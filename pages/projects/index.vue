@@ -7,7 +7,7 @@ const searching = useHeaderStore()
 
 const pageNo = ref(1)
 const pagination = ref({})
-const selectedCategory = ref(route.query.categoryKey)
+const selectedCategory = ref(Number(route.query.category))
 const selectCategory = (key) => {
   pageNo.value = 1
   selectedCategory.value = key
