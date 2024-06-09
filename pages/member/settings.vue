@@ -96,30 +96,34 @@ onMounted(() => {
     <div class="sm:px-auto container">
       <h1 class="mb-6 text-3xl sm:text-4xl lg:mb-10">帳戶設定</h1>
       <div class="mx-auto lg:w-[800px]">
-        <div class="mb-6 flex items-center px-3 lg:px-6">
-          <div
-            class="group relative mr-4 block h-20 w-20 rounded-full bg-cover bg-center sm:mr-10"
-            :style="{ 'background-image': `url('${tempUser.avatar}')` }"
-          >
-            <div class="absolute bottom-0 right-0 hidden group-hover:block">
-              <label
-                for="uploadImage"
-                class="flex cursor-pointer items-center justify-center rounded bg-secondary-1 p-0.5 text-white hover:bg-primary-1"
+        <div class="mb-6 flex items-start space-x-4 px-3 lg:px-6">
+          <Avatar :src="isLogin.userData.avatar" image-size="80px" class="group">
+            <template #upload>
+              <div
+                class="invisible absolute bottom-0 right-0 opacity-0 transition-all group-hover:visible group-hover:opacity-100"
               >
-                <Icon name="material-symbols:upload" width="20" height="20" color="white" />
-              </label>
-              <input
-                id="uploadImage"
-                ref="uploadedFile"
-                type="file"
-                class="hidden"
-                @change="uploadFile"
-              />
+                <label
+                  for="uploadImage"
+                  class="flex cursor-pointer items-center justify-center rounded bg-secondary-1 p-0.5 text-white hover:bg-primary-1"
+                >
+                  <Icon name="material-symbols:upload" width="20" height="20" color="white" />
+                </label>
+                <input
+                  id="uploadImage"
+                  ref="uploadedFile"
+                  type="file"
+                  class="hidden"
+                  @change="uploadFile"
+                />
+              </div>
+            </template>
+          </Avatar>
+
+          <div class="overflow-hidden">
+            <div class="mb-3 break-words text-xl font-bold lg:text-3xl">
+              {{ isLogin.userData.nickName }}
             </div>
-          </div>
-          <div>
-            <div class="mb-3 text-xl font-bold lg:text-3xl">{{ isLogin.userData.nickName }}</div>
-            <div class="lg:text-xl">{{ isLogin.userData.email }}</div>
+            <div class="break-words lg:text-xl">{{ isLogin.userData.email }}</div>
           </div>
         </div>
         <div class="mb-4 flex gap-4 font-bold">
@@ -139,7 +143,7 @@ onMounted(() => {
           </button>
         </div>
         <div class="bg-secondary-5 px-3 py-10 lg:px-6">
-          <Form v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
+          <form v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
             <div class="flex items-center space-x-4">
               <label for="username" class="w-1/4 font-bold sm:w-1/6">真實姓名</label>
               <div class="grow">
@@ -167,7 +171,12 @@ onMounted(() => {
             <div class="flex items-center space-x-4">
               <label for="gender" class="w-1/4 font-bold sm:w-1/6">性別</label>
               <div class="grow">
-                <select id="" v-model="tempUser.gender" name="gender" class="w-full px-3 py-2">
+                <select
+                  id=""
+                  v-model="tempUser.gender"
+                  name="gender"
+                  class="min-h-10 w-full px-3 py-2"
+                >
                   <option value="0" selected disabled>請選擇性別</option>
                   <option value="1">男</option>
                   <option value="2">女</option>
@@ -210,7 +219,7 @@ onMounted(() => {
                 />
               </div>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-start space-x-4">
               <label for="aboutMe" class="w-1/4 font-bold sm:w-1/6">關於我</label>
               <div class="grow">
                 <textarea
@@ -237,7 +246,7 @@ onMounted(() => {
                 更新
               </button>
             </div>
-          </Form>
+          </form>
           <form v-else action="" class="space-y-4">
             <div class="flex items-center space-x-4">
               <label for="oldPassword" class="w-1/4 font-bold sm:w-1/6">舊密碼</label>
