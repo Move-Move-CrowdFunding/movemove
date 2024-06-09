@@ -11,22 +11,18 @@ defineProps({
   defaultImageSize: {
     type: String,
     default: 'lg'
+  },
+  imageSize: {
+    type: String,
+    default: '40px'
   }
 })
 </script>
 <template>
-  <div
-    class="flex-shrink-0"
-    :class="defaultImageSize === 'lg' ? 'h-[60px] w-[60px]' : 'h-[40px] w-[40px]'"
-  >
+  <div class="relative flex-shrink-0" :class="`h-[${imageSize}] w-[${imageSize}]`">
     <div
       v-if="!src"
-      class="m-auto flex flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-neutral-200 before:block before:bg-neutral-200 before:content-[''] before:[mask-image:url('~/assets/icons/avatar.svg')] before:[mask-position:center] before:[mask-repeat:no-repeat] before:[mask-size:contain]"
-      :class="
-        defaultImageSize === 'lg'
-          ? 'h-[58px] w-[58px] before:h-12 before:w-12'
-          : 'h-[40px] w-[40px] before:h-9 before:w-9'
-      "
+      class="m-auto flex h-full w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-full border border-neutral-200 bg-neutral-200 p-2 before:block before:h-full before:w-full before:bg-neutral-50 before:content-[''] before:[mask-image:url('~/assets/icons/avatar.svg')] before:[mask-position:center] before:[mask-repeat:no-repeat] before:[mask-size:contain]"
     ></div>
     <img
       v-else
