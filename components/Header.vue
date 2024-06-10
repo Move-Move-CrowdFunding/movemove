@@ -151,7 +151,7 @@ onMounted(() => {
               :items="dropdownMenuList"
               :popper="{ offsetDistance: 17, placement: 'top' }"
             >
-              <Avatar default-image-size="sm" :src="isLogin.userData.avatar" />
+              <Avatar image-size="40px" :src="isLogin.userData.avatar" />
             </UDropdown>
           </div>
           <div class="flex flex-row">
