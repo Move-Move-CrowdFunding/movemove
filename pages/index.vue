@@ -34,8 +34,11 @@ onMounted(() => {
     <section class="relative">
       <Swiper
         id="banner-swiper"
-        :modules="[SwiperNavigation, SwiperPagination]"
+        :modules="[SwiperAutoplay, SwiperNavigation, SwiperPagination]"
         :loop="true"
+        :autoplay="{
+          delay: 3000
+        }"
         :centered-slides="true"
         :pagination="true"
         :navigation="bannerNavigation"
