@@ -19,11 +19,8 @@ const date = new Date()
 const countdownDay = computed(() => {
   return dayjs.unix(props.project?.endDate).diff(dayjs(), 'day')
 })
-const toggleFollow = (id) => {
-  if (id) {
-    console.log(id)
-  }
-}
+
+const emit = defineEmits(['follow'])
 </script>
 <template>
   <NuxtLink
@@ -39,7 +36,7 @@ const toggleFollow = (id) => {
         v-if="isLogin.isLogin"
         class="group absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': project.trackingStatus, 'fill-white': !project.trackingStatus }"
-        @click.prevent="toggleFollow(project.id)"
+        @click.prevent="emit('follow', project.id)"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <g>

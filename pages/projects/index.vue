@@ -47,6 +47,20 @@ const changePage = (page) => {
   getProjects()
 }
 
+const toggleFollow = async (id) => {
+  console.log(id)
+  await getFetchData({
+    url: `/member/collection`,
+    method: 'POST',
+    params: { projectId: id }
+  })
+    .then((res) => {
+      console.log(res)
+      getProjects()
+    })
+    .catch((err) => console.log(err))
+}
+
 onMounted(() => {
   nextTick(async () => {
     await getProjects()
@@ -99,7 +113,7 @@ onMounted(() => {
     </div>
     <ul v-if="apiProject?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in apiProject" :key="project.id">
-        <ProjectCard :project="project" />
+        <ProjectCard :project="project" @follow="toggleFollow" />
       </li>
     </ul>
     <div v-else class="text-center">找不到相符條件的資料</div>
