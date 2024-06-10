@@ -37,8 +37,10 @@ onMounted(() => {
         :modules="[SwiperAutoplay, SwiperNavigation, SwiperPagination]"
         :loop="true"
         :autoplay="{
-          delay: 3000
+          delay: 3000,
+          pauseOnMouseEnter: true
         }"
+        :speed="1000"
         :centered-slides="true"
         :pagination="true"
         :navigation="bannerNavigation"

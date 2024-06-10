@@ -32,7 +32,7 @@ watch(
 )
 const getProjects = async () => {
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=10&keyword=${searchKeyword.searchKeyword}`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=12&keyword=${searchKeyword.searchKeyword}`,
     method: 'GET'
   })
     .then((res) => {
