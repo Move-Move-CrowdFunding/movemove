@@ -7,15 +7,17 @@ defineProps({
   text: {
     type: String,
     default: '資料載入中...'
+  },
+  isLoading: {
+    type: Boolean,
+    default: false
   }
 })
-
-const isLoading = useLoadingStore()
 </script>
 <template>
   <transition name="fade">
     <div
-      v-if="isLoading.isLoading"
+      v-if="isLoading"
       class="flex h-full w-full flex-col justify-center bg-neutral-50 text-center"
     >
       <div class="flex min-h-[400px] flex-col items-center justify-center p-4">
