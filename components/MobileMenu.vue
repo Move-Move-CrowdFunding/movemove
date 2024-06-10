@@ -26,7 +26,7 @@ const modelValue = defineModel({
         v-if="isLogin.isLogin"
         class="peer flex items-center space-x-6 border-b border-neutral-100 bg-neutral-50 px-3 py-4"
       >
-        <Avatar :src="isLogin.userData.avatar" image-size="60px" />
+        <Avatar :src="isLogin.userData.avatar" size="md" />
         <div class="space-y-2 overflow-hidden text-neutral-900">
           <h5 class="overflow-hidden text-ellipsis whitespace-nowrap">
             {{ isLogin.userData.nickName }}
