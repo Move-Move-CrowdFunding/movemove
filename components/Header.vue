@@ -13,7 +13,10 @@ const notificationsCount = ref(0)
 const isLogin = useIsLoginStore()
 const searchIsShow = ref(false)
 
-const mobileState = useMenuStore()
+const mobileState = useHeaderStore()
+const searchKeyword = useHeaderStore()
+const searching = useHeaderStore()
+
 const mobileMenuToggle = () => {
   mobileState.mobileMenuShow = !mobileState.mobileMenuShow
 }
@@ -38,29 +41,26 @@ const dropdownMenuList = computed<DropdownMenu[][]>(() => {
   return [mapMenuList]
 })
 
-const searchKeyword = ref('')
-
 // 是否顯示 input 清除按鈕
 const isSearchDeleteBtnShow = computed(() => {
-  return searchKeyword.value.length > 0
+  return searchKeyword.searchKeyword.length > 0
 })
 const clearSearchKeyword = () => {
-  searchKeyword.value = ''
+  searchKeyword.searchKeyword = ''
 }
 const searchJumpTo = () => {
-  if (searchKeyword.value.trim()) {
-    navigateTo({
-      path: `/projects`,
-      query: {
-        pageNo: 1,
-        pageSize: 10,
-        categoryKey: 0,
-        isExpired: 'false',
-        sort: 1,
-        keyword: searchKeyword.value
-      }
-    })
-  }
+  searching.searching = true
+  navigateTo({
+    path: `/projects`,
+    query: {
+      pageNo: 1,
+      pageSize: 10,
+      categoryKey: 0,
+      isExpired: 'true',
+      sort: 1,
+      keyword: searchKeyword.searchKeyword.trim()
+    }
+  })
 }
 
 onMounted(() => {
@@ -89,11 +89,12 @@ onMounted(() => {
             >
               <input
                 id=""
-                v-model="searchKeyword"
+                v-model="searchKeyword.searchKeyword"
                 class="text-netural-600 placeholder:text-netural-50 w-full px-2 pl-2 pr-0 outline-none transition-all"
                 type="text"
                 placeholder="搜尋 提案關鍵字"
                 name=""
+                @keyup.enter="searchJumpTo"
               />
               <UButton
                 :class="isSearchDeleteBtnShow ? 'flex' : 'hidden'"
@@ -150,7 +151,7 @@ onMounted(() => {
               :items="dropdownMenuList"
               :popper="{ offsetDistance: 17, placement: 'top' }"
             >
-              <Avatar default-image-size="sm" :src="isLogin.userData.avatar" />
+              <Avatar size="sm" :src="isLogin.userData.avatar" />
             </UDropdown>
           </div>
           <div class="flex flex-row">
@@ -164,7 +165,7 @@ onMounted(() => {
                   ></div>
                   <input
                     id=""
-                    v-model="searchKeyword"
+                    v-model="searchKeyword.searchKeyword"
                     class="text-netural-600 placeholder:text-netural-50 peer w-full py-2 pl-1 pr-2 outline-none transition-all"
                     type="text"
                     placeholder="搜尋 提案關鍵字"

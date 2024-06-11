@@ -3,12 +3,14 @@ const route = useRoute()
 
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
-  await isLogin.getUserData()
-  if (isLogin.userData.email) {
-    await getProject(route.params.id)
-  } else {
-    await navigateTo('/login')
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
   }
+  await getProject(route.params.id)
 }
 
 const getProject = async (id) => {

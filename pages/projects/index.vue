@@ -1,33 +1,63 @@
 <script setup>
+const route = useRoute()
+const router = useRouter()
+
+const searchKeyword = useHeaderStore()
+const searching = useHeaderStore()
+
+const isLoading = ref(false)
+
 const pageNo = ref(1)
 const pagination = ref({})
-const selectedCategory = ref(0)
+const selectedCategory = ref(Number(route.query.category))
 const selectCategory = (key) => {
   pageNo.value = 1
   selectedCategory.value = key
-  getAdminProjects()
+  router.push({
+    query: {
+      ...route.query,
+      category: key
+    }
+  })
+  searchKeyword.searchKeyword = ''
+  getProjects()
 }
 const sort = ref(1)
-const showExpired = ref(false)
+const showExpired = ref(route.query.isExpired || 'false')
 const apiProject = ref([])
-const getAdminProjects = async () => {
+
+watch(
+  () => searching.searching,
+  async () => {
+    await getProjects()
+  }
+)
+
+const getProjects = async () => {
+  isLoading.value = true
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=1`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=10&keyword=${searchKeyword.searchKeyword}`,
     method: 'GET'
   })
     .then((res) => {
       apiProject.value = res.results
       pagination.value = res.pagination
+      searching.searching = false
+      isLoading.value = false
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      isLoading.value = false
+    })
 }
 const changePage = (page) => {
   pageNo.value = page
-  getAdminProjects()
+  getProjects()
 }
+
 onMounted(() => {
   nextTick(async () => {
-    await getAdminProjects()
+    await getProjects()
   })
 })
 </script>
@@ -59,28 +89,32 @@ onMounted(() => {
         {{ item.name }}
       </button>
     </div>
-    <div class="mb-4 flex justify-between">
+    <div v-if="apiProject?.length" class="mb-4 flex justify-between">
       <div class="flex items-center">
         <input
           id="showAll"
           v-model="showExpired"
           type="checkbox"
           class="mr-2 h-5 w-5 appearance-none rounded-sm border-secondary-1 outline outline-2 outline-secondary-1 after:relative after:block after:h-5/6 after:w-6/12 after:translate-x-[5px] checked:bg-secondary-1 checked:after:relative checked:after:rotate-45 checked:after:border-b-4 checked:after:border-r-4 checked:after:border-white"
-          @change="getAdminProjects"
+          @change="getProjects"
         />
         <label for="showAll" class="flex items-center gap-2">顯示已結束提案</label>
       </div>
-      <select id="" v-model="sort" name="" class="px-2 py-1" @change="getAdminProjects">
+      <select id="" v-model="sort" name="" class="px-2 py-1" @change="getProjects">
         <option value="1">由新到舊</option>
         <option value="2">由舊到新</option>
       </select>
     </div>
-    <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <LoadingDataState v-if="isLoading" :is-loading="isLoading" />
+    <ul v-else-if="apiProject?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in apiProject" :key="project.id">
         <ProjectCard :project="project" />
       </li>
     </ul>
+
+    <EmptyState v-else />
     <Pagination
+      v-if="apiProject?.length && !isLoading"
       container-class="container flex items-center justify-center py-10 lg:py-20"
       size="xl"
       :pagination="pagination"

@@ -108,7 +108,7 @@ onMounted(() => {
     </section>
     <!-- bg-group -->
     <div class="bg-group-1 bg-none bg-right-bottom bg-no-repeat lg:px-3">
-      <section class="container py-10 sm:pt-20">
+      <section v-if="homeData.hotProjects?.length" class="container py-10 sm:pt-20">
         <div class="mb-6 flex h-[54px] items-center justify-between sm:mb-10">
           <h2 class="text-3xl sm:text-4xl">熱門提案</h2>
           <NuxtLink to="/projects" class="hover:text-primary-1 active:text-secondary-1"
@@ -123,7 +123,7 @@ onMounted(() => {
             :slides-per-view="1.3"
             :space-between="24"
             :navigation="hotNavigation"
-            :pagination="{ clickable: true }"
+            :pagination="true"
             :breakpoints="{
               '640': {
                 slidesPerView: 2.3
@@ -137,7 +137,7 @@ onMounted(() => {
               <ProjectCard :project="project" />
             </SwiperSlide>
           </Swiper>
-          <button class="hot-swiper-button-prev">
+          <button v-if="homeData.hotProjects.length > 3" class="hot-swiper-button-prev">
             <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
               <g>
                 <path
@@ -146,7 +146,7 @@ onMounted(() => {
               </g>
             </svg>
           </button>
-          <button class="hot-swiper-button-next">
+          <button v-if="homeData.hotProjects.length > 3" class="hot-swiper-button-next">
             <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
               <g>
                 <path
@@ -230,7 +230,7 @@ onMounted(() => {
     </section>
 
     <div class="bg-group-2 bg-top bg-no-repeat">
-      <section class="lg:bg-none">
+      <section v-if="homeData.successProjects?.length" class="lg:bg-none">
         <div class="container pb-10 pt-20 sm:pb-20 sm:pt-40">
           <div class="mb-6 flex h-[54px] items-center justify-between lg:mb-10">
             <h2 class="text-3xl sm:text-4xl">成功案例</h2>
@@ -241,7 +241,7 @@ onMounted(() => {
           <ul class="grid gap-6 sm:gap-y-9 lg:grid-cols-2">
             <li v-for="item in homeData.successProjects" :key="item._id">
               <NuxtLink
-                :to="`/project/${item._id}`"
+                :to="`/projects/${item._id}`"
                 class="group grid grid-cols-3 overflow-hidden rounded-2xl border border-primary-3 bg-white duration-300 hover:border-primary-1 hover:shadow-lg lg:grid-cols-2 lg:rounded-[32px]"
               >
                 <div class="relative overflow-hidden">

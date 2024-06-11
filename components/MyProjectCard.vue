@@ -25,11 +25,11 @@ const emit = defineEmits(['showSponsorList'])
         :style="{ backgroundImage: `url(${data.coverUrl})` }"
       ></NuxtLink>
       <div class="absolute left-6 top-6 rounded-full bg-primary-3 px-2 py-1">
-        {{ categoryKeys[data.categoryKey]?.name }}
+        {{ categoryKeys[data.categoryKey - 1]?.name }}
       </div>
     </div>
     <div class="col-span-3 flex w-full flex-col items-start gap-2 p-4 lg:flex-row lg:p-10">
-      <div class="grow space-y-2">
+      <div class="w-full grow space-y-2">
         <h2
           class="text-lg font-bold text-secondary-2 decoration-secondary-2 underline-offset-2 hover:underline"
         >

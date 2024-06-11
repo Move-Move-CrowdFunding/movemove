@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { getAdminProjectItem } from '@/apis/admin'
-
-// import type { ResponseData } from '~/types/response'
+import type { ResponseData } from '~/types/response'
 
 definePageMeta({
   layout: 'admin-layout'
@@ -42,20 +40,43 @@ interface ProjectItem {
 const projectItem = ref({} as ProjectItem)
 
 const pageTitle = usePageTitleStore()
-
-const getProjectItem = async (id: string) => {
-  const { data, error } = await getAdminProjectItem(id)
-  if (error.value) return
-  projectItem.value = data.value.results
-  pageTitle.title = projectItem.value.title
-}
 const route = useRoute()
 const { id } = route.params
 
+const getProjectItem = async (id: string) => {
+  await getFetchData({
+    url: `/admin/projects/${id}`,
+    method: 'GET'
+  })
+    .then((res) => {
+      projectItem.value = (res as ResponseData).results
+      pageTitle.title = projectItem.value.title
+    })
+    .catch((err: any) => {
+      console.log('err', err)
+    })
+}
+
+const isLogin = useIsLoginStore()
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
+  }
+  if (isLogin.userData.auth) {
+    await getProjectItem(id as string)
+  } else {
+    alert('無瀏覽權限，請先登入')
+    await navigateTo('/login')
+  }
+}
 onMounted(() => {
   pageTitle.currentTitle = '提案內容'
   nextTick(async () => {
-    await getProjectItem(id as string)
+    await checkPermission()
   })
 })
 </script>

@@ -1,4 +1,7 @@
 <script setup>
+const router = useRouter()
+const isLogin = useIsLoginStore()
+
 const tempData = ref({
   introduce: '',
   teamName: '',
@@ -11,8 +14,8 @@ const tempData = ref({
   coverUrl: '',
   describe: '',
   videoUrl: '',
-  startDate: NaN,
-  endDate: NaN,
+  startDate: 0,
+  endDate: 0,
   relatedUrl: '',
   feedbackItem: '',
   feedbackUrl: '',
@@ -21,8 +24,6 @@ const tempData = ref({
 })
 
 const createProject = async (tempData) => {
-  console.log(tempData)
-
   await getFetchData({
     url: '/project',
     method: 'POST',
@@ -30,12 +31,26 @@ const createProject = async (tempData) => {
   })
     .then((res) => {
       console.log(res)
-      // router.push({ path: `/create/success` })
+      router.push({ path: `/create/success/${res.results.id}` })
     })
     .catch((err) => {
       console.log(err)
     })
 }
+
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+    }
+  }
+}
+onMounted(() => {
+  nextTick(() => {
+    checkPermission()
+  })
+})
 </script>
 <template>
   <div>
