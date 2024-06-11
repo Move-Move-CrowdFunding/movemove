@@ -88,13 +88,6 @@ const reviewProjectId = (approve) => {
 </script>
 <template>
   <div>
-    <pre>
-      latestLog
-      {{ latestLog?.status === 0 }}
-      {{ latestLog?.status === 1 }}
-      {{ latestLog?.status === 0 || latestLog?.status === 1 }}
-      {{ isDisable }}
-    </pre>
     <div class="container py-10">
       <div v-if="latestLog?.status === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">

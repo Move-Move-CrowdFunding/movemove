@@ -87,9 +87,8 @@ onMounted(() => {
               >
             </div>
             <div class="flex justify-between">
-              <clientOnly>
-                <div>募資倒數 {{ days }} 天 {{ hours }} 小時</div>
-              </clientOnly>
+              <div v-if="days >= 0 && hours >= 0">募資倒數 {{ days }} 天 {{ hours }} 小時</div>
+              <div v-else>募資已結束</div>
               <div class="flex items-center">
                 <Icon name="mdi:user" width="24" height="24" />
                 <span>{{ project.supportCount }}人參與</span>
@@ -115,10 +114,11 @@ onMounted(() => {
         <div class="mb-6 rounded-3xl p-6 shadow-lg">
           <div class="mb-4 hidden gap-4 lg:flex">
             <NuxtLink
-              :to="`/projects/${project.id}/support`"
+              :to="days >= 0 && hours >= 0 ? `/projects/${project.id}/support` : '/projects'"
               class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
             >
-              支持專案
+              <span v-if="days >= 0 && hours >= 0"> 支持專案 </span>
+              <span v-else>募資已結束</span>
             </NuxtLink>
             <button
               class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
@@ -193,10 +193,11 @@ onMounted(() => {
     <div class="sticky bottom-0 rounded-t-2xl bg-white py-6 lg:hidden">
       <div class="container flex gap-4">
         <NuxtLink
-          :to="`/projects/${project.id}/support`"
+          :to="days >= 0 && hours >= 0 ? `/projects/${project.id}/support` : '/projects'"
           class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
         >
-          支持專案
+          <span v-if="days >= 0 && hours >= 0"> 支持專案 </span>
+          <span v-else>募資已結束</span>
         </NuxtLink>
         <button
           class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
