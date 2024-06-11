@@ -1,76 +1,92 @@
 <script setup>
 const route = useRoute()
-
-const results = ref({})
-const projectItem = computed(() => results.value.results || {})
-
-const tempData = ref({
-  userName: '',
-  money: 100,
-  email: 'user@gmail.com',
-  phone: '',
-  isNeedFeedback: true,
-  receiver: '收件人名稱',
-  receiverPhone: '收件人電話',
-  address: '地址'
+const id = computed(() => route.params.id) // project id
+const userStore = useIsLoginStore() // 會員資料
+const { userData } = storeToRefs(userStore)
+watch(userData, (val) => {
+  tempData.value.userName = val?.userName ?? ''
+  tempData.value.email = val?.email ?? ''
+  tempData.value.phone = val?.phone ?? ''
 })
 
-const id = computed(() => route.params.id)
-
+const results = ref({}) // 專案完整資料
+const projectItem = computed(() => results.value.results || {}) // 專案資料
+// 取得專案資料
 const getProject = async () => {
   try {
-    results.value = await getFetchData({
+    const res = await getFetchData({
       url: `/project/${id.value}`
     })
+
+    results.value = JSON.parse(JSON.stringify(res))
   } catch (error) {
     console.log(error)
   }
 }
 
-const supportResults = ref({})
+const paymentForm = ref(null) // 金流表單element
+const supportResults = ref({
+  //  金流表單資料
+  TradeSha: '',
+  TradeInfo: '',
+  MerchantID: 'MS152443410',
+  Version: '2.0',
+  TimeStamp: '',
+  MerchantOrderNo: '',
+  money: '',
+  ItemDesc: '公益募捐'
+})
 
-const payment = async () => {
-  try {
-    const formData = new FormData()
+// 支持專案資料
+const tempData = ref({
+  userName: '',
+  email: '',
+  phone: '',
+  money: 1000,
+  isNeedFeedback: false,
+  receiver: '',
+  receiverPhone: '',
+  address: ''
+})
 
-    if (supportResults.value?.results) {
-      const { TradeSha, TradeInfo, data } = supportResults.value.results
-      formData.append('TradeSha', TradeSha)
-      formData.append('TradeInfo', TradeInfo)
-      formData.append('MerchantID', 'MS152443410')
-      formData.append('TimeStamp', data.TimeStamp)
-      formData.append('Version', '2.0')
-      formData.append('MerchantOrderNo', data.MerchantOrderNo)
-      formData.append('Amt', data.money)
-      formData.append('ItemDesc', '公益募捐')
-
-      const response = await $fetch('https://ccore.newebpay.com/MPG/mpg_gateway', {
-        method: 'POST',
-        body: formData
-      })
-
-      console.log(response)
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
-
+// 支持專案
 const supportProject = async () => {
   try {
-    supportResults.value = await getFetchData({
+    const res = await getFetchData({
       url: `/payment/support`,
       method: 'POST',
       params: { ...tempData.value, projectId: id.value }
     })
 
-    if (supportResults.value.status === 'success') {
-      payment()
+    if (res.status === 'success') {
+      // 完成後將資料填入金流表單並送出
+      const { results } = res
+      supportResults.value = {
+        ...supportResults.value,
+        TradeSha: results.TradeSha,
+        TradeInfo: results.TradeInfo,
+        TimeStamp: results.data.TimeStamp,
+        MerchantOrderNo: results.data.MerchantOrderNo,
+        money: results.data.money
+      }
+      nextTick(() => paymentForm.value.submit())
     }
   } catch (error) {
     console.log(error)
   }
 }
+
+const isOverDonationTarget = computed(() => tempData.value.money >= projectItem.value.feedbackMoney)
+watch(isOverDonationTarget, (val) => {
+  if (!val) {
+    tempData.value.isNeedFeedback = false
+    tempData.value.receiver = ''
+    tempData.value.receiverPhone = ''
+    tempData.value.address = ''
+  } else {
+    tempData.value.isNeedFeedback = true
+  }
+})
 
 onMounted(() => {
   nextTick(() => {
@@ -79,7 +95,9 @@ onMounted(() => {
 })
 </script>
 <template>
-  {{ supportResults }}
+  {{ userData }}
+  <hr />
+  {{ tempData }}
   <div class="container py-10 lg:py-20">
     <h1 class="mb-6 text-center text-3xl font-bold lg:mb-10">支持提案內容</h1>
     <div class="grid gap-12 md:grid-cols-2">
@@ -164,6 +182,7 @@ onMounted(() => {
           </ul>
         </div>
         <div
+          v-if="projectItem.feedbackItem"
           class="space-y-4 overflow-hidden rounded-3xl p-6 shadow-[0_0_8px_0_theme(colors.neutral.900/16%)]"
         >
           <div class="peer flex items-start space-x-4">
@@ -174,7 +193,7 @@ onMounted(() => {
             />
             <div class="flex-1 space-y-1 text-base">
               <h4 class="flex flex-wrap">
-                <p>單筆滿 NTD$ 100 立即享回饋:</p>
+                <p>單筆滿 NTD$ {{ projectItem.feedbackMoney }} 立即享回饋:</p>
                 <p>{{ projectItem.feedbackItem }} * 1</p>
               </h4>
               <p class="text-neutral-600">
@@ -205,7 +224,7 @@ onMounted(() => {
             </div>
           </div>
           <div
-            v-if="tempData.money >= projectItem.feedbackMoney"
+            v-if="isOverDonationTarget"
             class="space-y-6 peer-[&]:before:mb-4 peer-[&]:before:block peer-[&]:before:h-px peer-[&]:before:w-full peer-[&]:before:bg-neutral-200 peer-[&]:before:content-['']"
           >
             <div class="flex items-center space-x-3">
@@ -269,21 +288,16 @@ onMounted(() => {
           </button>
         </div>
       </div>
-      <!-- <form method="post" action="https://ccore.newebpay.com/MPG/mpg_gateway">
-        <input type="text" name="TradeSha" :value="supportResults.TradeSha" />
-        <input type="text" name="TradeInfo" :value="supportResults.TradeInfo" />
-        <input type="text" name="MerchantID" value="MS152443410" />
-        <input type="text" name="TimeStamp" :value="supportResults.sponsorData.TimeStamp" />
-        <input type="text" name="Version" :value="2.0" />
-        <input
-          type="text"
-          name="MerchantOrderNo"
-          :value="supportResults.sponsorData.MerchantOrderNo"
-        />
-        <input type="text" name="Amt" :value="supportResults.sponsorData.money" />
-        <input type="text" name="ItemDesc" value="公益募捐" />
-        <button type="submit">送出</button>
-      </form> -->
+      <form ref="paymentForm" method="post" action="https://ccore.newebpay.com/MPG/mpg_gateway">
+        <input :value="supportResults.TradeSha" type="hidden" name="TradeSha" />
+        <input :value="supportResults.TradeInfo" type="hidden" name="TradeInfo" />
+        <input :value="supportResults.MerchantID" type="hidden" name="MerchantID" />
+        <input :value="supportResults.TimeStamp" type="hidden" name="TimeStamp" />
+        <input :value="supportResults.Version" type="hidden" name="Version" />
+        <input :value="supportResults.MerchantOrderNo" type="hidden" name="MerchantOrderNo" />
+        <input :value="supportResults.money" type="hidden" name="Amt" />
+        <input :value="supportResults.ItemDesc" type="hidden" name="ItemDesc" />
+      </form>
     </div>
   </div>
 </template>
