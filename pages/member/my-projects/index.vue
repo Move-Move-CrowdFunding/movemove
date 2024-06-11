@@ -68,14 +68,13 @@ const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
     .catch((err) => console.log(err))
 }
 
-const sponsorId = ref('')
-const sponsorListShown = ref(true)
-const showSponsorList = async (id) => {
-  console.log(id)
+const sponsorProject = ref({})
+const sponsorListShown = ref(false)
+const showSponsorList = async (project) => {
   sponsorListShown.value = true
-  sponsorId.value = id
+  sponsorProject.value = project
   await getFetchData({
-    url: `/member/support/${id}`,
+    url: `/member/support/${project.id}`,
     method: 'GET'
   })
     .then((res) => {
@@ -84,6 +83,11 @@ const showSponsorList = async (id) => {
       sponsorPagination.value = res.pagination
     })
     .catch((err) => console.log(err))
+}
+const hideSponsorList = () => {
+  sponsorListShown.value = false
+  sponsorProject.value = false
+  sponsorList.value = []
 }
 
 const pageNo = ref(1)
@@ -117,7 +121,7 @@ onMounted(() => {
     </ul>
     <ul v-if="results.list.length" class="flex flex-col gap-6 lg:gap-10">
       <li v-for="item in results.list" :key="item.id">
-        <MyProjectCard :data="item" @show-sponsor-list="showSponsorList(item.id)" />
+        <MyProjectCard :data="item" @show-sponsor-list="showSponsorList" />
       </li>
     </ul>
     <div v-else class="text-center">找不到相符條件的資料</div>
@@ -127,17 +131,21 @@ onMounted(() => {
       id="sponsorListModal"
       class="fixed left-1/2 top-1/2 z-[70] flex max-h-dvh max-w-full -translate-x-1/2 -translate-y-1/2 flex-col bg-secondary-1 px-6 py-10 shadow-2xl"
     >
-      <div class="mb-6 flex items-center gap-4">
-        <h2 class="text-2xl font-bold text-white">{{ sponsorId }}贊助名單</h2>
-        <button v-if="sponsorList?.length" class="rounded bg-primary-1 px-2 py-0.5 text-white">
-          匯出
-        </button>
-        <button class="ml-auto text-white" @click="sponsorListShown = false">
+      <div class="mb-6 flex items-start gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-white">{{ sponsorProject.title }}贊助名單</h2>
+          <button
+            v-if="sponsorList?.length"
+            class="shrink-0 self-center rounded bg-primary-1 px-2 py-0.5 text-white"
+          >
+            匯出
+          </button>
+        </div>
+        <button class="ml-auto text-white" @click="hideSponsorList">
           <Icon name="mdi:close" height="32" width="32" />
         </button>
       </div>
       <div class="grow overflow-auto bg-white">
-        <pre>{{ sponsorList }}</pre>
         <UTable
           v-if="sponsorList.length"
           :rows="sponsorList"
@@ -146,7 +154,7 @@ onMounted(() => {
         >
           <template #createdAt-data="{ row }">
             <p class="text-wrap">
-              {{ $timeformat(row.createdAt) }}
+              {{ $timeformat(row.createTime) }}
             </p>
           </template>
           <template #info-data="{ row }">

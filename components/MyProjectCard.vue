@@ -72,7 +72,7 @@ const emit = defineEmits(['showSponsorList'])
         <button
           v-else-if="data.state === 'ongoing' || data.state === 'ended'"
           class="ml-auto flex items-center rounded-full bg-secondary-2 p-1 px-2 text-white duration-100 hover:bg-primary-1"
-          @click="emit('showSponsorList', data.id)"
+          @click="emit('showSponsorList', { id: data.id, title: data.title })"
         >
           <div class="flex h-6 w-6 items-center justify-center">
             <Icon name="mdi:user" color="white" width="24" height="24" class="" />
