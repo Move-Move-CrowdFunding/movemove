@@ -18,7 +18,7 @@ const latestLog = computed(() => {
     : {}
 })
 const isDisable = computed(() => {
-  return latestLog.value.status === 0 || latestLog.value.status === 1
+  return inAdmin || latestLog.value.status === 0 || latestLog.value.status === 1
 })
 
 // 綁定日期
