@@ -5,6 +5,8 @@ const router = useRouter()
 const searchKeyword = useHeaderStore()
 const searching = useHeaderStore()
 
+const isLoading = ref(false)
+
 const pageNo = ref(1)
 const pagination = ref({})
 const selectedCategory = ref(Number(route.query.category))
@@ -30,7 +32,9 @@ watch(
     await getProjects()
   }
 )
+
 const getProjects = async () => {
+  isLoading.value = true
   await getFetchData({
     url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=12&keyword=${searchKeyword.searchKeyword}`,
     method: 'GET'
@@ -39,8 +43,12 @@ const getProjects = async () => {
       apiProject.value = res.results
       pagination.value = res.pagination
       searching.searching = false
+      isLoading.value = false
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      isLoading.value = false
+    })
 }
 const changePage = (page) => {
   pageNo.value = page
@@ -111,15 +119,16 @@ onMounted(() => {
         <option value="2">由舊到新</option>
       </select>
     </div>
-    <ul v-if="apiProject?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <LoadingDataState v-if="isLoading" :is-loading="isLoading" />
+    <ul v-else-if="apiProject?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in apiProject" :key="project.id">
         <ProjectCard :project="project" @follow="toggleFollow" />
       </li>
     </ul>
-    <div v-else class="text-center">找不到相符條件的資料</div>
 
+    <EmptyState v-else />
     <Pagination
-      v-if="apiProject?.length"
+      v-if="apiProject?.length && !isLoading"
       container-class="container flex items-center justify-center py-10 lg:py-20"
       size="xl"
       :pagination="pagination"

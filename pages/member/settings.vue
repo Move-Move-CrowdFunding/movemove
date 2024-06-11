@@ -97,7 +97,7 @@ onMounted(() => {
       <h1 class="mb-6 text-3xl sm:text-4xl lg:mb-10">帳戶設定</h1>
       <div class="mx-auto lg:w-[800px]">
         <div class="mb-6 flex items-start space-x-4 px-3 lg:px-6">
-          <Avatar :src="isLogin.userData.avatar" image-size="80px" class="group">
+          <Avatar :src="isLogin.userData.avatar" size="lg" class="group">
             <template #upload>
               <div
                 class="invisible absolute bottom-0 right-0 opacity-0 transition-all group-hover:visible group-hover:opacity-100"
