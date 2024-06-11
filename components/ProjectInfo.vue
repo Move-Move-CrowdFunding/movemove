@@ -3,7 +3,6 @@ import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/u
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
 const inCreate = route.fullPath.includes('create/edit')
-// console.log('inCreate', inCreate)
 const props = defineProps({
   tempData: {
     type: Object,
@@ -14,14 +13,12 @@ const props = defineProps({
 const newTempData = computed(() => props.tempData)
 
 const latestLog = computed(() => {
-  if (!inAdmin) {
-    return newTempData.value && newTempData.value?.state
-      ? newTempData.value?.state[newTempData.value?.state.length - 1]
-      : []
-  }
   return newTempData.value && newTempData.value?.reviewLog
     ? newTempData.value?.reviewLog[newTempData.value?.reviewLog.length - 1]
-    : []
+    : {}
+})
+const isDisable = computed(() => {
+  return inAdmin || latestLog.value.status === 0 || latestLog.value.status === 1
 })
 
 // 綁定日期
@@ -38,8 +35,6 @@ const changeDate = (item) => {
 }
 changeDate('startDate')
 changeDate('endDate')
-
-const isDisable = inAdmin || latestLog.value?.status === 0 || latestLog.value?.status === 1
 
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
@@ -93,6 +88,13 @@ const reviewProjectId = (approve) => {
 </script>
 <template>
   <div>
+    <pre>
+      latestLog
+      {{ latestLog?.status === 0 }}
+      {{ latestLog?.status === 1 }}
+      {{ latestLog?.status === 0 || latestLog?.status === 1 }}
+      {{ isDisable }}
+    </pre>
     <div class="container py-10">
       <div v-if="latestLog?.status === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">

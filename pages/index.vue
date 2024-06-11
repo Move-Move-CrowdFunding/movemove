@@ -23,6 +23,21 @@ const getHomeData = async () => {
     })
     .catch((err) => console.log(err))
 }
+
+const toggleFollow = async (id) => {
+  console.log(id)
+  await getFetchData({
+    url: `/member/collection`,
+    method: 'POST',
+    params: { projectId: id }
+  })
+    .then((res) => {
+      console.log(res)
+      getHomeData()
+    })
+    .catch((err) => console.log(err))
+}
+
 onMounted(() => {
   nextTick(() => {
     getHomeData()
@@ -34,8 +49,13 @@ onMounted(() => {
     <section class="relative">
       <Swiper
         id="banner-swiper"
-        :modules="[SwiperNavigation, SwiperPagination]"
+        :modules="[SwiperAutoplay, SwiperNavigation, SwiperPagination]"
         :loop="true"
+        :autoplay="{
+          delay: 3000,
+          pauseOnMouseEnter: true
+        }"
+        :speed="1000"
         :centered-slides="true"
         :pagination="true"
         :navigation="bannerNavigation"
@@ -134,7 +154,7 @@ onMounted(() => {
             }"
           >
             <SwiperSlide v-for="project in homeData.hotProjects" :key="project.id">
-              <ProjectCard :project="project" />
+              <ProjectCard :project="project" @follow="toggleFollow" />
             </SwiperSlide>
           </Swiper>
           <button v-if="homeData.hotProjects.length > 3" class="hot-swiper-button-prev">
@@ -190,7 +210,7 @@ onMounted(() => {
       <div class="container">
         <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           <li v-for="project in homeData.recommendProjects" :key="project.id">
-            <ProjectCard :project="project" />
+            <ProjectCard :project="project" @follow="toggleFollow" />
           </li>
         </ul>
       </div>

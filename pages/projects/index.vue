@@ -36,7 +36,7 @@ watch(
 const getProjects = async () => {
   isLoading.value = true
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=10&keyword=${searchKeyword.searchKeyword}`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=12&keyword=${searchKeyword.searchKeyword}`,
     method: 'GET'
   })
     .then((res) => {
@@ -53,6 +53,20 @@ const getProjects = async () => {
 const changePage = (page) => {
   pageNo.value = page
   getProjects()
+}
+
+const toggleFollow = async (id) => {
+  console.log(id)
+  await getFetchData({
+    url: `/member/collection`,
+    method: 'POST',
+    params: { projectId: id }
+  })
+    .then((res) => {
+      console.log(res)
+      getProjects()
+    })
+    .catch((err) => console.log(err))
 }
 
 onMounted(() => {
@@ -108,7 +122,7 @@ onMounted(() => {
     <LoadingDataState v-if="isLoading" :is-loading="isLoading" />
     <ul v-else-if="apiProject?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in apiProject" :key="project.id">
-        <ProjectCard :project="project" />
+        <ProjectCard :project="project" @follow="toggleFollow" />
       </li>
     </ul>
 
