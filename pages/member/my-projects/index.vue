@@ -70,11 +70,9 @@ const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
 
 const sponsorProject = ref({})
 const sponsorListShown = ref(false)
-const showSponsorList = async (project) => {
-  sponsorListShown.value = true
-  sponsorProject.value = project
+const getSponsorList = async (project, page = 1, pageSize = 8) => {
   await getFetchData({
-    url: `/member/support/${project.id}`,
+    url: `/member/support/${project.id}?pageNo=${page}&pageSize=${pageSize}`,
     method: 'GET'
   })
     .then((res) => {
@@ -83,6 +81,11 @@ const showSponsorList = async (project) => {
       sponsorPagination.value = res.pagination
     })
     .catch((err) => console.log(err))
+}
+const showSponsorList = async (project, page) => {
+  sponsorListShown.value = true
+  sponsorProject.value = project
+  await getSponsorList(project, page)
 }
 const hideSponsorList = () => {
   sponsorListShown.value = false
@@ -94,6 +97,11 @@ const pageNo = ref(1)
 const changePage = (page) => {
   pageNo.value = page
   getMyProjects(page, 10, selectedState.value)
+}
+const sponsorPageNo = ref(1)
+const changeSponsorPage = (page) => {
+  sponsorPageNo.value = page
+  getSponsorList(sponsorProject.value, page)
 }
 
 onMounted(() => {
@@ -176,7 +184,7 @@ onMounted(() => {
         container-class="container flex items-center justify-center pt-6"
         size="md"
         :pagination="sponsorPagination"
-        @page="changePage"
+        @page="changeSponsorPage"
       />
     </div>
     <Pagination
