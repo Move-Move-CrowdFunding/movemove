@@ -36,7 +36,7 @@ watch(
 const getProjects = async () => {
   isLoading.value = true
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpried=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=12&keyword=${searchKeyword.searchKeyword}`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpired=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=12&keyword=${searchKeyword.searchKeyword}`,
     method: 'GET'
   })
     .then((res) => {
@@ -56,7 +56,6 @@ const changePage = (page) => {
 }
 
 const toggleFollow = async (id) => {
-  console.log(id)
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
