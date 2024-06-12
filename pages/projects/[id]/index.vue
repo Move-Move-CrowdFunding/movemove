@@ -21,7 +21,7 @@ const project = ref({
   userId: '',
   projectId: '',
   introduce: '',
-  teamName: '弱勢救星',
+  teamName: '',
   title: '',
   email: '',
   phone: '',
