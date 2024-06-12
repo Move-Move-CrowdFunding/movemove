@@ -22,6 +22,7 @@ const project = ref({
   projectId: '',
   introduce: '',
   teamName: '',
+  avatar: '',
   title: '',
   email: '',
   phone: '',
@@ -147,8 +148,9 @@ onMounted(() => {
         <div class="rounded-3xl p-4 shadow-lg lg:p-6">
           <div class="flex items-center gap-10">
             <div
+              v-if="project?.avatar"
               class="h-20 w-20 shrink-0 rounded-full bg-[url('')] bg-cover bg-center"
-              :style="{ backgroundImage: `url(${project.coverUrl})` }"
+              :style="{ backgroundImage: `url(${project.avatar})` }"
             ></div>
             <div>
               <div class="mb-4 text-2xl">{{ project.teamName }}</div>
