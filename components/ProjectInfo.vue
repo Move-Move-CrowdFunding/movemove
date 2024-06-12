@@ -12,6 +12,12 @@ const props = defineProps({
 
 const newTempData = computed(() => props.tempData)
 
+const isLogin = useIsLoginStore()
+
+if (inCreate) {
+  newTempData.value.teamName = isLogin.userData.nickName
+}
+
 const latestLog = computed(() => {
   return newTempData.value && newTempData.value?.reviewLog
     ? newTempData.value?.reviewLog[newTempData.value?.reviewLog.length - 1]
@@ -88,6 +94,7 @@ const reviewProjectId = (approve) => {
 </script>
 <template>
   <div>
+    <pre>{{ newTempData }}</pre>
     <div class="container py-10">
       <div v-if="latestLog?.status === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">
@@ -110,14 +117,17 @@ const reviewProjectId = (approve) => {
               type="text"
               placeholder="請輸入提案人姓名/團隊名稱"
               class="block w-full"
-              :disabled="isDisable"
+              disabled
             />
             <p class="mt-2 text-xs">
               提案人必須要用真實姓名註冊會員，不接受匿名或使用他人名義的提案。
             </p>
           </div>
           <div class="mb-6">
-            <label for="email">聯絡信箱</label>
+            <label for="email">
+              聯絡信箱
+              <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+            </label>
             <input
               id="email"
               v-model="newTempData.email"
@@ -128,7 +138,10 @@ const reviewProjectId = (approve) => {
             />
           </div>
           <div class="mb-6">
-            <label for="phone">聯絡手機</label>
+            <label for="phone">
+              聯絡手機
+              <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+            </label>
             <input
               id="phone"
               v-model="newTempData.phone"
@@ -139,7 +152,10 @@ const reviewProjectId = (approve) => {
             />
           </div>
           <div class="mb-6">
-            <label for="phone">團隊介紹</label>
+            <label for="phone">
+              團隊介紹
+              <!-- <span class="text-red-700" :class="{ hidden: isDisable }">*</span> -->
+            </label>
             <textarea
               id="phone"
               v-model="newTempData.introduce"
@@ -172,7 +188,10 @@ const reviewProjectId = (approve) => {
         <div class="order-1 col-span-2 lg:order-2">
           <h2>提案詳情</h2>
           <div class="mb-6">
-            <label for="title">提案標題</label>
+            <label for="title">
+              提案標題
+              <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+            </label>
             <input
               id="title"
               v-model="newTempData.title"
@@ -187,7 +206,10 @@ const reviewProjectId = (approve) => {
           </div>
           <div class="mb-6 grid grid-cols-2 gap-3">
             <div>
-              <label for="categoryKey">分類</label>
+              <label for="categoryKey">
+                分類
+                <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+              </label>
               <select
                 id="categoryKey"
                 v-model="newTempData.categoryKey"
@@ -202,7 +224,10 @@ const reviewProjectId = (approve) => {
               </select>
             </div>
             <div>
-              <label for="targetMoney">提案目標</label>
+              <label for="targetMoney">
+                提案目標
+                <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+              </label>
               <div class="flex items-center space-x-2">
                 <input
                   id="targetMoney"
@@ -218,7 +243,10 @@ const reviewProjectId = (approve) => {
             </div>
           </div>
           <div class="mb-6">
-            <label for="">預計時間</label>
+            <label for="">
+              預計時間
+              <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+            </label>
             <div class="flex items-center space-x-2">
               <input
                 id="startDate"
@@ -243,7 +271,10 @@ const reviewProjectId = (approve) => {
             </p>
           </div>
           <div class="mb-6">
-            <label for="describe">提案簡介</label>
+            <label for="describe">
+              提案簡介
+              <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+            </label>
             <textarea
               id="describe"
               v-model="newTempData.describe"
@@ -253,7 +284,10 @@ const reviewProjectId = (approve) => {
             ></textarea>
           </div>
           <div class="mb-6">
-            <label for="">封面照片</label>
+            <label for="">
+              封面照片
+              <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+            </label>
             <div class="flex items-stretch rounded border">
               <label for="coverUpload" :disabled="isDisable" class="m-1">
                 <div
@@ -281,7 +315,10 @@ const reviewProjectId = (approve) => {
             <img :src="newTempData.coverUrl" class="mt-1" />
           </div>
           <div class="mb-6">
-            <label for="coverUrl">提案說明</label>
+            <label for="coverUrl">
+              提案說明
+              <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+            </label>
             <textarea
               id="coverUrl"
               v-model="newTempData.content"

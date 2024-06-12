@@ -74,30 +74,32 @@ onMounted(() => {
       >
         <SwiperSlide class="bg-[url('~/assets/images/index/banner/1.png')] bg-cover bg-center">
           <div class="h-full text-center font-bold">
-            <p class="mt-20">募募</p>
+            <img src="~/assets/icons/logo.svg" alt="" class="mx-auto mt-20 block" />
             <p class="my-12 text-7xl">群眾募資</p>
             <p class="text-3xl">共同實現夢想</p>
           </div>
         </SwiperSlide>
         <SwiperSlide class="bg-[url('~/assets/images/index/banner/2.png')] bg-cover bg-center">
           <div class="h-full text-center font-bold">
-            <p class="mt-20">募募</p>
+            <img src="~/assets/icons/logo.svg" alt="" class="mx-auto mt-20 block" />
             <p class="my-12 text-7xl">群眾募資</p>
             <p class="text-3xl">建立共同體和凝聚力</p>
           </div>
         </SwiperSlide>
         <SwiperSlide class="bg-[url('~/assets/images/index/banner/3.png')] bg-cover bg-center">
           <div class="h-full text-center font-bold">
-            <p class="mt-20">募募</p>
+            <img src="~/assets/icons/logo.svg" alt="" class="mx-auto mt-20 block" />
             <p class="my-12 text-7xl">群眾募資</p>
             <p class="text-3xl">民主參與影響</p>
           </div>
         </SwiperSlide>
         <SwiperSlide class="bg-[url('~/assets/images/index/banner/3.png')] bg-cover bg-center">
           <div class="h-full text-center font-bold">
-            <p class="mt-20">募募</p>
+            <img src="~/assets/icons/logo.svg" alt="" class="mx-auto mt-20 block" />
             <p class="my-12 text-7xl">群眾募資</p>
-            <p class="text-3xl">4</p>
+            <NuxtLink to="/create" class="rounded-lg bg-[#4767A2] px-5 py-2 text-white">
+              發起提案
+            </NuxtLink>
           </div>
         </SwiperSlide>
       </Swiper>

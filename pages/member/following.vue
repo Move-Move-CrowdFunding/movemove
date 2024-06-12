@@ -31,13 +31,27 @@ watch(
 const updateUrl = () => {
   router.push({ query: { pageNo: pn.value } })
 }
+
+const toggleFollow = async (id) => {
+  console.log(id)
+  await getFetchData({
+    url: `/member/collection`,
+    method: 'POST',
+    params: { projectId: id }
+  })
+    .then((res) => {
+      console.log(res)
+      getProjects()
+    })
+    .catch((err) => console.log(err))
+}
 </script>
 <template>
   <div class="container py-10 lg:py-20">
     <h1 class="mb-6 text-3xl sm:text-4xl lg:mb-10">追蹤記錄</h1>
     <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in followingList" :key="project.id">
-        <ProjectCard :project="project" />
+        <ProjectCard :project="project" @follow="toggleFollow" />
       </li>
     </ul>
     <div class="mt-5 flex items-center justify-center">
