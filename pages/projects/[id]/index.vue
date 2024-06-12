@@ -2,6 +2,7 @@
 import { useDayjs } from '#dayjs'
 const dayjs = useDayjs()
 const route = useRoute()
+const apiData = ref({})
 const getProject = async () => {
   await getFetchData({
     url: `/project/${route.params.id}`,
@@ -9,6 +10,7 @@ const getProject = async () => {
   })
     .then((res) => {
       console.log(res)
+      apiData.value = res
       project.value = res.results
       diffInSeconds.value = project.value.endDate - new Date() / 1000
       days.value = Math.floor(diffInSeconds.value / (24 * 3600))
@@ -22,6 +24,7 @@ const project = ref({
   projectId: '',
   introduce: '',
   teamName: '',
+  avatar: '',
   title: '',
   email: '',
   phone: '',
@@ -56,6 +59,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="">
+    <pre>{{ apiData }}</pre>
     <div class="py-10 lg:rounded-b-[200px] lg:bg-secondary-5 lg:py-20">
       <div class="container grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div
@@ -147,8 +151,9 @@ onMounted(() => {
         <div class="rounded-3xl p-4 shadow-lg lg:p-6">
           <div class="flex items-center gap-10">
             <div
+              v-if="project?.avatar"
               class="h-20 w-20 shrink-0 rounded-full bg-[url('')] bg-cover bg-center"
-              :style="{ backgroundImage: `url(${project.coverUrl})` }"
+              :style="{ backgroundImage: `url(${project.avatar})` }"
             ></div>
             <div>
               <div class="mb-4 text-2xl">{{ project.teamName }}</div>
