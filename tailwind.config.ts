@@ -1,4 +1,5 @@
 import colors from './tailwindcss/colors'
+import keyframes from './tailwindcss/animation'
 
 module.exports = {
   content: [
@@ -11,7 +12,8 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors
+      colors,
+      keyframes
     },
     container: {
       center: true,

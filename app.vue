@@ -11,6 +11,7 @@ useHead({
 })
 </script>
 <template>
+  <LoadingOverlay />
   <NuxtLayout>
     <NuxtPage />
     <UModals @close="modal.close()" />
