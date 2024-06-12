@@ -12,12 +12,6 @@ const props = defineProps({
 
 const newTempData = computed(() => props.tempData)
 
-const isLogin = useIsLoginStore()
-
-if (inCreate) {
-  newTempData.value.teamName = isLogin.userData.nickName
-}
-
 const latestLog = computed(() => {
   return newTempData.value && newTempData.value?.reviewLog
     ? newTempData.value?.reviewLog[newTempData.value?.reviewLog.length - 1]
@@ -109,14 +103,17 @@ const reviewProjectId = (approve) => {
         <div class="order-2 lg:order-1">
           <h2 class="">提案人資料</h2>
           <div class="mb-6">
-            <label for="teamName">提案人姓名/團隊名稱</label>
+            <label for="teamName">
+              提案人姓名/團隊名稱
+              <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
+            </label>
             <input
               id="teamName"
               v-model="newTempData.teamName"
               type="text"
               placeholder="請輸入提案人姓名/團隊名稱"
               class="block w-full"
-              disabled
+              :disabled="isDisable"
             />
             <p class="mt-2 text-xs">
               提案人必須要用真實姓名註冊會員，不接受匿名或使用他人名義的提案。
