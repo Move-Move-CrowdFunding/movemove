@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
+import { BaseModal } from '#components'
 definePageMeta({
   layout: 'custom-layout'
 })
+const modal = useModal()
+const toast = useToast()
 
 const isLogin = useIsLoginStore()
 
@@ -31,7 +34,7 @@ const submitSignUp = async () => {
     }
   })
     .then((res) => {
-      console.log('res', res)
+      // console.log('res', res)
       alert((res as ResponseData).message)
       currentView.value = 'login'
       registerForm.value = {
@@ -42,7 +45,7 @@ const submitSignUp = async () => {
       }
     })
     .catch((err) => {
-      console.log(err)
+      // console.log(err)
       alert((err as ResponseData).message)
     })
 }
@@ -57,12 +60,23 @@ const submitLogin = async () => {
       password: loginForm.value.password
     }
   })
-    .then(async (res) => {
+    .then((res) => {
       const { token, auth } = (res as ResponseData).results
       useCookie('userToken').value = token
       isLogin.getUserData()
-      alert((res as ResponseData).message)
-      await navigateTo(auth ? '/admin' : '/')
+      // alert((res as ResponseData).message)
+      modal.open(BaseModal, {
+        title: (res as ResponseData).status,
+        message: (res as ResponseData).message,
+        preventClose: true,
+        async onSuccess() {
+          toast.add({
+            title: (res as ResponseData).status,
+            id: 'modal-success'
+          })
+          await navigateTo(auth ? '/admin' : '/')
+        }
+      })
     })
     .catch((err) => {
       console.log(err)

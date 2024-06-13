@@ -14,6 +14,6 @@ useHead({
   <LoadingOverlay />
   <NuxtLayout>
     <NuxtPage />
-    <UModals @close="modal.close()" />
+    <UModals prevent-close @close="modal.close()" />
   </NuxtLayout>
 </template>

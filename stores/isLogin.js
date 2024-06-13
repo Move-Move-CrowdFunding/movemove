@@ -36,6 +36,7 @@ export const useIsLoginStore = defineStore('isLogin', () => {
     userName: 0
   })
 
+  // console.log('token', token.value)
   const getUserData = async () => {
     await getFetchData({
       url: '/user',

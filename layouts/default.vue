@@ -1,13 +1,13 @@
 <script setup>
-const isLogin = useIsLoginStore()
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-  }
-}
+// const isLogin = useIsLoginStore()
+// const checkPermission = async () => {
+//   if (!isLogin.isLogin) {
+//     await isLogin.checkLogin()
+//   }
+// }
 onMounted(() => {
   nextTick(() => {
-    checkPermission()
+    // checkPermission()
   })
 })
 </script>

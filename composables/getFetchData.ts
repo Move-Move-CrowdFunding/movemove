@@ -1,3 +1,5 @@
+import { BaseModal } from '#components'
+
 interface Params {
   url: string
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -7,6 +9,14 @@ interface Params {
 export default function getFetchData({ url, method = 'GET', params }: Params) {
   const runtimeConfig = useRuntimeConfig()
   const { apiBase } = runtimeConfig.public
+
+  const modal = useModal()
+  function openModal(title: string, message: string) {
+    modal.open(BaseModal, {
+      title,
+      message
+    })
+  }
   return new Promise((resolve, reject) => {
     useFetch(url, {
       method,
@@ -22,10 +32,12 @@ export default function getFetchData({ url, method = 'GET', params }: Params) {
         }
       },
       onResponse({ request, response }) {
+        console.log('response', response)
         if (response.ok) {
           resolve(response._data)
         } else {
           reject(response?._data)
+          openModal(response._data.status, response._data.message)
         }
       },
       onResponseError({ request, response }) {
