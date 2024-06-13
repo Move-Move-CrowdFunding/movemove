@@ -103,6 +103,7 @@ onMounted(() => {
           </NuxtLink>
         </li>
       </ul>
+      <EmptyState v-else />
       <div
         v-if="notificationsList && notificationsList.length > responsePagination.pageSize"
         class="flex items-center justify-center pt-6"

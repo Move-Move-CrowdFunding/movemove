@@ -1,13 +1,27 @@
 <script setup>
+import { useWindowScroll } from '@vueuse/core'
+const { y } = useWindowScroll({ behavior: 'smooth' })
+
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
   if (!isLogin.isLogin) {
     await isLogin.checkLogin()
   }
 }
+
+const showToTop = ref(false)
+const checkScroll = () => {
+  if (y.value >= 500) {
+    showToTop.value = true
+  } else {
+    showToTop.value = false
+  }
+}
 onMounted(() => {
   nextTick(() => {
     checkPermission()
+
+    window.addEventListener('scroll', checkScroll)
   })
 })
 </script>
@@ -17,7 +31,7 @@ onMounted(() => {
     <div class="flex flex-1 flex-col">
       <slot />
     </div>
-    <GoTop />
+    <GoTop v-if="showToTop" />
     <Footer />
   </div>
 </template>

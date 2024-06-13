@@ -36,9 +36,9 @@ const updateUrl = () => {
 }
 </script>
 <template>
-  <div class="bg-secondary-5 py-10 lg:py-20">
+  <div class="py-10 lg:py-20">
     <h1 class="container mb-6 text-3xl sm:text-4xl lg:mb-10">贊助記錄</h1>
-    <UAccordion multiple :items="items" class="container">
+    <UAccordion v-if="items?.length" multiple :items="items" class="container">
       <template #default="{ item, open }">
         <UButton color="gray" variant="ghost" class="mt-2 p-0">
           <div
@@ -111,7 +111,8 @@ const updateUrl = () => {
         </div>
       </template>
     </UAccordion>
-    <div class="mt-5 flex items-center justify-center">
+    <EmptyState v-else />
+    <div v-if="items?.length" class="mt-5 flex items-center justify-center">
       <UPagination
         v-model="pn"
         :page-count="pageSize"

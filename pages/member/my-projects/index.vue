@@ -132,7 +132,7 @@ onMounted(() => {
         <MyProjectCard :data="item" @show-sponsor-list="showSponsorList" />
       </li>
     </ul>
-    <div v-else class="text-center">找不到相符條件的資料</div>
+    <EmptyState v-else />
     <!-- 贊助名單 Modal -->
     <div
       v-if="sponsorListShown"
