@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useWindowScroll } from '@vueuse/core'
 const { y } = useWindowScroll({ behavior: 'smooth' })
+
 const scrollToTop = () => {
   y.value = 0
 }

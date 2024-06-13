@@ -41,16 +41,30 @@ const modelValue = defineModel({
           <ul>
             <li v-for="item in menuMapList" :key="item.name">
               <NuxtLink
-                class="relative block overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-3 pr-10 text-neutral-600 after:absolute after:inset-y-0 after:right-3 after:my-auto after:block after:h-5 after:w-5 after:bg-neutral-600 after:content-[''] after:[mask-image:url('~/assets/icons/arrow_forward.svg')] after:[mask-position:center] after:[mask-repeat:no-repeat] after:[mask-size:contain]"
+                class="relative block overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-3 pr-10 text-neutral-600 after:absolute after:inset-y-0 after:right-3 after:my-auto after:block after:h-5 after:w-5 after:bg-neutral-600 after:content-[''] after:[mask-image:url('~/assets/icons/arrow_forward.svg')] after:[mask-position:center] after:[mask-repeat:no-repeat] after:[mask-size:contain] hover:text-secondary-2"
                 :to="item.url"
                 >{{ item.name }}
               </NuxtLink>
             </li>
           </ul>
         </div>
+        <div class="peer bg-neutral-50 py-3 peer-[&]:mt-2">
+          <NuxtLink
+            class="relative block overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-3 pr-10 text-neutral-600 after:absolute after:inset-y-0 after:right-3 after:my-auto after:block after:h-5 after:w-5 after:bg-neutral-600 after:content-[''] after:[mask-image:url('~/assets/icons/arrow_forward.svg')] after:[mask-position:center] after:[mask-repeat:no-repeat] after:[mask-size:contain] hover:text-secondary-2"
+            to="/create"
+            >提案
+          </NuxtLink>
+        </div>
         <div class="peer bg-neutral-50 py-4 peer-[&]:mt-2">
           <h3 class="px-3 pb-4 text-neutral-900">提案類別</h3>
           <ul>
+            <li>
+              <NuxtLink
+                class="relative block overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-3 pr-10 text-neutral-600 after:absolute after:inset-y-0 after:right-3 after:my-auto after:block after:h-5 after:w-5 after:bg-neutral-600 after:content-[''] after:[mask-image:url('~/assets/icons/arrow_forward.svg')] after:[mask-position:center] after:[mask-repeat:no-repeat] after:[mask-size:contain] hover:bg-inherit hover:text-secondary-2"
+                to="/projects"
+                >全部
+              </NuxtLink>
+            </li>
             <li v-for="item in categoryMenuList" :key="item.name">
               <NuxtLink
                 class="relative block overflow-hidden text-ellipsis whitespace-nowrap py-2 pl-3 pr-10 text-neutral-600 after:absolute after:inset-y-0 after:right-3 after:my-auto after:block after:h-5 after:w-5 after:bg-neutral-600 after:content-[''] after:[mask-image:url('~/assets/icons/arrow_forward.svg')] after:[mask-position:center] after:[mask-repeat:no-repeat] after:[mask-size:contain] hover:bg-inherit hover:text-secondary-2"

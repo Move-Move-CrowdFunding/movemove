@@ -49,12 +49,13 @@ const toggleFollow = async (id) => {
 <template>
   <div class="container py-10 lg:py-20">
     <h1 class="mb-6 text-3xl sm:text-4xl lg:mb-10">追蹤記錄</h1>
-    <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <ul v-if="items?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       <li v-for="project in followingList" :key="project.id">
         <ProjectCard :project="project" @follow="toggleFollow" />
       </li>
     </ul>
-    <div class="mt-5 flex items-center justify-center">
+    <EmptyState v-else />
+    <div v-if="items?.length" class="mt-5 flex items-center justify-center">
       <UPagination
         v-model="pn"
         :page-count="pageSize"

@@ -237,7 +237,7 @@ onMounted(() => {
                 class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white"
                 @click.prevent="getTempUser(isLogin.userData)"
               >
-                取消
+                重置
               </button>
               <button
                 type="submit"
@@ -298,7 +298,7 @@ onMounted(() => {
                 class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white"
                 @click.prevent="tempPassword = { old: '', new: '', newCheck: '' }"
               >
-                取消
+                重置
               </button>
               <button
                 class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white disabled:bg-neutral-400"
