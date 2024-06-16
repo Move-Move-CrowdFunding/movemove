@@ -147,11 +147,7 @@ onMounted(() => {
         </div>
         <div class="rounded-3xl p-4 shadow-lg lg:p-6">
           <div class="flex items-center gap-10">
-            <div
-              v-if="project?.avatar"
-              class="h-20 w-20 shrink-0 rounded-full bg-[url('')] bg-cover bg-center"
-              :style="{ backgroundImage: `url(${project.avatar})` }"
-            ></div>
+            <Avatar size="lg" :src="project?.avatar" />
             <div>
               <div class="mb-4 text-2xl">{{ project.teamName }}</div>
               <div class="flex">
