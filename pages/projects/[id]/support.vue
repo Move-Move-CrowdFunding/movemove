@@ -1,52 +1,108 @@
 <script setup>
-const projectItem = {
-  status: 'success',
-  message: '取得提案內容成功',
-  results: {
-    id: '663e3f9652027aeb86960016',
-    userId: '663e3f3452027aeb8696000c',
-    categoryKey: 2,
-    coverUrl:
-      'https://images.unsplash.com/photo-1715694290840-bd862815c8ba?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDE3fHhIeFlUTUhMZ09jfHxlbnwwfHx8fHw%3D',
-    describe:
-      '一場無情的大火吞噬了整個社區，請幫助無家可歸的民眾。一場無情的大火吞噬了整個社區，請幫助無家可歸的民眾。一場無情的大火吞噬了整個社區，請幫助無家可歸的民眾。一場無情的大火吞噬了整個社區，請幫助無家可歸的民眾。',
-    endDate: 1721577600,
-    title:
-      '樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停樂知修繕隊緊急求援|弱勢助弱勢,修家修心不能停',
-    videoUrl: '',
-    startDate: 1720713600,
-    feedbackItem: '限量精美小熊維尼',
-    feedbackUrl:
-      'https://images.unsplash.com/photo-1715694290840-bd862815c8ba?w=800&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHx0b3BpYy1mZWVkfDE3fHhIeFlUTUhMZ09jfHxlbnwwfHx8fHw%3D',
-    feedbackMoney: 100,
-    feedbackDate: 1721577600,
-    targetMoney: 30000,
-    teamName: '弱勢救星',
-    phone: '0938938438',
-    email: 'nomail@mail.com',
-    relatedUrl: '',
-    introduce: '專業金援團隊，弱勢族群救星，幫助許多需要協助的家庭。',
-    content: '<p>test</p>',
-    achievedMoney: 2200,
-    supportCount: 2,
-    trackingStatus: true,
-    state: ['123']
+const route = useRoute()
+const id = computed(() => route.params.id) // project id
+const userStore = useIsLoginStore() // 會員資料
+const { userData } = storeToRefs(userStore)
+
+// 支持專案資料
+const tempData = ref({
+  userName: '',
+  email: '',
+  phone: '',
+  money: 1000,
+  isNeedFeedback: false,
+  receiver: '',
+  receiverPhone: '',
+  address: ''
+})
+
+watch(
+  userData,
+  (val) => {
+    tempData.value.userName = val?.userName ?? ''
+    tempData.value.email = val?.email ?? ''
+    tempData.value.phone = val?.phone ?? ''
+  },
+  { immediate: true }
+)
+
+const results = ref({}) // 專案完整資料
+const projectItem = computed(() => results.value.results || {}) // 專案資料
+// 取得專案資料
+const getProject = async () => {
+  try {
+    const res = await getFetchData({
+      url: `/project/${id.value}`
+    })
+
+    results.value = JSON.parse(JSON.stringify(res))
+  } catch (error) {
+    console.log(error)
   }
 }
 
-const tempData = ref({
-  projectId: '',
-  userName: '',
-  money: 100,
-  email: 'abc@gmail.com',
-  phone: '',
-  isNeedFeedback: true,
-  receiver: '收件人名稱',
-  receiverPhone: '收件人電話',
-  address: '地址'
+const paymentForm = ref(null) // 金流表單element
+const supportResults = ref({
+  //  金流表單資料
+  TradeSha: '',
+  TradeInfo: '',
+  MerchantID: 'MS152443410',
+  Version: '2.0',
+  TimeStamp: '',
+  MerchantOrderNo: '',
+  money: '',
+  ItemDesc: '公益募捐'
+})
+
+// 支持專案
+const supportProject = async () => {
+  try {
+    const res = await getFetchData({
+      url: `/payment/support`,
+      method: 'POST',
+      params: { ...tempData.value, projectId: id.value }
+    })
+
+    if (res.status === 'success') {
+      // 完成後將資料填入金流表單並送出
+      const { results } = res
+      supportResults.value = {
+        ...supportResults.value,
+        TradeSha: results.TradeSha,
+        TradeInfo: results.TradeInfo,
+        TimeStamp: results.data.TimeStamp,
+        MerchantOrderNo: results.data.MerchantOrderNo,
+        money: results.data.money
+      }
+      nextTick(() => paymentForm.value.submit())
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const isOverDonationTarget = computed(() => tempData.value.money >= projectItem.value.feedbackMoney)
+watch(isOverDonationTarget, (val) => {
+  if (!val) {
+    tempData.value.isNeedFeedback = false
+    tempData.value.receiver = ''
+    tempData.value.receiverPhone = ''
+    tempData.value.address = ''
+  } else {
+    tempData.value.isNeedFeedback = true
+  }
+})
+
+onMounted(() => {
+  nextTick(() => {
+    getProject()
+  })
 })
 </script>
 <template>
+  <!-- {{ userData }}
+  <hr />
+  {{ tempData }} -->
   <div class="container py-10 lg:py-20">
     <h1 class="mb-6 text-center text-3xl font-bold lg:mb-10">支持提案內容</h1>
     <div class="grid gap-12 md:grid-cols-2">
@@ -56,13 +112,13 @@ const tempData = ref({
         <div class="relative h-[320px] w-full overflow-hidden rounded-3xl">
           <div
             class="block h-full w-full bg-cover bg-center duration-300 hover:scale-110 lg:h-full"
-            :style="{ backgroundImage: `url(${projectItem.results.coverUrl})` }"
+            :style="{ backgroundImage: `url(${projectItem.coverUrl})` }"
           ></div>
         </div>
         <h3 class="line-clamp-4 text-2xl text-neutral-900">
-          {{ projectItem.results.title }}
+          {{ projectItem.title }}
         </h3>
-        <div class="line-clamp-4 text-neutral-800">{{ projectItem.results.describe }}</div>
+        <div class="line-clamp-4 text-neutral-800">{{ projectItem.describe }}</div>
       </div>
       <div class="space-y-6">
         <div
@@ -131,25 +187,26 @@ const tempData = ref({
           </ul>
         </div>
         <div
+          v-if="projectItem.feedbackItem"
           class="space-y-4 overflow-hidden rounded-3xl p-6 shadow-[0_0_8px_0_theme(colors.neutral.900/16%)]"
         >
           <div class="peer flex items-start space-x-4">
             <img
               class="h-20 w-20 overflow-hidden rounded-2xl object-cover"
-              :src="projectItem.results.feedbackUrl"
+              :src="projectItem.feedbackUrl"
               alt=""
             />
             <div class="flex-1 space-y-1 text-base">
               <h4 class="flex flex-wrap">
-                <p>單筆滿 NTD$ 100 立即享回饋:</p>
-                <p>{{ projectItem.results.feedbackItem }} * 1</p>
+                <p>單筆滿 NTD$ {{ projectItem.feedbackMoney }} 立即享回饋:</p>
+                <p>{{ projectItem.feedbackItem }} * 1</p>
               </h4>
               <p class="text-neutral-600">
-                預計寄出日期: {{ $dateformat(projectItem.results.feedbackDate) }}
+                預計寄出日期: {{ $dateformat(projectItem.feedbackDate) }}
               </p>
               <div class="flex items-center space-x-2">
                 <div
-                  v-if="tempData.money >= projectItem.results.feedbackMoney"
+                  v-if="tempData.money >= projectItem.feedbackMoney"
                   class="h-5 w-5 flex-shrink-0 bg-warning-700 [mask-image:url('~/assets/icons/check.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
                 ></div>
                 <div
@@ -158,22 +215,21 @@ const tempData = ref({
                 ></div>
                 <p
                   :class="
-                    tempData.money >= projectItem.results.feedbackMoney
+                    tempData.money >= projectItem.feedbackMoney
                       ? 'text-warning-700'
                       : 'text-neutral-600'
                   "
                 >
-                  <span v-if="tempData.money >= projectItem.results.feedbackMoney">已符合</span>
+                  <span v-if="tempData.money >= projectItem.feedbackMoney">已符合</span>
                   <span v-else
-                    >未符合，差
-                    {{ projectItem.results.feedbackMoney - tempData.money }} 元享回饋</span
+                    >未符合，差 {{ projectItem.feedbackMoney - tempData.money }} 元享回饋</span
                   >
                 </p>
               </div>
             </div>
           </div>
           <div
-            v-if="tempData.money >= projectItem.results.feedbackMoney"
+            v-if="isOverDonationTarget"
             class="space-y-6 peer-[&]:before:mb-4 peer-[&]:before:block peer-[&]:before:h-px peer-[&]:before:w-full peer-[&]:before:bg-neutral-200 peer-[&]:before:content-['']"
           >
             <div class="flex items-center space-x-3">
@@ -228,11 +284,25 @@ const tempData = ref({
             <span>當您確認支付時，即代表您已知悉並同意我們的</span
             ><NuxtLink class="inline-block underline" to="/" target="_blank">使用條款</NuxtLink>。
           </p>
-          <button class="w-full max-w-[260px] rounded bg-secondary-2 p-4 text-xl text-white">
+          <button
+            type="button"
+            class="w-full max-w-[260px] rounded bg-secondary-2 p-4 text-xl text-white"
+            @click="supportProject"
+          >
             確認支付
           </button>
         </div>
       </div>
+      <form ref="paymentForm" method="post" action="https://ccore.newebpay.com/MPG/mpg_gateway">
+        <input :value="supportResults.TradeSha" type="hidden" name="TradeSha" />
+        <input :value="supportResults.TradeInfo" type="hidden" name="TradeInfo" />
+        <input :value="supportResults.MerchantID" type="hidden" name="MerchantID" />
+        <input :value="supportResults.TimeStamp" type="hidden" name="TimeStamp" />
+        <input :value="supportResults.Version" type="hidden" name="Version" />
+        <input :value="supportResults.MerchantOrderNo" type="hidden" name="MerchantOrderNo" />
+        <input :value="supportResults.money" type="hidden" name="Amt" />
+        <input :value="supportResults.ItemDesc" type="hidden" name="ItemDesc" />
+      </form>
     </div>
   </div>
 </template>
