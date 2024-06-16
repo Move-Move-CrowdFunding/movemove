@@ -1,17 +1,19 @@
 <script setup>
 // import { _10 } from '#tailwind-config/theme/aspectRatio';
-
-const isLogin = useIsLoginStore()
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-      return
-    }
-  }
-  await getMyProjects()
-}
+definePageMeta({
+  requiresAuth: true
+})
+// const isLogin = useIsLoginStore()
+// const checkPermission = async () => {
+//   if (!isLogin.isLogin) {
+//     await isLogin.checkLogin()
+//     if (!isLogin.isLogin) {
+//       await navigateTo('/login')
+//       return
+//     }
+//   }
+//   await getMyProjects()
+// }
 
 const results = ref({
   eachStateCount: {
@@ -106,7 +108,8 @@ const changeSponsorPage = (page) => {
 
 onMounted(() => {
   nextTick(async () => {
-    await checkPermission()
+    await getMyProjects()
+    // await checkPermission()
   })
 })
 </script>

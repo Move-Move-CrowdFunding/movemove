@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { getAdminProjects } from '@/apis/admin'
 definePageMeta({
-  layout: 'admin-layout'
+  layout: 'admin-layout',
+  requiresAuth: true
 })
 
 interface ReviewLog {
@@ -180,22 +181,6 @@ watch(pageNo, async () => {
   await getProjects(formData)
 })
 
-const isLogin = useIsLoginStore()
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-      return
-    }
-  }
-  if (isLogin.userData.auth) {
-    await getProjects(formData)
-  } else {
-    alert('無瀏覽權限，請先登入')
-    await navigateTo('/login')
-  }
-}
 const search = async () => {
   formData.value.state = filterState.value
   formData.value.sortDesc = sortDesc.value
@@ -218,8 +203,8 @@ const pageTitle = usePageTitleStore()
 
 onMounted(() => {
   pageTitle.currentTitle = '提案列表'
-  nextTick(() => {
-    checkPermission()
+  nextTick(async () => {
+    await getProjects(formData)
   })
 })
 </script>

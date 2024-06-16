@@ -1,4 +1,4 @@
-import { BaseModal } from '#components'
+import { BaseDialog } from '#components'
 type UrlType = string | Request | Ref<string | Request> | (() => string | Request)
 interface RequestOptions {
   method?: any
@@ -9,8 +9,8 @@ const request = async (url: UrlType, params: any, options: RequestOptions) => {
   const token = useCookie('userToken')
   const modal = useModal()
 
-  function openModal(title: string, message: string) {
-    modal.open(BaseModal, {
+  function openDialog(title: string, message: string) {
+    modal.open(BaseDialog, {
       title,
       message
     })
@@ -33,12 +33,12 @@ const request = async (url: UrlType, params: any, options: RequestOptions) => {
     },
     onResponse({ request, response }) {
       //   console.log('onResponse', 'request', request, 'response._data', response._data)
-      //   openModal('成功', response._data.message)
+      //   openDialog('成功', response._data.message)
       return response._data
     },
     onResponseError({ request, response, options }) {
       //   console.log('onResponseError', 'request', request, 'response', response, 'options', options)
-      openModal('錯誤', response._data.message)
+      openDialog('錯誤', response._data.message)
     }
   })
   return { data, pending, error, refresh, status }

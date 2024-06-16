@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
-
+definePageMeta({
+  requiresAuth: true
+})
 interface NotificationItem {
   id: string
   content: string
@@ -29,16 +31,16 @@ const tempUser = ref({})
 
 const notificationsList: Ref<Partial<NotificationItem>[]> = ref([])
 
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-      return
-    }
-  }
-  getTempUser(isLogin.userData)
-}
+// const checkPermission = async () => {
+//   if (!isLogin.isLogin) {
+//     await isLogin.checkLogin()
+//     if (!isLogin.isLogin) {
+//       await navigateTo('/login')
+//       return
+//     }
+//   }
+//   getTempUser(isLogin.userData)
+// }
 
 const getNotifications = async () => {
   await getFetchData({
@@ -59,7 +61,8 @@ const getTempUser = (data: any) => {
 }
 onMounted(() => {
   nextTick(() => {
-    checkPermission()
+    // checkPermission()
+    getTempUser(isLogin.userData)
     getNotifications()
   })
 })

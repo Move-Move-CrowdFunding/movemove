@@ -8,7 +8,6 @@ defineProps({
 </script>
 <template>
   <UButton
-    tag="nuxtLink"
     to="/member/notifications"
     class="relative h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2 shadow-none transition-all hover:bg-secondary-3/20 focus:outline-0"
   >

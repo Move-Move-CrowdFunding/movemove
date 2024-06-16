@@ -1,5 +1,9 @@
 <script setup>
 import { useDayjs } from '#dayjs'
+definePageMeta({
+  requiresAuth: true
+})
+
 const dayjs = useDayjs()
 const route = useRoute()
 
@@ -39,19 +43,20 @@ const getProject = async () => {
     })
 }
 
-const isLogin = useIsLoginStore()
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-    }
-  }
-  await getProject()
-}
+// const isLogin = useIsLoginStore()
+// const checkPermission = async () => {
+//   if (!isLogin.isLogin) {
+//     await isLogin.checkLogin()
+//     if (!isLogin.isLogin) {
+//       await navigateTo('/login')
+//     }
+//   }
+//   await getProject()
+// }
 onMounted(() => {
-  nextTick(() => {
-    checkPermission()
+  nextTick(async () => {
+    // checkPermission()
+    await getProject()
   })
 })
 </script>

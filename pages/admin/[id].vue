@@ -2,7 +2,8 @@
 import type { ResponseData } from '~/types/response'
 
 definePageMeta({
-  layout: 'admin-layout'
+  layout: 'admin-layout',
+  requiresAuth: true
 })
 
 interface ProjectItem {
@@ -57,26 +58,26 @@ const getProjectItem = async (id: string) => {
     })
 }
 
-const isLogin = useIsLoginStore()
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-      return
-    }
-  }
-  if (isLogin.userData.auth) {
-    await getProjectItem(id as string)
-  } else {
-    alert('無瀏覽權限，請先登入')
-    await navigateTo('/login')
-  }
-}
+// const isLogin = useIsLoginStore()
+// const checkPermission = async () => {
+// if (!isLogin.isLogin) {
+//   await isLogin.checkLogin()
+//   if (!isLogin.isLogin) {
+//     await navigateTo('/login')
+//     return
+//   }
+// }
+// if (isLogin.userData.auth) {
+//   await getProjectItem(id as string)
+// } else {
+//   alert('無瀏覽權限，請先登入')
+//   await navigateTo('/login')
+// }
+// }
 onMounted(() => {
   pageTitle.currentTitle = '提案內容'
   nextTick(async () => {
-    await checkPermission()
+    await getProjectItem(id as string)
   })
 })
 </script>

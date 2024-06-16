@@ -1,6 +1,10 @@
 <script setup>
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
+import { BaseDialog } from '#components'
 const route = useRoute()
+const modalConfirm = useModal()
+const modalResponse = useModal()
+
 const inAdmin = route.fullPath.includes('admin')
 const inCreate = route.fullPath.includes('create/edit')
 const props = defineProps({
@@ -68,22 +72,57 @@ const uploadFile = async (item) => {
 const emit = defineEmits(['createProject'])
 
 const reviewContent = ref('')
+
 const reviewProjectId = (approve) => {
-  getFetchData({
-    url: `/admin/projects/${newTempData.value._id}`,
-    method: 'POST',
-    params: {
-      approve,
-      content: reviewContent.value
+  console.log('reviewProjectId', approve)
+  // console.log('modal', modal)
+  modalResponse.open(BaseDialog, {
+    // title: res.status,
+    // message: res.message
+    onSuccess() {
+      console.log('success')
+      // reloadNuxtApp()
     }
   })
-    .then((res) => {
-      alert(res.message)
-      reloadNuxtApp()
+
+  // getFetchData({
+  //   url: `/admin/projects/${newTempData.value._id}`,
+  //   method: 'POST',
+  //   params: {
+  //     approve,
+  //     content: reviewContent.value
+  //   }
+  // })
+  //   .then((res) => {
+  //     // alert(res.message)
+  //     modal.open(BaseDialog, {
+  //       title: res.status,
+  //       message: res.message
+  //       // onSuccess() {
+  //       //   console.log('success')
+  //       //   reloadNuxtApp()
+  //       // }
+  //     })
+  //     console.log('modal', modal)
+  //   })
+  //   .catch((err) => {
+  //     console.log('err', err)
+  //     modal.open(BaseDialog, {
+  //       title: err.status,
+  //       message: err.message
+  //     })
+  //   })
+}
+function reviewDialog(approve) {
+  return new Promise((resolve) => {
+    modalConfirm.open(BaseDialog, {
+      message: approve === 1 ? '確定核准提案?' : '否准此筆提案?',
+      onConfirm() {
+        resolve(reviewProjectId(approve))
+        // modalConfirm.close()
+      }
     })
-    .catch((err) => {
-      console.log('err', err)
-    })
+  })
 }
 </script>
 <template>
@@ -430,10 +469,10 @@ const reviewProjectId = (approve) => {
       >
         <input v-model="reviewContent" type="text" class="w-full" />
         <div class="flex shrink-0 gap-4 text-white">
-          <button class="ml-auto rounded-lg bg-warning-500 px-3 py-2" @click="reviewProjectId(-1)">
+          <button class="ml-auto rounded-lg bg-warning-500 px-3 py-2" @click="reviewDialog(-1)">
             否準提案
           </button>
-          <button class="rounded-lg bg-warning-700 px-3 py-2" @click="reviewProjectId(1)">
+          <button class="rounded-lg bg-warning-700 px-3 py-2" @click="reviewDialog(1)">
             核准提案
           </button>
         </div>

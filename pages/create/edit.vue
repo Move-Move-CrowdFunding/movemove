@@ -1,6 +1,10 @@
 <script setup>
+definePageMeta({
+  requiresAuth: true
+})
+
 const router = useRouter()
-const isLogin = useIsLoginStore()
+// const isLogin = useIsLoginStore()
 
 const tempData = ref({
   introduce: '',
@@ -38,19 +42,19 @@ const createProject = async (tempData) => {
     })
 }
 
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-    }
-  }
-}
-onMounted(() => {
-  nextTick(() => {
-    checkPermission()
-  })
-})
+// const checkPermission = async () => {
+//   if (!isLogin.isLogin) {
+//     await isLogin.checkLogin()
+//     if (!isLogin.isLogin) {
+//       await navigateTo('/login')
+//     }
+//   }
+// }
+// onMounted(() => {
+//   nextTick(() => {
+//     checkPermission()
+//   })
+// })
 </script>
 <template>
   <div>

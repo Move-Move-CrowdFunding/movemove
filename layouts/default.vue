@@ -5,11 +5,11 @@
 //     await isLogin.checkLogin()
 //   }
 // }
-onMounted(() => {
-  nextTick(() => {
-    // checkPermission()
-  })
-})
+// onMounted(() => {
+//   nextTick(() => {
+//     checkPermission()
+//   })
+// })
 </script>
 <template>
   <div class="relative flex min-h-dvh flex-1 flex-col">

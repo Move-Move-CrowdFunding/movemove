@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
-import { BaseModal } from '#components'
+import { BaseDialog } from '#components'
 definePageMeta({
   layout: 'custom-layout'
 })
@@ -63,24 +63,23 @@ const submitLogin = async () => {
     .then((res) => {
       const { token, auth } = (res as ResponseData).results
       useCookie('userToken').value = token
+      console.log('isLogin', isLogin)
+      // 登入後 isLogin 本來是true，重整後就變成false
+      isLogin.isLogin = true
       isLogin.getUserData()
-      // alert((res as ResponseData).message)
-      modal.open(BaseModal, {
-        title: (res as ResponseData).status,
-        message: (res as ResponseData).message,
-        preventClose: true,
-        async onSuccess() {
-          toast.add({
-            title: (res as ResponseData).status,
-            id: 'modal-success'
-          })
+      toast.add({
+        title: (res as ResponseData).message,
+        timeout: 1000,
+        callback: async () => {
           await navigateTo(auth ? '/admin' : '/')
         }
       })
     })
     .catch((err) => {
-      console.log(err)
-      alert((err as ResponseData).message)
+      modal.open(BaseDialog, {
+        title: (err as ResponseData).status,
+        message: (err as ResponseData).message
+      })
     })
 }
 
@@ -233,6 +232,6 @@ const forgotPassword = () => {
 </template>
 <style lang="scss" scoped>
 button {
-  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 text-neutral-50 transition hover:bg-primary-2;
+  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 transition-all hover:bg-primary-2;
 }
 </style>

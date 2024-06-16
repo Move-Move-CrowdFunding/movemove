@@ -1,4 +1,4 @@
-import { BaseModal } from '#components'
+import { BaseDialog } from '#components'
 
 interface Params {
   url: string
@@ -11,8 +11,8 @@ export default function getFetchData({ url, method = 'GET', params }: Params) {
   const { apiBase } = runtimeConfig.public
 
   const modal = useModal()
-  function openModal(title: string, message: string) {
-    modal.open(BaseModal, {
+  function openDialog(title: string, message: string) {
+    modal.open(BaseDialog, {
       title,
       message
     })
@@ -32,17 +32,13 @@ export default function getFetchData({ url, method = 'GET', params }: Params) {
         }
       },
       onResponse({ request, response }) {
-        console.log('response', response)
         if (response.ok) {
           resolve(response._data)
         } else {
           reject(response?._data)
-          openModal(response._data.status, response._data.message)
         }
-      },
-      onResponseError({ request, response }) {
-        reject(response?._data)
       }
+      // onResponseError({ request, response }) {}
     })
   })
 }

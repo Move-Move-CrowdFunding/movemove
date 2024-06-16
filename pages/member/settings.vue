@@ -1,19 +1,22 @@
 <script setup>
+definePageMeta({
+  requiresAuth: true
+})
 const tab = ref(1)
 const isLogin = useIsLoginStore()
 
 const tempUser = ref({})
 
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-      return
-    }
-  }
-  getTempUser(isLogin.userData)
-}
+// const checkPermission = async () => {
+//   if (!isLogin.isLogin) {
+//     await isLogin.checkLogin()
+//     if (!isLogin.isLogin) {
+//       await navigateTo('/login')
+//       return
+//     }
+//   }
+//   getTempUser(isLogin.userData)
+// }
 const getTempUser = (data) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
 }
@@ -87,7 +90,8 @@ const uploadFile = async () => {
 
 onMounted(() => {
   nextTick(() => {
-    checkPermission()
+    getTempUser(isLogin.userData)
+    // checkPermission()
   })
 })
 </script>

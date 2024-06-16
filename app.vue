@@ -15,5 +15,6 @@ useHead({
   <NuxtLayout>
     <NuxtPage />
     <UModals prevent-close @close="modal.close()" />
+    <UNotifications />
   </NuxtLayout>
 </template>
