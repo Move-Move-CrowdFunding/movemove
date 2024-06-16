@@ -1,4 +1,6 @@
 <script setup>
+import { z } from 'zod'
+
 const route = useRoute()
 const id = computed(() => route.params.id) // project id
 const userStore = useIsLoginStore() // 會員資料
@@ -50,13 +52,46 @@ const supportResults = ref({
   Version: '2.0',
   TimeStamp: '',
   MerchantOrderNo: '',
-  money: '',
+  money: null,
   ItemDesc: '公益募捐'
 })
 
+const schema = z.object({
+  email: z.string().email('Invalid email'),
+  userName: z.string().min(1, '請填寫名稱'),
+  phone: z
+    .string()
+    .min(8, '電話需8碼以上')
+    .refine((data) => /^\d+$/.test(data), {
+      message: '僅能輸入數字'
+    }),
+  // money: z.number().min(1, '請填寫金額'),。
+  money: z.union([z.string().min(1, '請填寫金額'), z.number().min(1, '請填寫金額')]),
+  isNeedFeedback: z.boolean().optional(),
+  receiver: z.string().refine((val) => !tempData.value.isNeedFeedback || val.length >= 1, {
+    message: '請填寫收件人'
+  }),
+  receiverPhone: z
+    .string()
+    .refine((val) => !tempData.value.isNeedFeedback || val.length >= 8, {
+      message: '聯絡電話需8碼以上'
+    })
+    .refine((data) => !tempData.value.isNeedFeedback || /^\d+$/.test(data), {
+      message: '僅能輸入數字'
+    }),
+  address: z.string().refine((val) => !tempData.value.isNeedFeedback || val.length >= 1, {
+    message: '請填寫收件地址'
+  })
+})
+
 // 支持專案
+const loading = useLoadingStore()
+
 const supportProject = async () => {
   try {
+    // console.log(event.data)
+    console.log('loading:', loading)
+    loading.isGlobalLoading = true
     const res = await getFetchData({
       url: `/payment/support`,
       method: 'POST',
@@ -81,6 +116,10 @@ const supportProject = async () => {
   }
 }
 
+function onError() {
+  // console.log('form error:',event)
+}
+
 const isOverDonationTarget = computed(() => tempData.value.money >= projectItem.value.feedbackMoney)
 watch(isOverDonationTarget, (val) => {
   if (!val) {
@@ -103,7 +142,9 @@ onMounted(() => {
   <!-- {{ userData }}
   <hr />
   {{ tempData }} -->
+
   <div class="container py-10 lg:py-20">
+    <LoadingOverlay />
     <h1 class="mb-6 text-center text-3xl font-bold lg:mb-10">支持提案內容</h1>
     <div class="grid gap-12 md:grid-cols-2">
       <div
@@ -121,177 +162,156 @@ onMounted(() => {
         <div class="line-clamp-4 text-neutral-800">{{ projectItem.describe }}</div>
       </div>
       <div class="space-y-6">
-        <div
-          class="space-y-6 overflow-hidden rounded-3xl p-6 shadow-[0_0_8px_0_theme(colors.neutral.900/16%)]"
+        <UForm
+          :schema="schema"
+          :state="tempData"
+          class="space-y-4"
+          @submit="supportProject"
+          @error="onError"
         >
-          <div class="space-y-1">
-            <label class="text-neutral-800" for="email">E-mail </label>
-            <input
-              id="email"
-              v-model="tempData.email"
-              type="text"
-              placeholder="請輸入E-mail"
-              class="block w-full cursor-not-allowed rounded border p-3"
-              readonly
-              disabled
-            />
-          </div>
-          <div class="space-y-1">
-            <label class="text-neutral-800" for="userName"
-              >名稱<span class="text-warning-500">*</span></label
-            >
-            <input
-              id="userName"
-              v-model="tempData.userName"
-              type="text"
-              placeholder="請填寫名稱"
-              class="block w-full rounded border p-3"
-            />
-          </div>
-          <div class="space-y-1">
-            <label class="text-neutral-800" for="tel"
-              >電話<span class="text-warning-500">*</span></label
-            >
-            <input
-              id="tel"
-              v-model="tempData.phone"
-              type="tel"
-              placeholder="請填寫電話"
-              class="block w-full rounded border p-3"
-            />
-          </div>
-          <div class="space-y-1">
-            <label class="text-neutral-800" for="money"
-              >贊助金額<span class="text-warning-500">*</span></label
-            >
-            <div class="flex items-center rounded border px-3">
-              <span class="text-base font-bold text-secondary-2">NT$</span>
-              <input
-                id="money"
-                v-model="tempData.money"
-                placeholder="贊助金額"
-                class="block w-full py-3 pl-3 outline-offset-0 focus:outline-0 focus:outline-offset-0"
+          <div
+            class="space-y-6 overflow-hidden rounded-3xl p-6 shadow-[0_0_8px_0_theme(colors.neutral.900/16%)]"
+          >
+            <UFormGroup label="E-mail" required name="email">
+              <UInput
+                v-model="tempData.email"
+                placeholder="請輸入E-mail"
+                input-class="disabled:bg-gray-100 !p-3"
+                disabled
               />
-            </div>
-          </div>
-          <ul class="flex space-x-8">
-            <li class="flex-shrink-0">
-              <img class="w-10" src="~/assets/images/project/visa.svg" alt="visa" />
-            </li>
-            <li class="flex-shrink-0">
-              <img class="w-10" src="~/assets/images/project/jcb.svg" alt="jcb" />
-            </li>
-            <li class="flex-shrink-0">
-              <img class="w-10" src="~/assets/images/project/mastercard.svg" alt="mastercard" />
-            </li>
-          </ul>
-        </div>
-        <div
-          v-if="projectItem.feedbackItem"
-          class="space-y-4 overflow-hidden rounded-3xl p-6 shadow-[0_0_8px_0_theme(colors.neutral.900/16%)]"
-        >
-          <div class="peer flex items-start space-x-4">
-            <img
-              class="h-20 w-20 overflow-hidden rounded-2xl object-cover"
-              :src="projectItem.feedbackUrl"
-              alt=""
-            />
-            <div class="flex-1 space-y-1 text-base">
-              <h4 class="flex flex-wrap">
-                <p>單筆滿 NTD$ {{ projectItem.feedbackMoney }} 立即享回饋:</p>
-                <p>{{ projectItem.feedbackItem }} * 1</p>
-              </h4>
-              <p class="text-neutral-600">
-                預計寄出日期: {{ $dateformat(projectItem.feedbackDate) }}
-              </p>
-              <div class="flex items-center space-x-2">
-                <div
-                  v-if="tempData.money >= projectItem.feedbackMoney"
-                  class="h-5 w-5 flex-shrink-0 bg-warning-700 [mask-image:url('~/assets/icons/check.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
-                ></div>
-                <div
-                  v-else
-                  class="h-5 w-5 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/warning.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
-                ></div>
-                <p
-                  :class="
-                    tempData.money >= projectItem.feedbackMoney
-                      ? 'text-warning-700'
-                      : 'text-neutral-600'
-                  "
-                >
-                  <span v-if="tempData.money >= projectItem.feedbackMoney">已符合</span>
-                  <span v-else
-                    >未符合，差 {{ projectItem.feedbackMoney - tempData.money }} 元享回饋</span
-                  >
-                </p>
+            </UFormGroup>
+
+            <UFormGroup label="名稱" required name="userName">
+              <UInput v-model="tempData.userName" input-class="!p-3" placeholder="請填寫名稱" />
+            </UFormGroup>
+
+            <UFormGroup label="電話" required name="phone">
+              <UInput
+                v-model="tempData.phone"
+                input-class="!p-3"
+                placeholder="請填寫電話"
+                type="tel"
+              />
+            </UFormGroup>
+
+            <UFormGroup label="贊助金額" required name="money">
+              <div class="flex items-center rounded border pl-3">
+                <span class="text-base font-bold text-secondary-2">NT$</span>
+                <UInput
+                  v-model="tempData.money"
+                  class="flex-grow pl-3 pr-0"
+                  input-class="!p-3 border-0 ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  placeholder="贊助金額"
+                  type="number"
+                />
               </div>
-            </div>
+            </UFormGroup>
+
+            <ul class="flex space-x-8">
+              <li class="flex-shrink-0">
+                <img class="w-10" src="~/assets/images/project/visa.svg" alt="visa" />
+              </li>
+              <li class="flex-shrink-0">
+                <img class="w-10" src="~/assets/images/project/jcb.svg" alt="jcb" />
+              </li>
+              <li class="flex-shrink-0">
+                <img class="w-10" src="~/assets/images/project/mastercard.svg" alt="mastercard" />
+              </li>
+            </ul>
+            <!-- <UButton type="submit"> Submit </UButton> -->
           </div>
           <div
-            v-if="isOverDonationTarget"
-            class="space-y-6 peer-[&]:before:mb-4 peer-[&]:before:block peer-[&]:before:h-px peer-[&]:before:w-full peer-[&]:before:bg-neutral-200 peer-[&]:before:content-['']"
+            v-if="projectItem.feedbackItem"
+            class="space-y-4 overflow-hidden rounded-3xl p-6 shadow-[0_0_8px_0_theme(colors.neutral.900/16%)]"
           >
-            <div class="flex items-center space-x-3">
-              <input
-                id="needFeedback"
+            <div class="peer flex items-start space-x-4">
+              <img
+                class="h-20 w-20 overflow-hidden rounded-2xl object-cover"
+                :src="projectItem.feedbackUrl"
+                alt=""
+              />
+              <div class="flex-1 space-y-1 text-base">
+                <h4 class="flex flex-wrap">
+                  <p>單筆滿 NTD$ {{ projectItem.feedbackMoney }} 立即享回饋:</p>
+                  <p>{{ projectItem.feedbackItem }} * 1</p>
+                </h4>
+                <p class="text-neutral-600">
+                  預計寄出日期: {{ $dateformat(projectItem.feedbackDate) }}
+                </p>
+                <div class="flex items-center space-x-2">
+                  <div
+                    v-if="tempData.money >= projectItem.feedbackMoney"
+                    class="h-5 w-5 flex-shrink-0 bg-warning-700 [mask-image:url('~/assets/icons/check.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+                  ></div>
+                  <div
+                    v-else
+                    class="h-5 w-5 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/warning.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
+                  ></div>
+                  <p
+                    :class="
+                      tempData.money >= projectItem.feedbackMoney
+                        ? 'text-warning-700'
+                        : 'text-neutral-600'
+                    "
+                  >
+                    <span v-if="tempData.money >= projectItem.feedbackMoney">已符合</span>
+                    <span v-else
+                      >未符合，差 {{ projectItem.feedbackMoney - tempData.money }} 元享回饋</span
+                    >
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              v-if="isOverDonationTarget"
+              class="space-y-6 peer-[&]:before:mb-4 peer-[&]:before:block peer-[&]:before:h-px peer-[&]:before:w-full peer-[&]:before:bg-neutral-200 peer-[&]:before:content-['']"
+            >
+              <UCheckbox
                 v-model="tempData.isNeedFeedback"
-                type="checkbox"
-                class="h-5 w-5 shrink-0 appearance-none rounded-sm border-secondary-1 outline outline-2 outline-secondary-1 after:relative after:block after:h-5/6 after:w-6/12 after:translate-x-[5px] checked:bg-secondary-1 checked:after:relative checked:after:rotate-45 checked:after:border-b-4 checked:after:border-r-4 checked:after:border-white"
+                name="needFeedback"
+                label="請寄送回饋品"
+                input-class="h-5 w-5 shrink-0 appearance-none rounded-sm border-secondary-1 outline outline-2 outline-secondary-1 after:relative after:block after:h-5/6 after:w-6/12 after:translate-x-[5px] checked:bg-secondary-1 checked:after:relative checked:after:rotate-45 checked:after:border-b-4 checked:after:border-r-4 checked:after:border-white"
               />
-              <label for="needFeedback" class="text-lg text-secondary-1">請寄送回饋品</label>
-            </div>
-            <div class="space-y-1">
-              <label class="text-neutral-800" for="receiver"
-                >收件人<span class="text-warning-500">*</span></label
-              >
-              <input
-                id="receiver"
-                v-model="tempData.receiver"
-                type="text"
-                placeholder="請填寫收件人"
-                class="block w-full rounded border p-3"
-              />
-            </div>
-            <div class="space-y-1">
-              <label class="text-neutral-800" for="address"
-                >收件地址<span class="text-warning-500">*</span></label
-              >
-              <input
-                id="address"
-                v-model="tempData.address"
-                type="text"
-                placeholder="請填寫收件地址"
-                class="block w-full rounded border p-3"
-              />
-            </div>
-            <div class="space-y-1">
-              <label class="text-neutral-800" for="receiverPhone"
-                >聯絡電話<span class="text-warning-500">*</span></label
-              >
-              <input
-                id="receiverPhone"
-                v-model="tempData.receiverPhone"
-                type="tel"
-                placeholder="請填寫聯絡電話"
-                class="block w-full rounded border p-3"
-              />
+
+              <template v-if="tempData.isNeedFeedback">
+                <UFormGroup label="收件人" required name="receiver">
+                  <UInput
+                    v-model="tempData.receiver"
+                    input-class="!p-3"
+                    placeholder="請填寫收件人"
+                  />
+                </UFormGroup>
+                <UFormGroup label="收件地址" required name="address">
+                  <UInput
+                    v-model="tempData.address"
+                    input-class="!p-3"
+                    placeholder="請填寫收件地址"
+                  />
+                </UFormGroup>
+                <UFormGroup label="聯絡電話" required name="receiverPhone">
+                  <UInput
+                    v-model="tempData.receiverPhone"
+                    input-class="!p-3"
+                    placeholder="請填寫聯絡電話"
+                    type="tel"
+                  />
+                </UFormGroup>
+              </template>
             </div>
           </div>
-        </div>
-        <div class="space-y-6 text-center">
-          <p class="text-neutral-900">
-            <span>當您確認支付時，即代表您已知悉並同意我們的</span
-            ><NuxtLink class="inline-block underline" to="/" target="_blank">使用條款</NuxtLink>。
-          </p>
-          <button
-            type="button"
-            class="w-full max-w-[260px] rounded bg-secondary-2 p-4 text-xl text-white"
-            @click="supportProject"
-          >
-            確認支付
-          </button>
-        </div>
+          <div class="space-y-6 text-center">
+            <p class="text-neutral-900">
+              <span>當您確認支付時，即代表您已知悉並同意我們的</span
+              ><NuxtLink class="inline-block underline" to="/" target="_blank">使用條款</NuxtLink>。
+            </p>
+            <button
+              type="submit"
+              class="w-full max-w-[260px] rounded bg-secondary-2 p-4 text-xl text-white"
+            >
+              確認支付
+            </button>
+          </div>
+        </UForm>
       </div>
       <form ref="paymentForm" method="post" action="https://ccore.newebpay.com/MPG/mpg_gateway">
         <input :value="supportResults.TradeSha" type="hidden" name="TradeSha" />
