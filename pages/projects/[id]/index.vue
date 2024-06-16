@@ -147,40 +147,29 @@ onMounted(() => {
         </div>
         <div class="rounded-3xl p-4 shadow-lg lg:p-6">
           <div class="flex items-center gap-10">
-            <div
-              v-if="project?.avatar"
-              class="h-20 w-20 shrink-0 rounded-full bg-[url('')] bg-cover bg-center"
-              :style="{ backgroundImage: `url(${project.avatar})` }"
-            ></div>
+            <Avatar size="lg" :src="project?.avatar" />
             <div>
               <div class="mb-4 text-2xl">{{ project.teamName }}</div>
               <div class="flex">
                 <a
+                  v-if="project.phone.slice(1)"
                   :href="`tel:+886-${project.phone.slice(1)}`"
-                  class="text-primary-3 hover:text-primary-2"
+                  class="flex flex-shrink-0 text-primary-3 after:mx-4 after:block after:h-8 after:w-[2px] after:rounded-sm after:bg-neutral-400 after:content-[''] hover:text-primary-2 after:[&:last-child]:hidden"
                 >
                   <Icon name="mdi:phone" width="32" height="32" />
                 </a>
-                <Icon
-                  name="fluent:divider-tall-24-regular"
-                  width="32"
-                  height="32"
-                  class="text-neutral-400"
-                />
-                <a :href="`mailto:${project.email}`" class="text-primary-3 hover:text-primary-2">
+                <a
+                  v-if="project.email"
+                  :href="`mailto:${project.email}`"
+                  class="flex flex-shrink-0 text-primary-3 after:mx-4 after:block after:h-8 after:w-[2px] after:rounded-sm after:bg-neutral-400 after:content-[''] hover:text-primary-2 after:[&:last-child]:hidden"
+                >
                   <Icon name="mdi:email" width="32" height="32" />
                 </a>
-                <Icon
-                  name="fluent:divider-tall-24-regular"
-                  width="32"
-                  height="32"
-                  class="text-neutral-400"
-                />
-
                 <a
+                  v-if="project.relatedUrl"
                   :href="project.relatedUrl"
                   target="_blank"
-                  class="text-primary-3 hover:text-primary-2"
+                  class="flex flex-shrink-0 text-primary-3 after:mx-4 after:block after:h-8 after:w-[2px] after:rounded-sm after:bg-neutral-400 after:content-[''] hover:text-primary-2 after:[&:last-child]:hidden"
                 >
                   <Icon name="mdi:internet" width="32" height="32" />
                 </a>
