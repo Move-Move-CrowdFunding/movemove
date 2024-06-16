@@ -3,11 +3,28 @@ const route = useRoute()
 const id = computed(() => route.params.id) // project id
 const userStore = useIsLoginStore() // 會員資料
 const { userData } = storeToRefs(userStore)
-watch(userData, (val) => {
-  tempData.value.userName = val?.userName ?? ''
-  tempData.value.email = val?.email ?? ''
-  tempData.value.phone = val?.phone ?? ''
+
+// 支持專案資料
+const tempData = ref({
+  userName: '',
+  email: '',
+  phone: '',
+  money: 1000,
+  isNeedFeedback: false,
+  receiver: '',
+  receiverPhone: '',
+  address: ''
 })
+
+watch(
+  userData,
+  (val) => {
+    tempData.value.userName = val?.userName ?? ''
+    tempData.value.email = val?.email ?? ''
+    tempData.value.phone = val?.phone ?? ''
+  },
+  { immediate: true }
+)
 
 const results = ref({}) // 專案完整資料
 const projectItem = computed(() => results.value.results || {}) // 專案資料
@@ -35,18 +52,6 @@ const supportResults = ref({
   MerchantOrderNo: '',
   money: '',
   ItemDesc: '公益募捐'
-})
-
-// 支持專案資料
-const tempData = ref({
-  userName: '',
-  email: '',
-  phone: '',
-  money: 1000,
-  isNeedFeedback: false,
-  receiver: '',
-  receiverPhone: '',
-  address: ''
 })
 
 // 支持專案
@@ -95,9 +100,9 @@ onMounted(() => {
 })
 </script>
 <template>
-  {{ userData }}
+  <!-- {{ userData }}
   <hr />
-  {{ tempData }}
+  {{ tempData }} -->
   <div class="container py-10 lg:py-20">
     <h1 class="mb-6 text-center text-3xl font-bold lg:mb-10">支持提案內容</h1>
     <div class="grid gap-12 md:grid-cols-2">
