@@ -2,20 +2,20 @@
 import { useDayjs } from '#dayjs'
 const dayjs = useDayjs()
 const route = useRoute()
-const router = useRouter()
 
 const SupportData = ref([])
 const items = computed(() => SupportData.value?.results || [])
-const totalCount = computed(() => SupportData.value?.pagination?.count || 0)
-const pageNo = computed(() => route.query.pageNo * 1 || 1)
+const pageNo = ref(1)
 const pageSize = computed(() => route.query.pageSize * 1 || 10)
 
+const pagination = ref({})
 const getSupportData = async () => {
   try {
     const results = await getFetchData({
       url: `/member/support?pageNo=${pageNo.value}&pageSize=${pageSize.value}`
     })
     SupportData.value = results
+    pagination.value = results.pagination
   } catch (error) {
     console.log(error)
   }
@@ -31,8 +31,9 @@ watch(
   { immediate: true }
 )
 
-const updateUrl = () => {
-  router.push({ query: { pageNo: pn.value } })
+const changePage = (page) => {
+  pageNo.value = page
+  getSupportData()
 }
 </script>
 <template>
@@ -112,7 +113,7 @@ const updateUrl = () => {
       </template>
     </UAccordion>
     <EmptyState v-else />
-    <div v-if="items?.length" class="mt-5 flex items-center justify-center">
+    <!-- <div v-if="items?.length" class="mt-5 flex items-center justify-center">
       <UPagination
         v-model="pn"
         :page-count="pageSize"
@@ -120,7 +121,14 @@ const updateUrl = () => {
         :model-value="pn"
         @click="updateUrl"
       />
-    </div>
+    </div> -->
+    <Pagination
+      v-if="items?.length"
+      container-class="container flex items-center justify-center py-10 lg:py-20"
+      size="xl"
+      :pagination="pagination"
+      @page="changePage"
+    />
   </div>
 </template>
 

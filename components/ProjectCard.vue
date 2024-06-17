@@ -24,7 +24,7 @@ const emit = defineEmits(['follow'])
 </script>
 <template>
   <NuxtLink
-    :to="`/projects/${project.id}`"
+    :to="`/projects/${project?.id || project?._id}`"
     class="group block overflow-hidden rounded-3xl border border-primary-3 duration-300 hover:border-primary-1 hover:shadow-lg lg:rounded-[32px]"
   >
     <div class="relative overflow-hidden">
@@ -36,7 +36,7 @@ const emit = defineEmits(['follow'])
         v-if="isLogin.isLogin"
         class="group absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-neutral-600/50 duration-300 hover:bg-secondary-1 active:fill-primary-1 lg:right-4 lg:top-4"
         :class="{ 'fill-primary-1': project.trackingStatus, 'fill-white': !project.trackingStatus }"
-        @click.prevent="emit('follow', project.id)"
+        @click.prevent="emit('follow', project?.id || project?._id)"
       >
         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <g>
