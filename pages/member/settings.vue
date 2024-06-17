@@ -1,4 +1,6 @@
 <script setup>
+import { z } from 'zod'
+
 const tab = ref(1)
 const isLogin = useIsLoginStore()
 
@@ -84,6 +86,15 @@ const uploadFile = async () => {
       console.log(err)
     })
 }
+
+const schema = z.object({
+  phone: z
+    .string()
+    .min(8, '電話需8碼以上')
+    .refine((data) => /^\d+$/.test(data), {
+      message: '僅能輸入數字'
+    })
+})
 
 onMounted(() => {
   nextTick(() => {
@@ -315,6 +326,59 @@ onMounted(() => {
               </button>
             </div>
           </form>
+
+          <UForm :schema="schema">
+            <UFormGroup label="真實姓名" name="username">
+              <UInput
+                v-model="tempUser.userName"
+                input-class="w-full px-3 py-2"
+                placeholder="請輸入真實姓名"
+              />
+            </UFormGroup>
+            <UFormGroup label="顯示名稱" name="nickName">
+              <UInput
+                v-model="tempUser.nickName"
+                input-class="w-full px-3 py-2"
+                placeholder="請輸入顯示名稱"
+              />
+            </UFormGroup>
+            <UFormGroup label="性別" name="gender">
+              <USelect
+                variant="outline"
+                :options="[
+                  { id: 0, name: '不顯示' },
+                  { id: 1, name: '男' },
+                  { id: 2, name: '女' }
+                ]"
+                value-attribute="id"
+                option-attribute="name"
+                placeholder="請選擇性別"
+              />
+            </UFormGroup>
+            <!-- <UFormGroup name="phone" class="flex space-x-4">
+              <template #label>
+                <div class="w-1/4 font-bold sm:w-1/6">連絡電話</div>
+              </template>
+              <UInput
+                v-model="tempUser.phone"
+                input-class="grow"
+                placeholder="請填寫電話"
+                type="tel"
+              />
+            </UFormGroup> -->
+            <!-- <UFormGroup name="address" class="grid grid-cols-4 sm:grid-cols-6">
+              <template #label class="font-bold" >
+                收件地址
+              </template>
+              <div class="col-span-3 sm:col-span-5">
+                <UInput
+                  v-model="tempUser.address"
+                  input-class="block w-full px-3 py-2"
+                  placeholder="請輸入收件地址"
+                />
+              </div>
+            </UFormGroup> -->
+          </UForm>
         </div>
       </div>
     </div>
@@ -322,7 +386,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* * {
+* {
   outline: 1px solid #a00;
-} */
+}
 </style>
