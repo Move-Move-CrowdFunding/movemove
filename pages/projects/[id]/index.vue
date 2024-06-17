@@ -46,6 +46,20 @@ const project = ref({
   trackingStatus: false
 })
 
+const toggleFollow = async (id) => {
+  console.log(id)
+  await getFetchData({
+    url: `/member/collection`,
+    method: 'POST',
+    params: { projectId: id }
+  })
+    .then((res) => {
+      console.log(res)
+      getProject()
+    })
+    .catch((err) => console.log(err))
+}
+
 const diffInSeconds = ref(0)
 const days = ref(0)
 const hours = ref(0)
@@ -123,6 +137,7 @@ onMounted(() => {
             </NuxtLink>
             <button
               class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
+              @click="toggleFollow(project.id)"
             >
               <Icon v-if="project.trackingStatus" name="mdi:heart" width="32" height="32" />
               <Icon v-else name="mdi:heart-outline" width="32" height="32" />
@@ -192,6 +207,7 @@ onMounted(() => {
         </NuxtLink>
         <button
           class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
+          @click="toggleFollow(project.id)"
         >
           <Icon v-if="project.trackingStatus" name="mdi:heart" width="32" height="32" />
           <Icon v-else name="mdi:heart-outline" width="32" height="32" />
