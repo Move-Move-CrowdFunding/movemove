@@ -3,7 +3,7 @@ export const formGroupConfig = {
   label: {
     wrapper: '',
     base: 'flex items-center text-neutral-800 text-base',
-    required: "after:content-['*'] after:text-warning-500"
+    required: "after:content-['*'] !after:text-warning-500"
   },
   error: 'text-warning-500 peer-invalid:visible',
   default: {
