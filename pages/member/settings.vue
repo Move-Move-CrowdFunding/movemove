@@ -63,7 +63,7 @@ const changePassword = async () => {
       alert(err.message)
     })
 }
-const showPassword = ref(false)
+// const showPassword = ref(false)
 
 const uploadedFile = ref(null)
 const uploadFile = async () => {
@@ -86,14 +86,32 @@ const uploadFile = async () => {
       console.log(err)
     })
 }
-
-const schema = z.object({
+const passwordSchema = z.object({
+  oldPassword: z.string().refine((val) => val.length >= 1, {
+    message: '請輸入舊密碼'
+  }),
+  newPassword: z.string().refine((val) => val.length >= 1, {
+    message: '請輸入新密碼'
+  }),
+  checkPassword: z
+    .string()
+    .refine((val) => val.length >= 1, {
+      message: '請確認新密碼'
+    })
+    .refine(() => tempPassword.new === tempPassword.newCheck, {
+      message: '密碼需相同'
+    })
+})
+const infoSchema = z.object({
   phone: z
     .string()
     .min(8, '電話需8碼以上')
     .refine((data) => /^\d+$/.test(data), {
       message: '僅能輸入數字'
-    })
+    }),
+  nickName: z.string().refine((val) => val.length >= 1, {
+    message: '請填寫顯示名稱'
+  })
 })
 
 onMounted(() => {
@@ -154,7 +172,7 @@ onMounted(() => {
           </button>
         </div>
         <div class="bg-secondary-5 px-8 py-10">
-          <form v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
+          <!-- <form v-if="tab === 1" class="hidden space-y-4" @submit.prevent="editUser()">
             <div class="flex items-center space-x-4">
               <label for="username" class="w-1/4 font-bold sm:w-1/6">真實姓名</label>
               <div class="grow">
@@ -257,8 +275,8 @@ onMounted(() => {
                 更新
               </button>
             </div>
-          </form>
-          <form v-else action="" class="space-y-4">
+          </form> -->
+          <!-- <form v-else action="" class="space-y-4">
             <div class="flex items-center space-x-4">
               <label for="oldPassword" class="w-1/4 font-bold sm:w-1/6">舊密碼</label>
               <div class="relative grow">
@@ -325,26 +343,36 @@ onMounted(() => {
                 更新
               </button>
             </div>
-          </form>
-          <div v-if="tab === 1">
-            <UForm :schema="schema" :state="tempUser">
+          </form> -->
+          <div v-if="tab === 1" id="userInfoForm">
+            <UForm :schema="infoSchema" :state="tempUser" @submit.prevent="editUser">
               <div class="space-y-6">
-                <UFormGroup name="username">
-                  <template #label>
+                <UFormGroup label="真實姓名" name="username">
+                  <!-- <template #label>
                     <div class="pb-1 text-lg font-bold">真實姓名</div>
-                  </template>
-                  <UInput v-model="tempUser.userName" size="xl" placeholder="請輸入真實姓名" />
+                  </template> -->
+                  <UInput
+                    v-model="tempUser.userName"
+                    size="xl"
+                    placeholder="請輸入真實姓名"
+                    input-class="bg-white"
+                  />
                 </UFormGroup>
-                <UFormGroup name="nickName">
-                  <template #label>
+                <UFormGroup label="顯示名稱" required name="nickName">
+                  <!-- <template #label>
                     <div class="pb-1 text-lg font-bold">顯示名稱</div>
-                  </template>
-                  <UInput v-model="tempUser.nickName" size="xl" placeholder="請輸入顯示名稱" />
+                  </template> -->
+                  <UInput
+                    v-model="tempUser.nickName"
+                    size="xl"
+                    placeholder="請輸入顯示名稱"
+                    input-class="bg-white"
+                  />
                 </UFormGroup>
-                <UFormGroup name="gender">
-                  <template #label>
+                <UFormGroup label="性別" name="gender">
+                  <!-- <template #label>
                     <div class="pb-1 text-lg font-bold">性別</div>
-                  </template>
+                  </template> -->
                   <USelect
                     variant="outline"
                     :options="[
@@ -358,46 +386,82 @@ onMounted(() => {
                     size="xl"
                   />
                 </UFormGroup>
-                <UFormGroup name="phone">
-                  <template #label>
+                <UFormGroup label="連絡電話" name="phone">
+                  <!-- <template #label>
                     <div class="pb-1 text-lg font-bold">連絡電話</div>
-                  </template>
-                  <UInput v-model="tempUser.phone" size="xl" placeholder="請填寫電話" type="tel" />
+                  </template> -->
+                  <UInput
+                    v-model="tempUser.phone"
+                    size="xl"
+                    placeholder="請填寫電話"
+                    type="tel"
+                    input-class="bg-white"
+                  />
                 </UFormGroup>
-                <UFormGroup name="address">
-                  <template #label>
+                <UFormGroup label="收件地址" name="address">
+                  <!-- <template #label>
                     <div class="pb-1 text-lg font-bold">收件地址</div>
-                  </template>
-                  <UInput v-model="tempUser.address" size="xl" placeholder="請輸入收件地址" />
+                  </template> -->
+                  <UInput
+                    v-model="tempUser.address"
+                    size="xl"
+                    placeholder="請輸入收件地址"
+                    input-class="bg-white"
+                  />
                 </UFormGroup>
               </div>
             </UForm>
+            <div class="flex justify-between pt-6">
+              <button
+                class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white"
+                @click.prevent="getTempUser(isLogin.userData)"
+              >
+                重置
+              </button>
+              <button
+                type="submit"
+                class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white"
+              >
+                更新
+              </button>
+            </div>
           </div>
           <div v-else>
-            <UForm :schema="schema" :state="tempPassword">
+            <UForm :schema="passwordSchema" :state="tempPassword" @submit.prevent="changePassword">
               <div class="space-y-6">
-                <UFormGroup name="oldPassword" required>
-                  <template #label>
+                <UFormGroup name="oldPassword" label="舊密碼" required>
+                  <!-- <template #label>
                     <div class="pb-1 text-lg font-bold">舊密碼</div>
-                  </template>
+                  </template> -->
                   <UInput
                     v-model="tempPassword.old"
                     size="xl"
                     placeholder="請輸入舊密碼"
                     type="password"
+                    input-class="bg-white"
                   />
                 </UFormGroup>
-                <UFormGroup name="newPassword" required>
-                  <template #label>
+                <UFormGroup name="newPassword" label="新密碼" required>
+                  <!-- <template #label>
                     <div class="pb-1 text-lg font-bold">新密碼</div>
-                  </template>
-                  <UInput v-model="tempPassword.new" size="xl" placeholder="請輸入新密碼" />
+                  </template> -->
+                  <UInput
+                    v-model="tempPassword.new"
+                    size="xl"
+                    placeholder="請輸入新密碼"
+                    input-class="bg-white"
+                  />
                 </UFormGroup>
-                <UFormGroup name="checkPassword" required>
-                  <template #label>
+                <UFormGroup name="checkPassword" label="密碼確認" required>
+                  <!-- <template #label>
                     <div class="pb-1 text-lg font-bold">密碼確認</div>
-                  </template>
-                  <UInput v-model="tempPassword.newCheck" size="xl" placeholder="再次輸入新密碼" />
+                  </template> -->
+                  <UInput
+                    v-model="tempPassword.newCheck"
+                    size="xl"
+                    placeholder="再次輸入新密碼"
+                    input-class="bg-white"
+                  />
                 </UFormGroup>
               </div>
             </UForm>
@@ -411,5 +475,8 @@ onMounted(() => {
 <style scoped>
 * {
   outline: 1px solid #a000;
+}
+#userInfoForm label {
+  @apply !text-lg !font-bold;
 }
 </style>
