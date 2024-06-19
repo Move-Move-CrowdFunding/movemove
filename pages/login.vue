@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { z } from 'zod'
+import { formGroupConfig, inputConfig } from '~/nuxtui/props'
 import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'custom-layout'
@@ -12,11 +14,16 @@ const loginForm = ref({
   email: '',
   password: ''
 })
+
+const schemaRegister = z.object({
+  nickName: z.string().min(1, '請填寫名稱'),
+  email: z.string().email('請輸入有效的 email'),
+  password: z.string().min(8, '至少 8 碼')
+})
 const registerForm = ref({
   nickName: '',
   email: '',
-  password: '',
-  confirmPassword: ''
+  password: ''
 })
 
 // 註冊
@@ -37,8 +44,7 @@ const submitSignUp = async () => {
       registerForm.value = {
         nickName: '',
         email: '',
-        password: '',
-        confirmPassword: ''
+        password: ''
       }
     })
     .catch((err) => {
@@ -46,6 +52,11 @@ const submitSignUp = async () => {
       alert((err as ResponseData).message)
     })
 }
+
+const schemaLogin = z.object({
+  email: z.string().email('請輸入有效的 email'),
+  password: z.string().min(8, '至少 8 碼')
+})
 
 // 登入
 const submitLogin = async () => {
@@ -70,18 +81,23 @@ const submitLogin = async () => {
     })
 }
 
-const forgotPasswordForm = ref('')
+const forgotPasswordForm = ref({
+  email: ''
+})
+const schemaForgotPassword = z.object({
+  email: z.string().email('請輸入有效的 email')
+})
 const forgotPassword = () => {
   getFetchData({
     url: '/user/forget-password',
     method: 'POST',
     params: {
-      email: forgotPasswordForm.value
+      email: forgotPasswordForm.value.email
     }
   })
     .then((res) => {
       alert((res as ResponseData).message)
-      forgotPasswordForm.value = ''
+      forgotPasswordForm.value.email = ''
     })
     .catch((err) => {
       alert((err as ResponseData).message)
@@ -93,7 +109,7 @@ const forgotPassword = () => {
     class="flex min-h-dvh w-full flex-col overflow-y-auto overflow-x-hidden bg-[url('~/assets/images/login.jpeg')] bg-cover bg-center before:absolute before:inset-0 before:backdrop-blur-sm before:content-[''] md:flex-row md:items-start md:justify-start"
   >
     <div
-      class="flex min-h-dvh w-full flex-1 flex-col items-center justify-center overflow-auto py-8 before:absolute before:bottom-0 before:left-0 before:right-0 before:top-0 before:block before:bg-neutral-50/65 before:content-[''] md:flex-row md:py-4 md:before:left-[inherit] md:before:w-1/2"
+      class="flex min-h-dvh w-full flex-1 flex-col items-center justify-center overflow-auto py-8 before:absolute before:bottom-0 before:left-0 before:right-0 before:top-0 before:block before:bg-neutral-50/70 before:content-[''] md:flex-row md:py-4 md:before:left-[inherit] md:before:w-1/2"
     >
       <div
         class="flex justify-center px-4 md:mb-auto md:h-full md:w-1/2 md:items-start md:justify-start"
@@ -108,22 +124,28 @@ const forgotPassword = () => {
           class="relative z-10 flex w-full justify-center p-6 md:h-full md:w-1/2 md:items-center"
         >
           <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
-            <h3 class="peer text-center text-lg text-neutral-900">登入</h3>
-            <div class="space-y-6 peer-[&]:mt-6">
-              <BaseInputField
-                v-model="loginForm.email"
-                input-title="E-mail"
-                placeholder="E-mail"
-                is-required
-              />
-              <BaseInputField
-                v-model="loginForm.password"
-                type="password"
-                input-title="Password"
-                placeholder="Password"
-                is-required
-              />
-            </div>
+            <h3 class="text-center text-lg text-neutral-900">登入</h3>
+            <UForm
+              :schema="schemaLogin"
+              :state="loginForm"
+              class="relative z-10 space-y-4"
+              @submit="submitLogin"
+            >
+              <UFormGroup :ui="formGroupConfig" required label="Email" name="email">
+                <UInput v-model="loginForm.email" placeholder="Email" :ui="inputConfig" size="xl" />
+              </UFormGroup>
+
+              <UFormGroup :ui="formGroupConfig" required label="Password" name="password">
+                <UInput
+                  v-model="loginForm.password"
+                  :ui="inputConfig"
+                  size="xl"
+                  type="password"
+                  placeholder="Password"
+                />
+              </UFormGroup>
+              <UButton type="submit" size="lg" block> 登入 </UButton>
+            </UForm>
             <div class="flex items-center justify-between">
               <p>
                 還沒有帳號？
@@ -140,7 +162,6 @@ const forgotPassword = () => {
                 忘記密碼
               </p>
             </div>
-            <UButton size="lg" @click="submitLogin"> 登入 </UButton>
           </div>
         </div>
       </template>
@@ -152,22 +173,29 @@ const forgotPassword = () => {
         >
           <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
             <h3 class="peer text-center text-lg text-neutral-900">忘記密碼</h3>
-            <div class="space-y-6 peer-[&]:mt-6">
-              <BaseInputField
-                v-model="forgotPasswordForm"
-                input-title="E-mail"
-                placeholder="請輸入 E-mail"
-                is-required
-              />
-            </div>
-            <div class="flex items-center justify-between">
-              <a
-                class="cursor-pointer px-4 py-1 text-secondary-2 underline"
-                @click="currentView = 'login'"
-                >回登入頁</a
-              >
-            </div>
-            <UButton size="lg" @click="forgotPassword"> 獲取新密碼 </UButton>
+            <UForm
+              :schema="schemaForgotPassword"
+              :state="forgotPasswordForm"
+              class="relative z-10 space-y-4"
+              @submit="forgotPassword"
+            >
+              <UFormGroup :ui="formGroupConfig" required label="Email" name="email">
+                <UInput
+                  v-model="forgotPasswordForm.email"
+                  placeholder="Email"
+                  :ui="inputConfig"
+                  size="xl"
+                />
+              </UFormGroup>
+              <UButton type="submit" size="lg" block> 獲取新密碼 </UButton>
+              <div class="flex items-center justify-between">
+                <a
+                  class="cursor-pointer px-4 py-1 text-secondary-2 underline"
+                  @click="currentView = 'login'"
+                  >回登入頁</a
+                >
+              </div>
+            </UForm>
           </div>
         </div>
       </template>
@@ -179,38 +207,48 @@ const forgotPassword = () => {
         >
           <div class="mx-auto flex w-full flex-col space-y-4 md:max-w-[500px]">
             <h3 class="peer text-center text-lg text-neutral-900">註冊</h3>
-            <div class="space-y-6 peer-[&]:mt-6">
-              <BaseInputField
-                v-model="registerForm.nickName"
-                input-title="名稱"
-                placeholder="請輸入 名稱"
-                is-required
-              />
-              <BaseInputField
-                v-model="registerForm.email"
-                input-title="E-mail"
-                placeholder="請輸入 E-mail"
-                is-required
-              />
-              <BaseInputField
-                v-model="registerForm.password"
-                type="password"
-                input-title="密碼"
-                placeholder="請輸入密碼"
-                is-required
-              />
-            </div>
-            <div class="flex items-center justify-between">
-              <p>
-                已經有帳號？
-                <a
-                  class="cursor-pointer px-4 py-1 text-secondary-2 underline"
-                  @click="currentView = 'login'"
-                  >登入</a
-                >
-              </p>
-            </div>
-            <UButton size="lg" @click="submitSignUp"> 註冊 </UButton>
+            <UForm
+              :schema="schemaRegister"
+              :state="registerForm"
+              class="relative z-10 space-y-4"
+              @submit="submitSignUp"
+            >
+              <UFormGroup :ui="formGroupConfig" required label="名稱" name="nickName">
+                <UInput
+                  v-model="registerForm.nickName"
+                  placeholder="請輸入 名稱"
+                  size="xl"
+                  :ui="inputConfig"
+                />
+              </UFormGroup>
+              <UFormGroup :ui="formGroupConfig" required label="Email" name="email">
+                <UInput
+                  v-model="registerForm.email"
+                  placeholder="請輸入 E-mail"
+                  :ui="inputConfig"
+                  size="xl"
+                />
+              </UFormGroup>
+              <UFormGroup :ui="formGroupConfig" required label="密碼" name="password">
+                <UInput
+                  v-model="registerForm.password"
+                  placeholder="請輸入密碼"
+                  size="xl"
+                  :ui="inputConfig"
+                />
+              </UFormGroup>
+              <div class="flex items-center justify-between">
+                <p>
+                  已經有帳號？
+                  <a
+                    class="cursor-pointer px-4 py-1 text-secondary-2 underline"
+                    @click="currentView = 'login'"
+                    >登入</a
+                  >
+                </p>
+              </div>
+              <UButton type="submit" size="lg" block> 註冊 </UButton>
+            </UForm>
           </div>
         </div>
       </template>
@@ -219,6 +257,6 @@ const forgotPassword = () => {
 </template>
 <style lang="scss" scoped>
 button {
-  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 text-neutral-50 transition hover:bg-primary-2;
+  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 transition hover:bg-primary-2;
 }
 </style>
