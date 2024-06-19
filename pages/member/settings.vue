@@ -153,7 +153,7 @@ onMounted(() => {
             修改密碼
           </button>
         </div>
-        <div class="bg-secondary-5 px-3 py-10 lg:px-6">
+        <div class="bg-secondary-5 px-8 py-10">
           <form v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
             <div class="flex items-center space-x-4">
               <label for="username" class="w-1/4 font-bold sm:w-1/6">真實姓名</label>
@@ -326,59 +326,82 @@ onMounted(() => {
               </button>
             </div>
           </form>
-
-          <UForm :schema="schema">
-            <UFormGroup label="真實姓名" name="username">
-              <UInput
-                v-model="tempUser.userName"
-                input-class="w-full px-3 py-2"
-                placeholder="請輸入真實姓名"
-              />
-            </UFormGroup>
-            <UFormGroup label="顯示名稱" name="nickName">
-              <UInput
-                v-model="tempUser.nickName"
-                input-class="w-full px-3 py-2"
-                placeholder="請輸入顯示名稱"
-              />
-            </UFormGroup>
-            <UFormGroup label="性別" name="gender">
-              <USelect
-                variant="outline"
-                :options="[
-                  { id: 0, name: '不顯示' },
-                  { id: 1, name: '男' },
-                  { id: 2, name: '女' }
-                ]"
-                value-attribute="id"
-                option-attribute="name"
-                placeholder="請選擇性別"
-              />
-            </UFormGroup>
-            <!-- <UFormGroup name="phone" class="flex space-x-4">
-              <template #label>
-                <div class="w-1/4 font-bold sm:w-1/6">連絡電話</div>
-              </template>
-              <UInput
-                v-model="tempUser.phone"
-                input-class="grow"
-                placeholder="請填寫電話"
-                type="tel"
-              />
-            </UFormGroup> -->
-            <!-- <UFormGroup name="address" class="grid grid-cols-4 sm:grid-cols-6">
-              <template #label class="font-bold" >
-                收件地址
-              </template>
-              <div class="col-span-3 sm:col-span-5">
-                <UInput
-                  v-model="tempUser.address"
-                  input-class="block w-full px-3 py-2"
-                  placeholder="請輸入收件地址"
-                />
+          <div v-if="tab === 1">
+            <UForm :schema="schema" :state="tempUser">
+              <div class="space-y-6">
+                <UFormGroup name="username">
+                  <template #label>
+                    <div class="pb-1 text-lg font-bold">真實姓名</div>
+                  </template>
+                  <UInput v-model="tempUser.userName" size="xl" placeholder="請輸入真實姓名" />
+                </UFormGroup>
+                <UFormGroup name="nickName">
+                  <template #label>
+                    <div class="pb-1 text-lg font-bold">顯示名稱</div>
+                  </template>
+                  <UInput v-model="tempUser.nickName" size="xl" placeholder="請輸入顯示名稱" />
+                </UFormGroup>
+                <UFormGroup name="gender">
+                  <template #label>
+                    <div class="pb-1 text-lg font-bold">性別</div>
+                  </template>
+                  <USelect
+                    variant="outline"
+                    :options="[
+                      { id: 0, name: '不顯示' },
+                      { id: 1, name: '男' },
+                      { id: 2, name: '女' }
+                    ]"
+                    value-attribute="id"
+                    option-attribute="name"
+                    placeholder="請選擇性別"
+                    size="xl"
+                  />
+                </UFormGroup>
+                <UFormGroup name="phone">
+                  <template #label>
+                    <div class="pb-1 text-lg font-bold">連絡電話</div>
+                  </template>
+                  <UInput v-model="tempUser.phone" size="xl" placeholder="請填寫電話" type="tel" />
+                </UFormGroup>
+                <UFormGroup name="address">
+                  <template #label>
+                    <div class="pb-1 text-lg font-bold">收件地址</div>
+                  </template>
+                  <UInput v-model="tempUser.address" size="xl" placeholder="請輸入收件地址" />
+                </UFormGroup>
               </div>
-            </UFormGroup> -->
-          </UForm>
+            </UForm>
+          </div>
+          <div v-else>
+            <UForm :schema="schema" :state="tempPassword">
+              <div class="space-y-6">
+                <UFormGroup name="oldPassword" required>
+                  <template #label>
+                    <div class="pb-1 text-lg font-bold">舊密碼</div>
+                  </template>
+                  <UInput
+                    v-model="tempPassword.old"
+                    size="xl"
+                    placeholder="請輸入舊密碼"
+                    type="password"
+                  />
+                </UFormGroup>
+                <UFormGroup name="newPassword" required>
+                  <template #label>
+                    <div class="pb-1 text-lg font-bold">新密碼</div>
+                  </template>
+                  <UInput v-model="tempPassword.new" size="xl" placeholder="請輸入新密碼" />
+                </UFormGroup>
+                <UFormGroup name="checkPassword" required>
+                  <template #label>
+                    <div class="pb-1 text-lg font-bold">密碼確認</div>
+                  </template>
+                  <UInput v-model="tempPassword.newCheck" size="xl" placeholder="再次輸入新密碼" />
+                </UFormGroup>
+              </div>
+            </UForm>
+          </div>
         </div>
       </div>
     </div>
@@ -387,6 +410,6 @@ onMounted(() => {
 
 <style scoped>
 * {
-  outline: 1px solid #a00;
+  outline: 1px solid #a000;
 }
 </style>
