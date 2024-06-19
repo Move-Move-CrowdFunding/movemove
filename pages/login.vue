@@ -10,21 +10,17 @@ const isLogin = useIsLoginStore()
 
 const currentView = ref('login')
 
-const loginForm = ref({
-  email: '',
-  password: ''
-})
-
-const schemaRegister = z.object({
-  nickName: z.string().min(1, '請填寫名稱'),
-  email: z.string().email('請輸入有效的 email'),
-  password: z.string().min(8, '至少 8 碼')
-})
 const registerForm = ref({
   nickName: '',
   email: '',
   password: ''
 })
+const schemaRegister = z.object({
+  nickName: z.string().min(1, '請填寫名稱'),
+  email: z.string().email('請輸入有效的 email'),
+  password: z.string().min(8, '至少 8 碼')
+})
+const registerResult = computed(() => schemaRegister.safeParse(registerForm.value))
 
 // 註冊
 const submitSignUp = async () => {
@@ -53,12 +49,17 @@ const submitSignUp = async () => {
     })
 }
 
+// 登入
+const loginForm = ref({
+  email: '',
+  password: ''
+})
 const schemaLogin = z.object({
   email: z.string().email('請輸入有效的 email'),
   password: z.string().min(8, '至少 8 碼')
 })
+const loginResult = computed(() => schemaLogin.safeParse(loginForm.value))
 
-// 登入
 const submitLogin = async () => {
   await getFetchData({
     url: '/user/login',
@@ -81,12 +82,15 @@ const submitLogin = async () => {
     })
 }
 
+// 忘記密碼
 const forgotPasswordForm = ref({
   email: ''
 })
 const schemaForgotPassword = z.object({
   email: z.string().email('請輸入有效的 email')
 })
+const forgotResult = computed(() => schemaForgotPassword.safeParse(forgotPasswordForm.value))
+
 const forgotPassword = () => {
   getFetchData({
     url: '/user/forget-password',
@@ -109,7 +113,7 @@ const forgotPassword = () => {
     class="flex min-h-dvh w-full flex-col overflow-y-auto overflow-x-hidden bg-[url('~/assets/images/login.jpeg')] bg-cover bg-center before:absolute before:inset-0 before:backdrop-blur-sm before:content-[''] md:flex-row md:items-start md:justify-start"
   >
     <div
-      class="flex min-h-dvh w-full flex-1 flex-col items-center justify-center overflow-auto py-8 before:absolute before:bottom-0 before:left-0 before:right-0 before:top-0 before:block before:bg-neutral-50/70 before:content-[''] md:flex-row md:py-4 md:before:left-[inherit] md:before:w-1/2"
+      class="flex min-h-dvh w-full flex-1 flex-col items-center justify-center overflow-auto py-8 before:absolute before:bottom-0 before:left-0 before:right-0 before:top-0 before:block before:bg-neutral-50/90 before:content-[''] md:flex-row md:py-4 md:before:left-[inherit] md:before:w-1/2"
     >
       <div
         class="flex justify-center px-4 md:mb-auto md:h-full md:w-1/2 md:items-start md:justify-start"
@@ -144,7 +148,9 @@ const forgotPassword = () => {
                   placeholder="Password"
                 />
               </UFormGroup>
-              <UButton type="submit" size="lg" block> 登入 </UButton>
+              <UButton type="submit" size="lg" block :disabled="!loginResult.success">
+                登入
+              </UButton>
             </UForm>
             <div class="flex items-center justify-between">
               <p>
@@ -187,7 +193,9 @@ const forgotPassword = () => {
                   size="xl"
                 />
               </UFormGroup>
-              <UButton type="submit" size="lg" block> 獲取新密碼 </UButton>
+              <UButton type="submit" size="lg" block :disabled="!forgotResult.success">
+                獲取新密碼
+              </UButton>
               <div class="flex items-center justify-between">
                 <a
                   class="cursor-pointer px-4 py-1 text-secondary-2 underline"
@@ -247,7 +255,9 @@ const forgotPassword = () => {
                   >
                 </p>
               </div>
-              <UButton type="submit" size="lg" block> 註冊 </UButton>
+              <UButton type="submit" size="lg" block :disabled="!registerResult.success">
+                註冊
+              </UButton>
             </UForm>
           </div>
         </div>
@@ -257,6 +267,6 @@ const forgotPassword = () => {
 </template>
 <style lang="scss" scoped>
 button {
-  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 transition hover:bg-primary-2;
+  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 shadow-none transition hover:bg-primary-2 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-50 disabled:opacity-100;
 }
 </style>
