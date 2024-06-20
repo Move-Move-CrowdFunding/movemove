@@ -96,7 +96,7 @@ const passwordSchema = z.object({
     .min(8, {
       message: '新密碼需大於8位'
     })
-    .refine((val) => val !== tempPassword.old, {
+    .refine((val) => val !== tempPassword.value.old, {
       message: '新密碼不可與舊密碼相同'
     }),
   newCheck: z
@@ -104,8 +104,8 @@ const passwordSchema = z.object({
     .refine((val) => val.length >= 1, {
       message: '請確認新密碼'
     })
-    .refine(() => tempPassword.new === tempPassword.newCheck, {
-      message: '輸入新密碼需相同'
+    .refine(() => tempPassword.value.new === tempPassword.value.newCheck, {
+      message: '需與輸入新密碼相同'
     })
 })
 const infoSchema = z.object({
@@ -441,9 +441,6 @@ onMounted(() => {
                   />
                 </UFormGroup>
                 <UFormGroup name="newCheck" label="密碼確認" required>
-                  <!-- <template #label>
-                    <div class="pb-1 text-lg font-bold">密碼確認</div>
-                  </template> -->
                   <UInput
                     v-model="tempPassword.newCheck"
                     size="xl"
