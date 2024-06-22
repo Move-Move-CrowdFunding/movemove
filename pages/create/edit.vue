@@ -1,7 +1,7 @@
 <script setup>
 const router = useRouter()
 const isLogin = useIsLoginStore()
-const loading = useLoadingStore()
+const requestLoading = ref(false)
 
 const tempData = ref({
   introduce: '',
@@ -25,8 +25,7 @@ const tempData = ref({
 })
 
 const createProject = async (tempData) => {
-  loading.isGlobalLoading = true
-
+  requestLoading.value = true
   await getFetchData({
     url: '/project',
     method: 'POST',
@@ -35,11 +34,12 @@ const createProject = async (tempData) => {
     .then((res) => {
       console.log(res)
       router.push({ path: `/create/success/${res.results.id}` })
-      loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)
-      loading.isGlobalLoading = false
+    })
+    .finally(() => {
+      requestLoading.value = false
     })
 }
 
@@ -63,7 +63,11 @@ onMounted(() => {
 <template>
   <div>
     <CreateSteps :step="2" />
-    <ProjectInfo :temp-data="tempData" @create-project="createProject" />
+    <ProjectInfo
+      :temp-data="tempData"
+      :request-loading="requestLoading"
+      @create-project="createProject"
+    />
   </div>
 </template>
 
