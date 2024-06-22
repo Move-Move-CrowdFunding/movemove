@@ -9,7 +9,7 @@ definePageMeta({
 const isLogin = useIsLoginStore()
 
 const currentView = ref('login')
-
+const requestLoading = ref(false)
 const registerForm = ref({
   nickName: '',
   email: '',
@@ -24,6 +24,7 @@ const registerResult = computed(() => schemaRegister.safeParse(registerForm.valu
 
 // 註冊
 const submitSignUp = async () => {
+  requestLoading.value = true
   await getFetchData({
     url: '/user/sign-up',
     method: 'POST',
@@ -47,6 +48,9 @@ const submitSignUp = async () => {
       console.log(err)
       alert((err as ResponseData).message)
     })
+    .finally(() => {
+      requestLoading.value = false
+    })
 }
 
 // 登入
@@ -61,6 +65,7 @@ const schemaLogin = z.object({
 const loginResult = computed(() => schemaLogin.safeParse(loginForm.value))
 
 const submitLogin = async () => {
+  requestLoading.value = true
   await getFetchData({
     url: '/user/login',
     method: 'POST',
@@ -80,6 +85,9 @@ const submitLogin = async () => {
       console.log(err)
       alert((err as ResponseData).message)
     })
+    .finally(() => {
+      requestLoading.value = false
+    })
 }
 
 // 忘記密碼
@@ -92,6 +100,7 @@ const schemaForgotPassword = z.object({
 const forgotResult = computed(() => schemaForgotPassword.safeParse(forgotPasswordForm.value))
 
 const forgotPassword = () => {
+  requestLoading.value = true
   getFetchData({
     url: '/user/forget-password',
     method: 'POST',
@@ -105,6 +114,9 @@ const forgotPassword = () => {
     })
     .catch((err) => {
       alert((err as ResponseData).message)
+    })
+    .finally(() => {
+      requestLoading.value = false
     })
 }
 </script>
@@ -148,7 +160,13 @@ const forgotPassword = () => {
                   placeholder="Password"
                 />
               </UFormGroup>
-              <UButton type="submit" size="lg" block :disabled="!loginResult.success">
+              <UButton
+                type="submit"
+                size="lg"
+                block
+                :disabled="!loginResult.success"
+                :loading="requestLoading"
+              >
                 登入
               </UButton>
             </UForm>
@@ -193,7 +211,13 @@ const forgotPassword = () => {
                   size="xl"
                 />
               </UFormGroup>
-              <UButton type="submit" size="lg" block :disabled="!forgotResult.success">
+              <UButton
+                type="submit"
+                size="lg"
+                block
+                :disabled="!forgotResult.success"
+                :loading="requestLoading"
+              >
                 獲取新密碼
               </UButton>
               <div class="flex items-center justify-between">
@@ -255,7 +279,13 @@ const forgotPassword = () => {
                   >
                 </p>
               </div>
-              <UButton type="submit" size="lg" block :disabled="!registerResult.success">
+              <UButton
+                type="submit"
+                size="lg"
+                block
+                :disabled="!registerResult.success"
+                :loading="requestLoading"
+              >
                 註冊
               </UButton>
             </UForm>
