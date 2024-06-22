@@ -1,4 +1,6 @@
 <script setup>
+import { z } from 'zod'
+
 const tab = ref(1)
 const isLogin = useIsLoginStore()
 
@@ -18,6 +20,7 @@ const getTempUser = (data) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
 }
 const editUser = async () => {
+  console.log('editUser')
   await getFetchData({
     url: '/user',
     method: 'PATCH',
@@ -61,7 +64,7 @@ const changePassword = async () => {
       alert(err.message)
     })
 }
-const showPassword = ref(false)
+// const showPassword = ref(false)
 
 const uploadedFile = ref(null)
 const uploadFile = async () => {
@@ -84,6 +87,40 @@ const uploadFile = async () => {
       console.log(err)
     })
 }
+const passwordSchema = z.object({
+  old: z.string().refine((val) => val.length >= 1, {
+    message: '請輸入舊密碼'
+  }),
+  new: z
+    .string()
+    .min(8, {
+      message: '新密碼需大於8位'
+    })
+    .refine((val) => val !== tempPassword.value.old, {
+      message: '新密碼不可與舊密碼相同'
+    }),
+  newCheck: z
+    .string()
+    .refine((val) => val.length >= 1, {
+      message: '請確認新密碼'
+    })
+    .refine(() => tempPassword.value.new === tempPassword.value.newCheck, {
+      message: '需與輸入新密碼相同'
+    })
+})
+const infoSchema = z.object({
+  phone: z
+    .string()
+    .refine((data) => /^\d+$/.test(data) || data.length === 0, {
+      message: '僅能輸入數字'
+    })
+    .refine((data) => data.length >= 8 || data.length === 0, {
+      message: '電話須至少8碼'
+    }),
+  nickName: z.string().refine((val) => val.length >= 1, {
+    message: '請填寫顯示名稱'
+  })
+})
 
 onMounted(() => {
   nextTick(() => {
@@ -142,8 +179,8 @@ onMounted(() => {
             修改密碼
           </button>
         </div>
-        <div class="bg-secondary-5 px-3 py-10 lg:px-6">
-          <form v-if="tab === 1" class="space-y-4" @submit.prevent="editUser()">
+        <div class="bg-secondary-5 px-8 py-10">
+          <!-- <form v-if="tab === 1" class="hidden space-y-4" @submit.prevent="editUser()">
             <div class="flex items-center space-x-4">
               <label for="username" class="w-1/4 font-bold sm:w-1/6">真實姓名</label>
               <div class="grow">
@@ -246,8 +283,8 @@ onMounted(() => {
                 更新
               </button>
             </div>
-          </form>
-          <form v-else action="" class="space-y-4">
+          </form> -->
+          <!-- <form v-else action="" class="space-y-4">
             <div class="flex items-center space-x-4">
               <label for="oldPassword" class="w-1/4 font-bold sm:w-1/6">舊密碼</label>
               <div class="relative grow">
@@ -314,7 +351,128 @@ onMounted(() => {
                 更新
               </button>
             </div>
-          </form>
+          </form> -->
+          <div v-if="tab === 1" id="userInfoForm">
+            <UForm :schema="infoSchema" :state="tempUser" @submit="editUser">
+              <div class="space-y-6">
+                <UFormGroup label="真實姓名" name="username">
+                  <UInput
+                    v-model="tempUser.userName"
+                    size="xl"
+                    placeholder="請輸入真實姓名"
+                    input-class="bg-white"
+                  />
+                </UFormGroup>
+                <UFormGroup label="顯示名稱" required name="nickName">
+                  <UInput
+                    v-model="tempUser.nickName"
+                    size="xl"
+                    placeholder="請輸入顯示名稱"
+                    input-class="bg-white"
+                  />
+                </UFormGroup>
+                <UFormGroup label="性別" name="gender">
+                  <USelect
+                    variant="outline"
+                    :options="[
+                      { id: 0, name: '不顯示' },
+                      { id: 1, name: '男' },
+                      { id: 2, name: '女' }
+                    ]"
+                    value-attribute="id"
+                    option-attribute="name"
+                    placeholder="請選擇性別"
+                    size="xl"
+                  />
+                </UFormGroup>
+                <UFormGroup label="連絡電話" name="phone">
+                  <UInput
+                    v-model="tempUser.phone"
+                    size="xl"
+                    placeholder="請填寫電話"
+                    type="tel"
+                    input-class="bg-white"
+                  />
+                </UFormGroup>
+                <UFormGroup label="收件地址" name="address">
+                  <UInput
+                    v-model="tempUser.address"
+                    size="xl"
+                    placeholder="請輸入收件地址"
+                    input-class="bg-white"
+                  />
+                </UFormGroup>
+              </div>
+              <div class="flex justify-between pt-6">
+                <button
+                  class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white"
+                  @click.prevent="getTempUser(isLogin.userData)"
+                >
+                  重置
+                </button>
+                <button
+                  type="submit"
+                  class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white"
+                >
+                  更新
+                </button>
+              </div>
+            </UForm>
+          </div>
+          <div v-else>
+            <UForm :schema="passwordSchema" :state="tempPassword" @submit.prevent="changePassword">
+              <div class="space-y-6">
+                <UFormGroup name="old" label="舊密碼" required>
+                  <UInput
+                    v-model="tempPassword.old"
+                    size="xl"
+                    placeholder="請輸入舊密碼"
+                    input-class="bg-white"
+                    type="password"
+                  />
+                </UFormGroup>
+                <UFormGroup name="new" label="新密碼" required>
+                  <UInput
+                    v-model="tempPassword.new"
+                    size="xl"
+                    placeholder="請輸入新密碼"
+                    input-class="bg-white"
+                    type="password"
+                  />
+                </UFormGroup>
+                <UFormGroup name="newCheck" label="密碼確認" required>
+                  <UInput
+                    v-model="tempPassword.newCheck"
+                    size="xl"
+                    placeholder="再次輸入新密碼"
+                    input-class="bg-white"
+                    type="password"
+                  />
+                </UFormGroup>
+              </div>
+              <div class="flex justify-between pt-6">
+                <button
+                  class="inline-block rounded-lg bg-primary-1 px-4 py-2 text-white"
+                  @click.prevent="tempPassword = { old: '', new: '', newCheck: '' }"
+                >
+                  重置
+                </button>
+                <button
+                  class="inline-block rounded-lg bg-secondary-1 px-4 py-2 text-white disabled:bg-neutral-400"
+                  :disabled="
+                    tempPassword.new !== tempPassword.newCheck ||
+                    !tempPassword.new ||
+                    !tempPassword.newCheck ||
+                    !tempPassword.old ||
+                    tempPassword.new == tempPassword.old
+                  "
+                  @click.prevent="changePassword"
+                >
+                  更新
+                </button>
+              </div>
+            </UForm>
+          </div>
         </div>
       </div>
     </div>
@@ -322,7 +480,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* * {
-  outline: 1px solid #a00;
-} */
+* {
+  outline: 1px solid #a000;
+}
+#userInfoForm label {
+  @apply !text-lg !font-bold;
+}
 </style>
