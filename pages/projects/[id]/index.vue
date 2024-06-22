@@ -157,18 +157,12 @@ onMounted(() => {
               class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
               >支持專案
             </NuxtLink>
-            <NuxtLink
+            <button
               v-else
-              :to="
-                !isLogin.isLogin
-                  ? '/login'
-                  : days >= 0 && hours >= 0
-                    ? `/projects/${project.id}/support`
-                    : '/projects'
-              "
-              class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
-              >募資已結束
-            </NuxtLink>
+              class="block grow rounded bg-neutral-300 py-4 text-center text-xl text-white"
+            >
+              募資已結束
+            </button>
             <button
               v-if="isLogin.isLogin"
               class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
