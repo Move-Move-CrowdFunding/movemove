@@ -63,6 +63,9 @@ const toggleFollow = async (id) => {
 const diffInSeconds = ref(0)
 const days = ref(0)
 const hours = ref(0)
+
+const isLogin = useIsLoginStore()
+
 onMounted(() => {
   nextTick(async () => {
     await getProject()
@@ -127,15 +130,41 @@ onMounted(() => {
       </div>
       <div class="lg:col-span-5 xl:col-span-1">
         <div class="mb-6 rounded-3xl p-6 shadow-lg">
-          <div class="mb-4 hidden gap-4 lg:flex">
-            <NuxtLink
-              :to="days >= 0 && hours >= 0 ? `/projects/${project.id}/support` : '/projects'"
-              class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
+          <div class="hidden gap-4 lg:flex">
+            <button
+              v-if="project.startDate > new Date() / 1000"
+              :to="
+                !isLogin.isLogin
+                  ? '/login'
+                  : days >= 0 && hours >= 0
+                    ? `/projects/${project.id}/support`
+                    : '/projects'
+              "
+              class="block grow rounded bg-neutral-300 py-4 text-center text-xl text-white"
+              disabled
             >
-              <span v-if="days >= 0 && hours >= 0"> 支持專案 </span>
-              <span v-else>募資已結束</span>
+              <span>即將開始</span>
+            </button>
+            <NuxtLink
+              v-else-if="days >= 0 && hours >= 0"
+              :to="
+                !isLogin.isLogin
+                  ? '/login'
+                  : days >= 0 && hours >= 0
+                    ? `/projects/${project.id}/support`
+                    : '/projects'
+              "
+              class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
+              >支持專案
             </NuxtLink>
             <button
+              v-else
+              class="block grow rounded bg-neutral-300 py-4 text-center text-xl text-white"
+            >
+              募資已結束
+            </button>
+            <button
+              v-if="isLogin.isLogin"
               class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
               @click="toggleFollow(project.id)"
             >
@@ -143,7 +172,7 @@ onMounted(() => {
               <Icon v-else name="mdi:heart-outline" width="32" height="32" />
             </button>
           </div>
-          <div class="flex gap-4">
+          <div v-if="project.feedbackItem" class="mt-4 flex gap-4">
             <img
               :src="project.feedbackUrl"
               alt=""
@@ -199,13 +228,20 @@ onMounted(() => {
     <div class="sticky bottom-0 rounded-t-2xl bg-white py-6 lg:hidden">
       <div class="container flex gap-4">
         <NuxtLink
-          :to="days >= 0 && hours >= 0 ? `/projects/${project.id}/support` : '/projects'"
+          :to="
+            !isLogin.isLogin
+              ? '/login'
+              : days >= 0 && hours >= 0
+                ? `/projects/${project.id}/support`
+                : '/projects'
+          "
           class="block grow rounded bg-secondary-2 py-4 text-center text-xl text-white hover:bg-primary-1"
         >
           <span v-if="days >= 0 && hours >= 0"> 支持專案 </span>
           <span v-else>募資已結束</span>
         </NuxtLink>
         <button
+          v-if="isLogin.isLogin"
           class="rounded-xl border border-secondary-1 p-3 text-secondary-1 hover:border-primary-1 hover:text-primary-1"
           @click="toggleFollow(project.id)"
         >

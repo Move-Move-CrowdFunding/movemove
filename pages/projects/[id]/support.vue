@@ -36,6 +36,7 @@ const getProject = async () => {
     const res = await getFetchData({
       url: `/project/${id.value}`
     })
+    console.log(res)
 
     results.value = JSON.parse(JSON.stringify(res))
   } catch (error) {
@@ -139,10 +140,6 @@ onMounted(() => {
 })
 </script>
 <template>
-  <!-- {{ userData }}
-  <hr />
-  {{ tempData }} -->
-
   <div class="container py-10 lg:py-20">
     <LoadingOverlay />
     <h1 class="mb-6 text-center text-3xl font-bold lg:mb-10">支持提案內容</h1>
@@ -305,10 +302,18 @@ onMounted(() => {
               ><NuxtLink class="inline-block underline" to="/" target="_blank">使用條款</NuxtLink>。
             </p>
             <button
+              v-if="projectItem.startDate < new Date() / 1000 && projectItem.endDate > new Date()"
               type="submit"
               class="w-full max-w-[260px] rounded bg-secondary-2 p-4 text-xl text-white"
             >
               確認支付
+            </button>
+            <button
+              v-else
+              class="w-full max-w-[260px] rounded bg-neutral-300 p-4 text-xl text-white"
+              disabled
+            >
+              目前無法贊助
             </button>
           </div>
         </UForm>
