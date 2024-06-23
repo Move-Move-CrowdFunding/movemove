@@ -1,7 +1,24 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ['@nuxtjs/stylelint-module', '@nuxtjs/tailwindcss'],
+  colorMode: {
+    preference: 'light'
+  },
+  app: {
+    head: {
+      title: 'movemove 募募',
+      viewport: 'width=device-width, initial-scale=1'
+    }
+  },
+  modules: [
+    '@nuxtjs/stylelint-module',
+    // '@nuxtjs/tailwindcss',
+    '@vueuse/nuxt',
+    'nuxt-swiper',
+    '@pinia/nuxt',
+    '@nuxt/ui',
+    'dayjs-nuxt'
+  ],
   typescript: {
     typeCheck: true
   },
@@ -17,6 +34,11 @@ export default defineNuxtConfig({
       autoprefixer: {}
     }
   },
-  css: ["~/assets/style/root.scss"]
-
+  dayjs: {},
+  css: ['~/assets/style/root.scss'],
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.NUXT_PUBLIC_API_BASE
+    }
+  }
 })

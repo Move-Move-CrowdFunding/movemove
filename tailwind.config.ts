@@ -1,4 +1,6 @@
-const colors = require('./tailwindcss/colors')
+import colors from './tailwindcss/colors'
+import keyframes from './tailwindcss/animation'
+
 module.exports = {
   content: [
     './components/**/*.{js,vue,ts}',
@@ -10,9 +12,17 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors
+      colors,
+      keyframes
+    },
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: '0.75rem',
+        sm: '2rem',
+        lg: '6rem'
+      }
     }
-
   },
   plugins: []
 }

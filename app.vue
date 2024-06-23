@@ -1,18 +1,19 @@
-<template>
-  <div>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-  </div>
-</template>
-<script lang="ts" setup>
-console.log('hello')
+<script setup lang="ts">
+const modal = useModal()
+
+// MobileMenu 打開時 body 加上 overflow-hidden
+const mobileState = useHeaderStore()
+const bodyClass = computed(() => (mobileState.mobileMenuShow ? 'overflow-hidden' : ''))
+useHead({
+  bodyAttrs: {
+    class: bodyClass
+  }
+})
 </script>
-<style lang="scss">
-.box {
-  position: absolute;
-  top: 50%;
-  padding: 0;
-  background-color: #fff;
-}
-</style>
+<template>
+  <LoadingOverlay />
+  <NuxtLayout>
+    <NuxtPage />
+    <UModals @close="modal.close()" />
+  </NuxtLayout>
+</template>

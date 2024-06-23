@@ -14,6 +14,9 @@ module.exports = {
     'prettier/prettier': 'error',
     'no-undef': 'off',
     'vue/no-multiple-template-root': 'off',
-    'vue/multi-word-component-names': 'off'
+    'vue/multi-word-component-names': 'off',
+    'vue/component-tags-order': ['error', {
+      order: [ 'script', 'template', 'style' ]
+    }],
   }
 }
