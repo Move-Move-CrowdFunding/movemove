@@ -1,5 +1,5 @@
 <script setup>
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { z } from 'zod'
 // import { formGroupConfig, inputConfig } from '~/nuxtui/props'
 // import { format } from 'date-fns'
@@ -20,23 +20,8 @@ const props = defineProps({
 })
 const errors = ref([])
 
-// const validate = (state) => {
-//   console.log('state', state)
-//   Object.keys(state).forEach((item) => {
-//     if (!item) errors.value.push({ path: item, message: '必填' })
-//   })
-//   // console.log('errors', errors)
-//   return errors.value
-// }
-
-// function onError(event) {
-//   console.log('event.errors', event.errors)
-//   const element = document.getElementById(event.errors[0].id)
-//   // console.log('element', element, event)
-//   element?.focus()
-//   element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-// }
-
+const MAX_FILE_SIZE = 2 * 1024 * 1024
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png']
 const schemaCreateProjectData = z.object({
   teamName: z.string().min(1, '請填寫姓名或團隊名稱'),
   email: z.string().email('請輸入有效的 email'),
@@ -47,7 +32,6 @@ const schemaCreateProjectData = z.object({
       message: '請輸入正確手機號碼'
     }),
   title: z.string().min(1, '請輸入提案標題'),
-  // categoryKey: z.number().min(1, '請選擇分類'),
   categoryKey: z.number().refine(
     (value) => {
       // console.log('categoryKey', value)
@@ -63,8 +47,15 @@ const schemaCreateProjectData = z.object({
     .refine((value) => value >= 100, {
       message: '金額至少100'
     }),
+  startDate: z.coerce.date(),
   describe: z.string().min(1, '請簡短敘述提案內容, 最長不超過 80 字'),
-  coverUrl: z.string().url('請輸入正確網址格式'),
+
+  coverUrl: z
+    .any()
+    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+      message: '僅接受 .jpg, .jpeg, .png 等圖片格式.'
+    })
+    .refine((file) => file.size > MAX_FILE_SIZE, { message: '檔案大小不可大於1MB' }),
   content: z.string().min(350, '請輸入提案說明, 至少 350 字'),
   videoUrl: z.string().url('請輸入正確影片網址').optional().or(z.literal('')),
   relatedUrl: z.string().url('請輸入正確網址格式').optional().or(z.literal('')),
@@ -96,9 +87,30 @@ const dateInput = computed(() => {
     feedbackDate: dateFormat(newTempData.value.feedbackDate)
   }
 })
+
+const result = computed(() => schemaCreateProjectData.safeParse(newTempData.value))
+
+// validateField 無法帶入 formData 資料，請解決
+const validateField = (field) => {
+  if (result.value.success) {
+    errors.value[field] = ''
+  } else {
+    // console.log('validateField file', file)
+
+    const fieldError = result.value.error.errors.find((error) => error.path[0] === field)
+    errors.value[field] = fieldError ? fieldError.message : ''
+    // result.value.error.errors.forEach((error) => {
+    //   console.log('error', error)
+    //   errors.value[error.path[0]] = error.message
+    // })
+  }
+}
+// const pickerdate = ref(new Date())
 const changeDate = (item) => {
   const date = new Date(dateInput.value[item])
   newTempData.value[item] = date.getTime() / 1000
+  // console.log('change', item)
+  validateField(item)
 }
 changeDate('startDate')
 changeDate('endDate')
@@ -106,36 +118,50 @@ changeDate('endDate')
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
 
-const result = computed(() => schemaCreateProjectData.safeParse(newTempData.value))
-const validateField = (field) => {
-  // console.log('validateField', field, result.value)
+const handleSubmit = () => {
   if (result.value.success) {
-    errors.value[field] = ''
+    // 提交表單
+    emit('createProject', newTempData.value)
   } else {
-    const fieldError = result.value.error.errors.find((error) => error.path[0] === field)
-    errors.value[field] = fieldError ? fieldError.message : ''
-  }
-  // console.log('validateField', errors.value)
-}
+    // 顯示錯誤訊息
+    // console.log('event.errors', result.value.error.errors)
+    // const element = document.getElementById(event.errors[0].id)
+    // //   // console.log('element', element, event)
+    // //   element?.focus()
+    // //   element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    // const findErrorElement = result.value.error.errors.find((item) => {
+    //   console.log('findErrorElement', document.getElementById(item.path[0]))
+    // })
+    // console.log('errors', errors.value)
 
-const errorTextClass = 'mt-2 text-sm text-warning-500 peer-invalid:visible'
-// const handleSubmit = () => {
-//   if (result.value.success) {
-//     // 提交表單
-//     alert('Form submitted successfully!')
-//   } else {
-//     // 顯示錯誤訊息
-//     result.value.error.errors.forEach((error) => {
-//       errors.value[error.path[0]] = error.message
-//     })
-//   }
+    result.value.error.errors.forEach((error) => {
+      errors.value[error.path[0]] = error.message
+    })
+    if (result.value.error.errors.length > 0) {
+      const element = document.getElementById(result.value.error.errors[0].path)
+      element.focus()
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }
+}
+// const handleFileChange = (event) => {
+//   const file = event.target.files[0]
+//   // console.log('handleFileChange file', file)
+//   newTempData.value.coverUrl = file
+//   validateField('coverUrl', file)
 // }
+const errorTextClass = 'mt-2 text-sm text-warning-500 peer-invalid:visible'
+
+// validateField 無法帶入 formData 資料，請解決
 const uploadFile = async (item) => {
   const formData = new FormData()
   if (item === 'cover') {
     formData.append('coverUpload', coverUpload.value.files[0])
+    validateField('coverUrl', coverUpload.value.files[0])
   } else {
     formData.append('feedbackUpload', feedbackUpload.value.files[0])
+    // console.log('feedbackUrl formData', formData)
+    validateField('feedbackUrl', formData)
   }
   await getFetchData({
     url: '/upload',
@@ -374,14 +400,46 @@ const reviewProjectId = (approve) => {
               <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
             </label>
             <div class="flex items-center space-x-2">
-              <input
-                id="startDate"
-                v-model="dateInput.startDate"
-                type="date"
-                class="grow"
-                :disabled="isDisable"
-                @change="changeDate('startDate')"
-              />
+              <UPopover :popper="{ placement: 'bottom-start' }">
+                <!-- <UButton
+                  icon="i-heroicons-calendar-days-20-solid"
+                  :label="dayjs(dateInput.startDate).format('YYYY-MM-DD')"
+                /> -->
+                <input
+                  id="startDate"
+                  v-model="dateInput.startDate"
+                  type="date"
+                  class="grow"
+                  :class="{ 'border-warning-500': errors.startDate }"
+                  :disabled="isDisable"
+                  @change="changeDate('startDate')"
+                />
+                <template #panel="{ close }">
+                  <ClientOnly>
+                    <DatePicker v-model="dateInput.startDate" is-required @close="close" />
+                  </ClientOnly>
+                </template>
+              </UPopover>
+              <!-- <div>
+                {{ dateInput.startDate }}
+              </div>
+              <div>
+                {{ dayjs(dateInput.startDate).format('YYYY-MM-DD') }}
+              </div>
+              <div>
+                {{ pickerdate }}
+              </div> -->
+              <UPopover :popper="{ placement: 'bottom-start' }">
+                <UButton
+                  icon="i-heroicons-calendar-days-20-solid"
+                  :label="dayjs(dateInput.startDate).format('YYYY-MM-DD')"
+                />
+                <template #panel="{ close }">
+                  <ClientOnly>
+                    <DatePicker v-model="dateInput.startDate" is-required @close="close" />
+                  </ClientOnly>
+                </template>
+              </UPopover>
               <span>→</span>
               <input
                 id="endDate"
@@ -392,6 +450,9 @@ const reviewProjectId = (approve) => {
                 @change="changeDate('endDate')"
               />
             </div>
+            <p v-if="errors.startDate" :class="errorTextClass">
+              {{ errors.startDate }}
+            </p>
             <p class="mt-2 text-xs">
               專案提交後需要7-10個工作天進行內容檢視，所以開始時間至少為10天後。募資天數最短為7天，最長為60天。
             </p>
@@ -409,10 +470,11 @@ const reviewProjectId = (approve) => {
                 class="peer block w-full"
                 :class="{ 'border-warning-500': errors.describe }"
                 :disabled="isDisable"
+                maxlength="80"
                 @focus="validateField('describe')"
                 @input="validateField('describe')"
               ></textarea>
-              <TextCounter :count="newTempData.describe.length" :max-length="80" />
+              <TextCounter v-if="!inAdmin" :count="newTempData.describe.length" :max-length="80" />
             </div>
             <p v-if="errors.describe" :class="errorTextClass">
               {{ errors.describe }}
@@ -423,7 +485,10 @@ const reviewProjectId = (approve) => {
               封面照片
               <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
             </label>
-            <div class="flex items-stretch rounded border">
+            <div
+              class="flex items-stretch rounded border"
+              :class="{ 'border-warning-500': errors.coverUrl }"
+            >
               <label for="coverUpload" :disabled="isDisable" class="m-1">
                 <div
                   class="flex h-full cursor-pointer items-center rounded bg-secondary-2 px-3 py-2 text-white hover:bg-secondary-1 disabled:bg-neutral-300"
@@ -443,8 +508,7 @@ const reviewProjectId = (approve) => {
                 v-model="newTempData.coverUrl"
                 type="text"
                 placeholder="或輸入圖片網址"
-                class="grow border-white"
-                :class="{ 'border-warning-500': errors.coverUrl }"
+                class="grow border-white focus-visible:outline-none"
                 :disabled="isDisable"
                 @focus="validateField('coverUrl')"
                 @input="validateField('coverUrl')"
@@ -471,7 +535,7 @@ const reviewProjectId = (approve) => {
                 @focus="validateField('content')"
                 @input="validateField('content')"
               ></textarea>
-              <TextCounter :count="newTempData.content.length" />
+              <TextCounter v-if="!inAdmin" :count="newTempData.content.length" />
             </div>
             <p v-if="errors.content" :class="errorTextClass">
               {{ errors.content }}
@@ -1068,7 +1132,7 @@ const reviewProjectId = (approve) => {
         v-if="!latestLog?.status && !inAdmin"
         class="mx-auto mt-10 flex w-full items-center space-x-2.5 rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         :disabled="!result.success"
-        @click="emit('createProject', newTempData)"
+        @click="handleSubmit"
       >
         <span
           v-show="requestLoading"
