@@ -55,7 +55,9 @@ const changePage = (page) => {
                 <span class="rounded-full bg-primary-1 px-2 py-0.5 text-xs">{{
                   categoryKeys[item.project.categoryKey].name
                 }}</span>
-                <p class="text-sm sm:mt-0">回饋：{{ item.project.feedbackItem }}</p>
+                <p v-if="item.project.feedbackItem" class="text-sm sm:mt-0">
+                  回饋：{{ item.project.feedbackItem }}
+                </p>
               </div>
             </div>
             <div
@@ -79,30 +81,34 @@ const changePage = (page) => {
       <template #item="{ item }">
         <div class="border-2 border-secondary-2 bg-white px-3 py-4 text-base">
           <div>
-            <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
-              <div class="font-bold">收件人</div>
-              <div class="sm:col-span-3 lg:col-span-5">{{ item.receiver }}</div>
-            </div>
-            <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
-              <div class="font-bold">寄件地址</div>
-              <div class="sm:col-span-3 lg:col-span-5">{{ item.address }}</div>
-            </div>
-            <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
-              <div class="font-bold">連絡電話</div>
-              <div class="sm:col-span-3 lg:col-span-5">{{ item.receiverPhone }}</div>
-            </div>
-            <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
-              <div class="font-bold">電子郵件</div>
-              <div class="sm:col-span-3 lg:col-span-5">{{ item.email }}</div>
-            </div>
-            <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
-              <div class="font-bold">預計寄送日期</div>
-              <div class="sm:col-span-2 lg:col-span-4">
-                {{ dayjs.unix(item.feedBackDate).format('YYYY/MM/DD') }}
+            <template v-if="item.isNeedFeedback">
+              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+                <div class="font-bold">收件人</div>
+                <div class="sm:col-span-3 lg:col-span-5">{{ item.receiver }}</div>
               </div>
+              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+                <div class="font-bold">寄件地址</div>
+                <div class="sm:col-span-3 lg:col-span-5">{{ item.address }}</div>
+              </div>
+              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+                <div class="font-bold">連絡電話</div>
+                <div class="sm:col-span-3 lg:col-span-5">{{ item.receiverPhone }}</div>
+              </div>
+              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+                <div class="font-bold">電子郵件</div>
+                <div class="sm:col-span-3 lg:col-span-5">{{ item.email }}</div>
+              </div>
+            </template>
+            <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+              <template v-if="item.isNeedFeedback">
+                <div class="font-bold">預計寄送日期</div>
+                <div class="sm:col-span-2 lg:col-span-4">
+                  {{ dayjs.unix(item.feedBackDate).format('YYYY/MM/DD') }}
+                </div>
+              </template>
               <div class="text-right">
                 <NuxtLink
-                  :to="`/projects/${item._id}`"
+                  :to="`/projects/${item.project._id}`"
                   class="underline underline-offset-2 hover:text-primary-1"
                   >前往專案</NuxtLink
                 >
