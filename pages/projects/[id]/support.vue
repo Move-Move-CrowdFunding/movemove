@@ -234,6 +234,7 @@ onMounted(() => {
             <!-- <UButton type="submit"> Submit </UButton> -->
           </div>
           <div
+            v-if="projectItem.feedbackItem"
             class="space-y-4 overflow-hidden rounded-3xl p-6 shadow-[0_0_8px_0_theme(colors.neutral.900/16%)]"
           >
             <div class="peer flex items-start space-x-4">
