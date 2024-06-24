@@ -11,7 +11,7 @@ const tempData = ref({
   userName: '',
   email: '',
   phone: '',
-  money: 1000,
+  money: 0,
   isNeedFeedback: false,
   receiver: '',
   receiverPhone: '',
@@ -144,7 +144,7 @@ watch(isOverDonationTarget, (val) => {
     tempData.value.receiver = ''
     tempData.value.receiverPhone = ''
     tempData.value.address = ''
-  } else {
+  } else if (projectItem.feedbackItem || val) {
     tempData.value.isNeedFeedback = true
   }
 })
