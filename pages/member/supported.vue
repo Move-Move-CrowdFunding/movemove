@@ -33,7 +33,7 @@ watch(
 
 const changePage = (page) => {
   pageNo.value = page
-  getSupportData()
+  // getSupportData()
 }
 </script>
 <template>
