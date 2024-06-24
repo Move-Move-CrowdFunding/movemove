@@ -69,20 +69,36 @@ const schema = z.object({
   // money: z.number().min(1, '請填寫金額'),。
   money: z.union([z.string().min(1, '請填寫金額'), z.number().min(1, '請填寫金額')]),
   isNeedFeedback: z.boolean().optional(),
-  receiver: z.string().refine((val) => !tempData.value.isNeedFeedback || val.length >= 1, {
-    message: '請填寫收件人'
-  }),
+  receiver: z
+    .string()
+    .refine(
+      (val) => !projectItem.feedbackItem || !tempData.value.isNeedFeedback || val.length >= 1,
+      {
+        message: '請填寫收件人'
+      }
+    ),
   receiverPhone: z
     .string()
-    .refine((val) => !tempData.value.isNeedFeedback || val.length >= 8, {
-      message: '聯絡電話需8碼以上'
-    })
-    .refine((data) => !tempData.value.isNeedFeedback || /^\d+$/.test(data), {
-      message: '僅能輸入數字'
-    }),
-  address: z.string().refine((val) => !tempData.value.isNeedFeedback || val.length >= 1, {
-    message: '請填寫收件地址'
-  })
+    .refine(
+      (val) => !projectItem.feedbackItem || !tempData.value.isNeedFeedback || val.length >= 8,
+      {
+        message: '聯絡電話需8碼以上'
+      }
+    )
+    .refine(
+      (data) => !projectItem.feedbackItem || !tempData.value.isNeedFeedback || /^\d+$/.test(data),
+      {
+        message: '僅能輸入數字'
+      }
+    ),
+  address: z
+    .string()
+    .refine(
+      (val) => !projectItem.feedbackItem || !tempData.value.isNeedFeedback || val.length >= 1,
+      {
+        message: '請填寫收件地址'
+      }
+    )
 })
 
 // 支持專案
