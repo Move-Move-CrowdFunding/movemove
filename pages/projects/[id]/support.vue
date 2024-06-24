@@ -302,7 +302,9 @@ onMounted(() => {
               ><NuxtLink class="inline-block underline" to="/" target="_blank">使用條款</NuxtLink>。
             </p>
             <button
-              v-if="projectItem.startDate < new Date() / 1000 && projectItem.endDate > new Date()"
+              v-if="
+                projectItem.startDate < new Date() / 1000 && projectItem.endDate > new Date() / 1000
+              "
               type="submit"
               class="w-full max-w-[260px] rounded bg-secondary-2 p-4 text-xl text-white"
             >
