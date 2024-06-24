@@ -174,7 +174,6 @@ onMounted(() => {
         </h3>
         <div class="line-clamp-4 text-neutral-800">{{ projectItem.describe }}</div>
       </div>
-      <pre>{{ projectItem }}{{ tempData }}</pre>
       <div class="space-y-6">
         <UForm
           :schema="schema"
