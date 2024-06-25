@@ -33,7 +33,7 @@ const project = ref({
   email: '',
   phone: '',
   achievedMoney: 0,
-  targetMoney: 0,
+  targetMoney: 1,
   categoryKey: 0,
   content: '',
   coverUrl: '',
