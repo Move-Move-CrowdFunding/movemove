@@ -275,6 +275,7 @@ onMounted(() => {
                   placeholder="請輸入密碼"
                   size="xl"
                   :ui="inputConfig"
+                  type="password"
                 />
               </UFormGroup>
               <div class="flex items-center justify-between">
