@@ -1,6 +1,8 @@
 <script setup>
 import dayjs from 'dayjs'
 import { z } from 'zod'
+import { Calendar } from 'v-calendar'
+// import 'v-calendar/style.css'
 // import { formGroupConfig, inputConfig } from '~/nuxtui/props'
 // import { format } from 'date-fns'
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
@@ -41,12 +43,10 @@ const schemaCreateProjectData = z.object({
       message: '請選擇分類'
     }
   ),
-  targetMoney: z.coerce
-    .number()
-    // .min(1, '請輸入提案目標')
-    .refine((value) => value >= 100, {
-      message: '金額至少100'
-    }),
+  targetMoney: z.coerce.number().min(1, '請輸入提案目標'),
+  // .refine((value) => value >= 100, {
+  //   message: '金額至少100'
+  // }),
   startDate: z.coerce.date(),
   describe: z.string().min(1, '請簡短敘述提案內容, 最長不超過 80 字'),
 
@@ -62,9 +62,9 @@ const schemaCreateProjectData = z.object({
   feedbackUrl: z.string().url('請輸入正確網址格式').optional().or(z.literal('')),
   feedbackMoney: z.coerce
     .number()
-    .refine((value) => value >= 100, {
-      message: '金額至少100'
-    })
+    // .refine((value) => value >= 100, {
+    //   message: '金額至少100'
+    // })
     .or(z.literal(''))
 })
 
@@ -105,10 +105,41 @@ const validateField = (field) => {
     // })
   }
 }
+// const pickerDate = ref(new Date())
+// const range = ref({
+//   start: new Date(dateInput.value.startDate),
+//   end: new Date(dateInput.value.endDate)
+// })
+// const popover = ref({
+//   visibility: 'click',
+//   placement: 'bottom',
+//   delay: 0,
+//   hideDelay: 0,
+//   keepVisibleOnInput: false
+// })
+// const attrs = ref([
+//   {
+//     key: 'today',
+//     highlight: {
+//       color: 'blue',
+//       fillMode: 'light',
+//       start: { fillMode: 'outline' },
+//       base: { fillMode: 'light' },
+//       end: { fillMode: 'outline' }
+//     },
+//     // dates: new Date()
+//     dates: {
+//       start: dateInput.value.startDate,
+//       end: dateInput.value.endDate
+//     },
+//     order: 1
+//   }
+// ])
 // const pickerdate = ref(new Date())
 const changeDate = (item) => {
   const date = new Date(dateInput.value[item])
   newTempData.value[item] = date.getTime() / 1000
+  // console.log('date', date)
   // console.log('change', item)
   validateField(item)
 }
@@ -219,6 +250,24 @@ const reviewProjectId = (approve) => {
       </div>
       <!-- <form @submit.prevent="handleSubmit">
       </form> -->
+      <ClientOnly>
+        <div class="flex">
+          <div>dateInput.startDate：</div>
+          <div>{{ dateInput.startDate }}</div>
+        </div>
+        <div class="flex">
+          <div>dayjs(dateInput.startDate).format('YYYY-MM-DD')：</div>
+          <div>{{ dayjs(dateInput.startDate).format('YYYY-MM-DD') }}</div>
+        </div>
+        <div class="flex">
+          <div>new Date() ：</div>
+          <div>{{ new Date() }}</div>
+        </div>
+        <div class="flex">
+          <div>dayjs(new Date()) ：</div>
+          <div>{{ dayjs(new Date()) }}</div>
+        </div>
+      </ClientOnly>
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12">
         <div class="order-2 lg:order-1">
           <h2 class="">提案人資料</h2>
@@ -378,7 +427,7 @@ const reviewProjectId = (approve) => {
                 <input
                   id="targetMoney"
                   v-model.number="newTempData.targetMoney"
-                  type="text"
+                  type="number"
                   placeholder="請輸入提案目標"
                   class="peer block w-full"
                   :disabled="isDisable"
@@ -399,47 +448,48 @@ const reviewProjectId = (approve) => {
               預計時間
               <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
             </label>
-            <div class="flex items-center space-x-2">
-              <UPopover :popper="{ placement: 'bottom-start' }">
-                <!-- <UButton
-                  icon="i-heroicons-calendar-days-20-solid"
-                  :label="dayjs(dateInput.startDate).format('YYYY-MM-DD')"
-                /> -->
-                <input
-                  id="startDate"
-                  v-model="dateInput.startDate"
-                  type="date"
-                  class="grow"
-                  :class="{ 'border-warning-500': errors.startDate }"
-                  :disabled="isDisable"
-                  @change="changeDate('startDate')"
-                />
-                <template #panel="{ close }">
-                  <ClientOnly>
-                    <DatePicker v-model="dateInput.startDate" is-required @close="close" />
-                  </ClientOnly>
+            <ClientOnly>
+              <Calendar />
+            </ClientOnly>
+            <!-- <ClientOnly>
+              <VDatePicker v-model="range" is-range :popover="popover">
+                <template #default="{ inputValue, inputEvents }">
+                  <input
+                    id="startDate"
+                    class="grow"
+                    :class="{ 'border-warning-500': errors.startDate }"
+                    :value="inputValue.start"
+                    :disabled="isDisable"
+                    v-on="inputEvents.start"
+                  />
+                  <span>→</span>
+                  <input
+                    id="endDate"
+                    class="grow"
+                    :class="{ 'border-warning-500': errors.endDate }"
+                    :disabled="isDisable"
+                    :value="inputValue.end"
+                    v-on="inputEvents.end"
+                  />
                 </template>
-              </UPopover>
+              </VDatePicker>
+            </ClientOnly> -->
+            <div class="flex items-center space-x-2">
               <!-- <div>
-                {{ dateInput.startDate }}
-              </div>
-              <div>
-                {{ dayjs(dateInput.startDate).format('YYYY-MM-DD') }}
-              </div>
-              <div>
                 {{ pickerdate }}
               </div> -->
-              <UPopover :popper="{ placement: 'bottom-start' }">
+
+              <!-- <UPopover :popper="{ placement: 'bottom-start' }">
                 <UButton
                   icon="i-heroicons-calendar-days-20-solid"
-                  :label="dayjs(dateInput.startDate).format('YYYY-MM-DD')"
+                  :label="dayjs(pickerDate).format('YYYY-MM-DD')"
                 />
                 <template #panel="{ close }">
                   <ClientOnly>
-                    <DatePicker v-model="dateInput.startDate" is-required @close="close" />
+                    <VCalendar is-required :attributes="attrs" @close="close" />
                   </ClientOnly>
                 </template>
-              </UPopover>
+              </UPopover> -->
               <span>→</span>
               <input
                 id="endDate"
@@ -453,6 +503,11 @@ const reviewProjectId = (approve) => {
             <p v-if="errors.startDate" :class="errorTextClass">
               {{ errors.startDate }}
             </p>
+            <!-- <div>
+              <ClientOnly>
+                <VCalendar v-model="pickerDate" />
+              </ClientOnly>
+            </div> -->
             <p class="mt-2 text-xs">
               專案提交後需要7-10個工作天進行內容檢視，所以開始時間至少為10天後。募資天數最短為7天，最長為60天。
             </p>
@@ -474,7 +529,7 @@ const reviewProjectId = (approve) => {
                 @focus="validateField('describe')"
                 @input="validateField('describe')"
               ></textarea>
-              <TextCounter v-if="!inAdmin" :count="newTempData.describe.length" :max-length="80" />
+              <TextCounter v-if="!inAdmin" :count="newTempData.describe.length" />
             </div>
             <p v-if="errors.describe" :class="errorTextClass">
               {{ errors.describe }}
@@ -637,7 +692,7 @@ const reviewProjectId = (approve) => {
               <input
                 id="feedbackMoney"
                 v-model.number="newTempData.feedbackMoney"
-                type="text"
+                type="number"
                 placeholder="請輸入回饋門檻"
                 class="peer block w-full"
                 :class="{ 'border-warning-500': errors.feedbackMoney }"
@@ -1168,7 +1223,12 @@ textarea,
 select {
   @apply rounded border p-3;
 }
+input[type='number'] {
+  @apply [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none;
+}
 button {
-  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 shadow-none transition hover:bg-primary-2 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-50 disabled:opacity-100;
+  @apply min-h-[40px] justify-center rounded-lg bg-secondary-2 px-5 py-2 text-neutral-50 shadow-none 
+  
+   hover:bg-primary-2 disabled:cursor-not-allowed disabled:bg-neutral-300 disabled:text-neutral-50 disabled:opacity-100;
 }
 </style>

@@ -22,6 +22,7 @@ const date = computed({
     emit('close')
   }
 })
+
 const attrs = {
   transparent: true,
   borderless: true,
@@ -32,14 +33,13 @@ const attrs = {
 </script>
 
 <template>
-  <!-- <VCalendarDatePicker
+  <VCalendarDatePicker
     v-if="date && typeof date === 'object'"
     v-model.range="date"
     :columns="2"
     v-bind="{ ...attrs, ...$attrs }"
   />
-  <VCalendarDatePicker v-else v-model="date" v-bind="{ ...attrs, ...$attrs }" /> -->
-  <VCalendarDatePicker v-model="date" v-bind="{ ...attrs, ...$attrs }" />
+  <VCalendarDatePicker v-else v-model="date" v-bind="{ ...attrs, ...$attrs }" />
 </template>
 
 <style>
