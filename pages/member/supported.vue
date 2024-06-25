@@ -1,23 +1,39 @@
 <script setup>
 import { useDayjs } from '#dayjs'
+const loading = useLoadingStore()
+
 const dayjs = useDayjs()
 const route = useRoute()
 
 const SupportData = ref([])
-const items = computed(() => SupportData.value?.results || [])
+const items = computed(() => {
+  if (SupportData.value?.results) {
+    return SupportData.value?.results.map((item) => ({
+      ...item,
+      disabled: !item.isNeedFeedback
+    }))
+  } else {
+    return []
+  }
+})
+
 const pageNo = ref(1)
 const pageSize = computed(() => route.query.pageSize * 1 || 10)
 
 const pagination = ref({})
 const getSupportData = async () => {
+  loading.isGlobalLoading = true
+
   try {
     const results = await getFetchData({
       url: `/member/support?pageNo=${pageNo.value}&pageSize=${pageSize.value}`
     })
     SupportData.value = results
     pagination.value = results.pagination
+    loading.isGlobalLoading = false
   } catch (error) {
     console.log(error)
+    loading.isGlobalLoading = false
   }
 }
 
@@ -33,13 +49,13 @@ watch(
 
 const changePage = (page) => {
   pageNo.value = page
-  // getSupportData()
 }
 </script>
 <template>
   <div class="py-10 lg:py-20">
+    <pre>{{ newItems }}</pre>
     <h1 class="container mb-6 text-3xl sm:text-4xl lg:mb-10">贊助記錄</h1>
-    <UAccordion v-if="items?.length" multiple :items="items" class="container">
+    <UAccordion v-if="items?.length" multiple :items="items" class="accordionStyle container">
       <template #default="{ item, open }">
         <UButton color="gray" variant="ghost" class="mt-2 p-0">
           <div
@@ -47,17 +63,22 @@ const changePage = (page) => {
           >
             <div class="mr-auto text-left">
               <div class="items-center gap-2 sm:flex">
-                <div class="shrink text-lg font-bold sm:line-clamp-1 lg:text-xl">
+                <NuxtLink
+                  :to="`/projects/${item.project._id}`"
+                  class="shrink text-lg font-bold hover:underline hover:underline-offset-2 sm:line-clamp-1 lg:text-xl"
+                >
                   {{ item.project.title }}
-                </div>
+                </NuxtLink>
               </div>
               <div class="mt-2 flex items-center gap-3">
                 <span class="rounded-full bg-primary-1 px-2 py-0.5 text-xs">{{
                   categoryKeys[item.project.categoryKey].name
                 }}</span>
-                <p v-if="item.project.feedbackItem" class="text-sm sm:mt-0">
+                <p v-if="item.project.feedbackItem && item.isNeedFeedback" class="text-sm sm:mt-0">
                   回饋：{{ item.project.feedbackItem }}
                 </p>
+                <p v-else-if="!item.project.feedbackItem">無回饋品</p>
+                <p v-else>不寄送回饋品</p>
               </div>
             </div>
             <div
@@ -79,7 +100,10 @@ const changePage = (page) => {
         </UButton>
       </template>
       <template #item="{ item }">
-        <div class="border-2 border-secondary-2 bg-white px-3 py-4 text-base">
+        <div
+          v-if="item.isNeedFeedback"
+          class="border-2 border-secondary-2 bg-white px-3 py-4 text-base"
+        >
           <div>
             <template v-if="item.isNeedFeedback">
               <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
@@ -98,22 +122,13 @@ const changePage = (page) => {
                 <div class="font-bold">電子郵件</div>
                 <div class="sm:col-span-3 lg:col-span-5">{{ item.email }}</div>
               </div>
-            </template>
-            <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
-              <template v-if="item.isNeedFeedback">
+              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
                 <div class="font-bold">預計寄送日期</div>
-                <div class="sm:col-span-2 lg:col-span-4">
+                <div class="sm:col-span-3 lg:col-span-5">
                   {{ dayjs.unix(item.feedBackDate).format('YYYY/MM/DD') }}
                 </div>
-              </template>
-              <div class="text-right">
-                <NuxtLink
-                  :to="`/projects/${item.project._id}`"
-                  class="underline underline-offset-2 hover:text-primary-1"
-                  >前往專案</NuxtLink
-                >
               </div>
-            </div>
+            </template>
           </div>
         </div>
       </template>

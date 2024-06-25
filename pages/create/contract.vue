@@ -1,4 +1,6 @@
 <script setup>
+const loading = useLoadingStore()
+
 const contractOneChecked = ref(false)
 const contractTwoChecked = ref(false)
 const isLogin = useIsLoginStore()
@@ -11,9 +13,11 @@ const checkPermission = async () => {
   }
 }
 onMounted(() => {
+  loading.isGlobalLoading = true
   nextTick(() => {
     checkPermission()
   })
+  loading.isGlobalLoading = false
 })
 </script>
 <template>

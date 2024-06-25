@@ -39,6 +39,7 @@ const getProject = async () => {
     console.log(res)
 
     results.value = JSON.parse(JSON.stringify(res))
+    loading.isGlobalLoading = false
   } catch (error) {
     console.log(error)
   }
@@ -127,9 +128,11 @@ const supportProject = async () => {
         money: results.data.money
       }
       nextTick(() => paymentForm.value.submit())
+      loading.isGlobalLoading = false
     }
   } catch (error) {
     console.log(error)
+    loading.isGlobalLoading = false
   }
 }
 

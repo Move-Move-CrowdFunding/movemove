@@ -7,6 +7,7 @@ definePageMeta({
 })
 
 const isLogin = useIsLoginStore()
+const loading = useLoadingStore()
 
 const currentView = ref('login')
 const requestLoading = ref(false)
@@ -65,6 +66,8 @@ const schemaLogin = z.object({
 const loginResult = computed(() => schemaLogin.safeParse(loginForm.value))
 
 const submitLogin = async () => {
+  loading.isGlobalLoading = true
+
   requestLoading.value = true
   await getFetchData({
     url: '/user/login',
@@ -80,6 +83,7 @@ const submitLogin = async () => {
       isLogin.getUserData()
       alert((res as ResponseData).message)
       await navigateTo(auth ? '/admin' : '/')
+      loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)
@@ -119,6 +123,9 @@ const forgotPassword = () => {
       requestLoading.value = false
     })
 }
+onMounted(() => {
+  loading.isGlobalLoading = false
+})
 </script>
 <template>
   <div

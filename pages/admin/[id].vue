@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
+const loading = useLoadingStore()
 
 definePageMeta({
   layout: 'admin-layout'
@@ -51,6 +52,7 @@ const getProjectItem = async (id: string) => {
     .then((res) => {
       projectItem.value = (res as ResponseData).results
       pageTitle.title = projectItem.value.title
+      loading.isGlobalLoading = false
     })
     .catch((err: any) => {
       console.log('err', err)

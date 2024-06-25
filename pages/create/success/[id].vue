@@ -2,6 +2,7 @@
 import { useDayjs } from '#dayjs'
 const dayjs = useDayjs()
 const route = useRoute()
+const loading = useLoadingStore()
 
 const project = ref({
   teamName: '',
@@ -31,6 +32,7 @@ const getProject = async () => {
     .then((res) => {
       console.log(res)
       project.value = res.results
+      loading.isGlobalLoading = false
     })
     .catch(async (err) => {
       console.log(err)
@@ -50,6 +52,8 @@ const checkPermission = async () => {
   await getProject()
 }
 onMounted(() => {
+  loading.isGlobalLoading = true
+
   nextTick(() => {
     checkPermission()
   })

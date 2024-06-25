@@ -1,5 +1,6 @@
 <script setup>
 const route = useRoute()
+const loading = useLoadingStore()
 
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
@@ -21,12 +22,15 @@ const getProject = async (id) => {
     .then((res) => {
       console.log(res)
       tempData.value = res.results
+      loading.isGlobalLoading = false
     })
     .catch((err) => console.log(err))
 }
 const tempData = ref()
 
 onMounted(() => {
+  loading.isGlobalLoading = true
+
   nextTick(async () => {
     await checkPermission()
   })

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
+const loading = useLoadingStore()
 
 interface NotificationItem {
   id: string
@@ -58,9 +59,10 @@ const getTempUser = (data: any) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
 }
 onMounted(() => {
-  nextTick(() => {
-    checkPermission()
-    getNotifications()
+  nextTick(async () => {
+    await checkPermission()
+    await getNotifications()
+    loading.isGlobalLoading = false
   })
 })
 </script>
