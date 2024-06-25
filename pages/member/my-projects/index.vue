@@ -69,7 +69,10 @@ const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
       pagination.value = res.pagination
       loading.isGlobalLoading = false
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      loading.isGlobalLoading = false
+    })
 }
 
 const sponsorProject = ref({})
@@ -88,7 +91,10 @@ const getSponsorList = async (project, page = 1, pageSize = 8) => {
 
       loading.isGlobalLoading = false
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      loading.isGlobalLoading = false
+    })
 }
 const showSponsorList = async (project, page) => {
   sponsorListShown.value = true

@@ -24,7 +24,10 @@ const getProject = async (id) => {
       tempData.value = res.results
       loading.isGlobalLoading = false
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      loading.isGlobalLoading = false
+    })
 }
 const tempData = ref()
 
