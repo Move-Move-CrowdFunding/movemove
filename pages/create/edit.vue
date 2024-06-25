@@ -1,6 +1,7 @@
 <script setup>
 const router = useRouter()
 const isLogin = useIsLoginStore()
+const loading = useLoadingStore()
 
 const tempData = ref({
   introduce: '',
@@ -24,6 +25,8 @@ const tempData = ref({
 })
 
 const createProject = async (tempData) => {
+  loading.isGlobalLoading = true
+
   await getFetchData({
     url: '/project',
     method: 'POST',
@@ -32,6 +35,7 @@ const createProject = async (tempData) => {
     .then((res) => {
       console.log(res)
       router.push({ path: `/create/success/${res.results.id}` })
+      loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)
@@ -45,8 +49,11 @@ const checkPermission = async () => {
       await navigateTo('/login')
     }
   }
+  loading.isGlobalLoading = false
 }
 onMounted(() => {
+  loading.isGlobalLoading = true
+
   nextTick(() => {
     checkPermission()
   })

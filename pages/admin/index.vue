@@ -3,6 +3,7 @@ import { getAdminProjects } from '@/apis/admin'
 definePageMeta({
   layout: 'admin-layout'
 })
+const loading = useLoadingStore()
 
 interface ReviewLog {
   _id: string
@@ -164,6 +165,8 @@ const getProjects = async (query: any) => {
   responsePagination.value.count = parseInt(data.value?.pagination.count)
   responsePagination.value.sortDesc = data.value?.pagination.sortDesc
   responsePagination.value.search = data.value?.pagination.search
+
+  loading.isGlobalLoading = false
 }
 
 const changePage = (page: number) => {

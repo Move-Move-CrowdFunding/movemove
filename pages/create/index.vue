@@ -6,6 +6,12 @@ import whyImage3 from '~/assets/images/projects/why3.png'
 import whyImage4 from '~/assets/images/projects/why4.png'
 import whyImage5 from '~/assets/images/projects/why5.png'
 import whyImage6 from '~/assets/images/projects/why6.png'
+
+const loading = useLoadingStore()
+
+onMounted(() => {
+  loading.isGlobalLoading = false
+})
 </script>
 
 <template>

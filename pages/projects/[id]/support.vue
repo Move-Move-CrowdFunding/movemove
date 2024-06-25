@@ -39,6 +39,7 @@ const getProject = async () => {
     console.log(res)
 
     results.value = JSON.parse(JSON.stringify(res))
+    loading.isGlobalLoading = false
   } catch (error) {
     console.log(error)
   }
@@ -127,9 +128,11 @@ const supportProject = async () => {
         money: results.data.money
       }
       nextTick(() => paymentForm.value.submit())
+      loading.isGlobalLoading = false
     }
   } catch (error) {
     console.log(error)
+    loading.isGlobalLoading = false
   }
 }
 
@@ -139,13 +142,13 @@ function onError() {
 
 const isOverDonationTarget = computed(() => tempData.value.money >= projectItem.value.feedbackMoney)
 watch(isOverDonationTarget, (val) => {
-  if (!val) {
+  if (projectItem.value.feedbackItem && val) {
+    tempData.value.isNeedFeedback = true
+  } else {
     tempData.value.isNeedFeedback = false
     tempData.value.receiver = ''
     tempData.value.receiverPhone = ''
     tempData.value.address = ''
-  } else if (projectItem.feedbackItem || val) {
-    tempData.value.isNeedFeedback = true
   }
 })
 

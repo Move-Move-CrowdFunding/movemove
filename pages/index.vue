@@ -1,5 +1,6 @@
 <script setup>
 const isLogin = useIsLoginStore()
+const loading = useLoadingStore()
 
 const bannerNavigation = {
   nextEl: '.banner-swiper-button-next',
@@ -20,6 +21,7 @@ const getHomeData = async () => {
   })
     .then((res) => {
       homeData.value = res
+      loading.isGlobalLoading = false
     })
     .catch((err) => console.log(err))
 }
@@ -261,9 +263,9 @@ onMounted(() => {
             >
           </div>
           <ul class="grid gap-6 sm:gap-y-9 lg:grid-cols-2">
-            <li v-for="item in homeData.successProjects" :key="item._id">
+            <li v-for="item in homeData.successProjects" :key="item.id">
               <NuxtLink
-                :to="`/projects/${item._id}`"
+                :to="`/projects/${item.id}`"
                 class="group grid grid-cols-3 overflow-hidden rounded-2xl border border-primary-3 bg-white duration-300 hover:border-primary-1 hover:shadow-lg lg:grid-cols-2 lg:rounded-[32px]"
               >
                 <div class="relative overflow-hidden">

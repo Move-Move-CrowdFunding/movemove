@@ -5,6 +5,7 @@ const router = useRouter()
 const searchKeyword = useHeaderStore()
 const searching = useHeaderStore()
 
+const loading = useLoadingStore()
 const isLoading = ref(false)
 
 const pageNo = ref(1)
@@ -44,10 +45,12 @@ const getProjects = async () => {
       pagination.value = res.pagination
       searching.searching = false
       isLoading.value = false
+      loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)
       isLoading.value = false
+      loading.isGlobalLoading = false
     })
 }
 const changePage = (page) => {
@@ -56,6 +59,8 @@ const changePage = (page) => {
 }
 
 const toggleFollow = async (id) => {
+  loading.isGlobalLoading = true
+
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',

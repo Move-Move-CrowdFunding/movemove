@@ -1,5 +1,6 @@
 <script setup>
 // import { _10 } from '#tailwind-config/theme/aspectRatio';
+const loading = useLoadingStore()
 
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
@@ -52,6 +53,8 @@ const states = ref([
 const selectedState = ref('ongoing')
 
 const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
+  loading.isGlobalLoading = true
+
   selectedState.value = state
   const index = states.value.filter((item) => item.state === state)[0].index
   await getFetchData({
@@ -64,6 +67,7 @@ const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
         result.state = state
       })
       pagination.value = res.pagination
+      loading.isGlobalLoading = false
     })
     .catch((err) => console.log(err))
 }
@@ -71,6 +75,8 @@ const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
 const sponsorProject = ref({})
 const sponsorListShown = ref(false)
 const getSponsorList = async (project, page = 1, pageSize = 8) => {
+  loading.isGlobalLoading = true
+
   await getFetchData({
     url: `/member/support/${project.id}?pageNo=${page}&pageSize=${pageSize}`,
     method: 'GET'
@@ -79,6 +85,8 @@ const getSponsorList = async (project, page = 1, pageSize = 8) => {
       console.log(res)
       sponsorList.value = res.results
       sponsorPagination.value = res.pagination
+
+      loading.isGlobalLoading = false
     })
     .catch((err) => console.log(err))
 }
