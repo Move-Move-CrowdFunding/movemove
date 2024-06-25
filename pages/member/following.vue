@@ -1,4 +1,5 @@
 <script setup>
+const loading = useLoadingStore()
 const route = useRoute()
 const results = ref([])
 const followingList = computed(() => results.value.results || [])
@@ -26,12 +27,15 @@ const getFollowing = async () => {
       url: `/member/collection?pageNo=${pageNo.value}&pageSize=${pageSize.value}`
     })
     pagination.value = results.value.pagination
+    loading.isGlobalLoading = false
   } catch (error) {
     console.log(error)
   }
 }
 
 const toggleFollow = async (id) => {
+  loading.isGlobalLoading = true
+
   console.log(id)
   await getFetchData({
     url: `/member/collection`,

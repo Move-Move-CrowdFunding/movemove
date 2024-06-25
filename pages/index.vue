@@ -1,5 +1,6 @@
 <script setup>
 const isLogin = useIsLoginStore()
+const loading = useLoadingStore()
 
 const bannerNavigation = {
   nextEl: '.banner-swiper-button-next',
@@ -20,6 +21,7 @@ const getHomeData = async () => {
   })
     .then((res) => {
       homeData.value = res
+      loading.isGlobalLoading = false
     })
     .catch((err) => console.log(err))
 }

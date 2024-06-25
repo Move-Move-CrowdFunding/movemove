@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 const tab = ref(1)
 const isLogin = useIsLoginStore()
+const loading = useLoadingStore()
 
 const tempUser = ref({})
 
@@ -15,11 +16,14 @@ const checkPermission = async () => {
     }
   }
   getTempUser(isLogin.userData)
+  loading.isGlobalLoading = false
 }
 const getTempUser = (data) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
 }
 const editUser = async () => {
+  loading.isGlobalLoading = true
+
   console.log('editUser')
   await getFetchData({
     url: '/user',
@@ -30,6 +34,7 @@ const editUser = async () => {
       getTempUser(res.results)
       alert(res.message)
       isLogin.getUserData()
+      loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)
@@ -42,6 +47,8 @@ const tempPassword = ref({
   newCheck: ''
 })
 const changePassword = async () => {
+  loading.isGlobalLoading = true
+
   await getFetchData({
     url: '/member/password',
     method: 'PATCH',
@@ -58,6 +65,7 @@ const changePassword = async () => {
         new: '',
         newCheck: ''
       }
+      loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)

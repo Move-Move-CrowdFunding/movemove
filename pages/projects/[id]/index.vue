@@ -1,5 +1,7 @@
 <script setup>
 import { useDayjs } from '#dayjs'
+const loading = useLoadingStore()
+
 const dayjs = useDayjs()
 const route = useRoute()
 const getProject = async () => {
@@ -13,8 +15,12 @@ const getProject = async () => {
       diffInSeconds.value = project.value.endDate - new Date() / 1000
       days.value = Math.floor(diffInSeconds.value / (24 * 3600))
       hours.value = Math.floor((diffInSeconds.value % (24 * 3600)) / 3600)
+      loading.isGlobalLoading = false
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      loading.isGlobalLoading = false
+    })
 }
 const project = ref({
   id: '',
@@ -47,7 +53,8 @@ const project = ref({
 })
 
 const toggleFollow = async (id) => {
-  console.log(id)
+  loading.isGlobalLoading = true
+
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',

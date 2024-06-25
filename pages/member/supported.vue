@@ -1,5 +1,7 @@
 <script setup>
 import { useDayjs } from '#dayjs'
+const loading = useLoadingStore()
+
 const dayjs = useDayjs()
 const route = useRoute()
 
@@ -16,8 +18,10 @@ const getSupportData = async () => {
     })
     SupportData.value = results
     pagination.value = results.pagination
+    loading.isGlobalLoading = false
   } catch (error) {
     console.log(error)
+    loading.isGlobalLoading = false
   }
 }
 
@@ -102,7 +106,7 @@ const changePage = (page) => {
               </div>
               <div class="text-right">
                 <NuxtLink
-                  :to="`/projects/${item._id}`"
+                  :to="`/projects/${item.project._id}`"
                   class="underline underline-offset-2 hover:text-primary-1"
                   >前往專案</NuxtLink
                 >
