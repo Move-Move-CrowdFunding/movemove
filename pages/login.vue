@@ -88,6 +88,7 @@ const submitLogin = async () => {
     .catch((err) => {
       console.log(err)
       alert((err as ResponseData).message)
+      loading.isGlobalLoading = false
     })
     .finally(() => {
       requestLoading.value = false

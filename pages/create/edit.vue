@@ -39,6 +39,7 @@ const createProject = async (tempData) => {
     })
     .catch((err) => {
       console.log(err)
+      loading.isGlobalLoading = false
     })
 }
 

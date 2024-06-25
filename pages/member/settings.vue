@@ -38,6 +38,7 @@ const editUser = async () => {
     })
     .catch((err) => {
       console.log(err)
+      loading.isGlobalLoading = false
     })
 }
 
@@ -70,6 +71,7 @@ const changePassword = async () => {
     .catch((err) => {
       console.log(err)
       alert(err.message)
+      loading.isGlobalLoading = false
     })
 }
 // const showPassword = ref(false)

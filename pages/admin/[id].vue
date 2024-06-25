@@ -56,6 +56,7 @@ const getProjectItem = async (id: string) => {
     })
     .catch((err: any) => {
       console.log('err', err)
+      loading.isGlobalLoading = false
     })
 }
 

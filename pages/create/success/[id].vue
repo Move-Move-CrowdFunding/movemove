@@ -38,6 +38,7 @@ const getProject = async () => {
       console.log(err)
       alert(err.message)
       await navigateTo('/index')
+      loading.isGlobalLoading = false
     })
 }
 
