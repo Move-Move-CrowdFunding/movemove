@@ -142,13 +142,13 @@ function onError() {
 
 const isOverDonationTarget = computed(() => tempData.value.money >= projectItem.value.feedbackMoney)
 watch(isOverDonationTarget, (val) => {
-  if (!val) {
+  if (projectItem.value.feedbackItem && val) {
+    tempData.value.isNeedFeedback = true
+  } else {
     tempData.value.isNeedFeedback = false
     tempData.value.receiver = ''
     tempData.value.receiverPhone = ''
     tempData.value.address = ''
-  } else if (projectItem.feedbackItem && val) {
-    tempData.value.isNeedFeedback = true
   }
 })
 
