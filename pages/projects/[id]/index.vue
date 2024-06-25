@@ -136,7 +136,10 @@ onMounted(() => {
         ></iframe>
       </div>
       <div class="lg:col-span-5 xl:col-span-1">
-        <div class="mb-6 rounded-3xl p-6 shadow-lg">
+        <div
+          class="mb-6 rounded-3xl p-6 shadow-lg"
+          :class="{ 'hidden lg:block': !project.feedbackItem }"
+        >
           <div class="hidden gap-4 lg:flex">
             <button
               v-if="project.startDate > new Date() / 1000"
