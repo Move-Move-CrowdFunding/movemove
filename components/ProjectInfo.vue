@@ -1,12 +1,9 @@
 <script setup>
-import dayjs from 'dayjs'
+// import dayjs from 'dayjs'
 import { z } from 'zod'
-import { Calendar } from 'v-calendar'
-// import 'v-calendar/style.css'
-// import { formGroupConfig, inputConfig } from '~/nuxtui/props'
-// import { format } from 'date-fns'
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
 import { regPhone } from '~/utils/regex'
+
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
 const inCreate = route.fullPath.includes('create/edit')
@@ -47,14 +44,25 @@ const schemaCreateProjectData = z.object({
   // .refine((value) => value >= 100, {
   //   message: '金額至少100'
   // }),
-  startDate: z.coerce.date(),
+  startDate: z.coerce.date().refine((value) => dateFormat(value) >= tenDaysLater, {
+    message: '開始時間至少為10天後'
+  }),
+  endDate: z.coerce.date().refine((value) => dateFormat(value) >= sevenDaysAfterTenDays, {
+    message: '募資天數最短為7天'
+  }),
   describe: z.string().min(1, '請簡短敘述提案內容, 最長不超過 80 字'),
 
   coverUrl: z
     .any()
-    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
-      message: '僅接受 .jpg, .jpeg, .png 等圖片格式.'
-    })
+    .refine(
+      (file) => {
+        // console.log('coverUrl filefile', file)
+        return ACCEPTED_IMAGE_TYPES.includes(file.type)
+      },
+      {
+        message: '僅接受 .jpg, .jpeg, .png, gif 等圖片格式.'
+      }
+    )
     .refine((file) => file.size > MAX_FILE_SIZE, { message: '檔案大小不可大於1MB' }),
   content: z.string().min(350, '請輸入提案說明, 至少 350 字'),
   videoUrl: z.string().url('請輸入正確影片網址').optional().or(z.literal('')),
@@ -90,57 +98,31 @@ const dateInput = computed(() => {
 
 const result = computed(() => schemaCreateProjectData.safeParse(newTempData.value))
 
-// validateField 無法帶入 formData 資料，請解決
-const validateField = (field) => {
+const validateField = (field, file) => {
   if (result.value.success) {
     errors.value[field] = ''
   } else {
-    // console.log('validateField file', file)
-
-    const fieldError = result.value.error.errors.find((error) => error.path[0] === field)
-    errors.value[field] = fieldError ? fieldError.message : ''
+    // console.dir(file)
+    const fieldError = result.value.error.errors.find((error) => {
+      // console.log('fieldError', error)
+      return error.path[0] === field
+    })
+    if (file) {
+      errors.value[field] = fieldError || { ...file }
+    } else {
+      errors.value[field] = fieldError ? fieldError.message : ''
+    }
+    // console.log('fieldError', errors.value[field])
     // result.value.error.errors.forEach((error) => {
     //   console.log('error', error)
     //   errors.value[error.path[0]] = error.message
     // })
   }
 }
-// const pickerDate = ref(new Date())
-// const range = ref({
-//   start: new Date(dateInput.value.startDate),
-//   end: new Date(dateInput.value.endDate)
-// })
-// const popover = ref({
-//   visibility: 'click',
-//   placement: 'bottom',
-//   delay: 0,
-//   hideDelay: 0,
-//   keepVisibleOnInput: false
-// })
-// const attrs = ref([
-//   {
-//     key: 'today',
-//     highlight: {
-//       color: 'blue',
-//       fillMode: 'light',
-//       start: { fillMode: 'outline' },
-//       base: { fillMode: 'light' },
-//       end: { fillMode: 'outline' }
-//     },
-//     // dates: new Date()
-//     dates: {
-//       start: dateInput.value.startDate,
-//       end: dateInput.value.endDate
-//     },
-//     order: 1
-//   }
-// ])
-// const pickerdate = ref(new Date())
+
 const changeDate = (item) => {
   const date = new Date(dateInput.value[item])
   newTempData.value[item] = date.getTime() / 1000
-  // console.log('date', date)
-  // console.log('change', item)
   validateField(item)
 }
 changeDate('startDate')
@@ -183,16 +165,14 @@ const handleSubmit = () => {
 // }
 const errorTextClass = 'mt-2 text-sm text-warning-500 peer-invalid:visible'
 
-// validateField 無法帶入 formData 資料，請解決
 const uploadFile = async (item) => {
   const formData = new FormData()
   if (item === 'cover') {
     formData.append('coverUpload', coverUpload.value.files[0])
-    validateField('coverUrl', coverUpload.value.files[0])
+    validateField('coverUpload', coverUpload.value.files[0])
   } else {
     formData.append('feedbackUpload', feedbackUpload.value.files[0])
-    // console.log('feedbackUrl formData', formData)
-    validateField('feedbackUrl', formData)
+    // validateField('feedbackUrl')
   }
   await getFetchData({
     url: '/upload',
@@ -248,26 +228,6 @@ const reviewProjectId = (approve) => {
           <p class="">{{ latestLog.content }}</p>
         </div>
       </div>
-      <!-- <form @submit.prevent="handleSubmit">
-      </form> -->
-      <ClientOnly>
-        <div class="flex">
-          <div>dateInput.startDate：</div>
-          <div>{{ dateInput.startDate }}</div>
-        </div>
-        <div class="flex">
-          <div>dayjs(dateInput.startDate).format('YYYY-MM-DD')：</div>
-          <div>{{ dayjs(dateInput.startDate).format('YYYY-MM-DD') }}</div>
-        </div>
-        <div class="flex">
-          <div>new Date() ：</div>
-          <div>{{ new Date() }}</div>
-        </div>
-        <div class="flex">
-          <div>dayjs(new Date()) ：</div>
-          <div>{{ dayjs(new Date()) }}</div>
-        </div>
-      </ClientOnly>
       <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12">
         <div class="order-2 lg:order-1">
           <h2 class="">提案人資料</h2>
@@ -448,66 +408,38 @@ const reviewProjectId = (approve) => {
               預計時間
               <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
             </label>
-            <ClientOnly>
-              <Calendar />
-            </ClientOnly>
-            <!-- <ClientOnly>
-              <VDatePicker v-model="range" is-range :popover="popover">
-                <template #default="{ inputValue, inputEvents }">
-                  <input
-                    id="startDate"
-                    class="grow"
-                    :class="{ 'border-warning-500': errors.startDate }"
-                    :value="inputValue.start"
-                    :disabled="isDisable"
-                    v-on="inputEvents.start"
-                  />
-                  <span>→</span>
-                  <input
-                    id="endDate"
-                    class="grow"
-                    :class="{ 'border-warning-500': errors.endDate }"
-                    :disabled="isDisable"
-                    :value="inputValue.end"
-                    v-on="inputEvents.end"
-                  />
-                </template>
-              </VDatePicker>
-            </ClientOnly> -->
-            <div class="flex items-center space-x-2">
-              <!-- <div>
-                {{ pickerdate }}
-              </div> -->
-
-              <!-- <UPopover :popper="{ placement: 'bottom-start' }">
-                <UButton
-                  icon="i-heroicons-calendar-days-20-solid"
-                  :label="dayjs(pickerDate).format('YYYY-MM-DD')"
+            <div class="flex w-full items-start space-x-2">
+              <div class="flex w-full flex-col justify-start">
+                <input
+                  id="startDate"
+                  v-model="dateInput.startDate"
+                  type="date"
+                  class="grow"
+                  :disabled="isDisable"
+                  :class="{ 'border-warning-500': errors.startDate }"
+                  @change="changeDate('startDate')"
                 />
-                <template #panel="{ close }">
-                  <ClientOnly>
-                    <VCalendar is-required :attributes="attrs" @close="close" />
-                  </ClientOnly>
-                </template>
-              </UPopover> -->
-              <span>→</span>
-              <input
-                id="endDate"
-                v-model="dateInput.endDate"
-                type="date"
-                class="grow"
-                :disabled="isDisable"
-                @change="changeDate('endDate')"
-              />
+                <p v-if="errors.startDate" :class="errorTextClass">
+                  {{ errors.startDate }}
+                </p>
+              </div>
+              <span class="flex h-[52px] items-center">→</span>
+              <div class="flex w-full flex-col justify-start">
+                <input
+                  id="endDate"
+                  v-model="dateInput.endDate"
+                  type="date"
+                  class="grow"
+                  :class="{ 'border-warning-500': errors.endDate }"
+                  :disabled="isDisable"
+                  @change="changeDate('endDate')"
+                />
+                <p v-if="errors.endDate" :class="errorTextClass">
+                  {{ errors.endDate }}
+                </p>
+              </div>
             </div>
-            <p v-if="errors.startDate" :class="errorTextClass">
-              {{ errors.startDate }}
-            </p>
-            <!-- <div>
-              <ClientOnly>
-                <VCalendar v-model="pickerDate" />
-              </ClientOnly>
-            </div> -->
+
             <p class="mt-2 text-xs">
               專案提交後需要7-10個工作天進行內容檢視，所以開始時間至少為10天後。募資天數最短為7天，最長為60天。
             </p>
@@ -531,6 +463,7 @@ const reviewProjectId = (approve) => {
               ></textarea>
               <TextCounter v-if="!inAdmin" :count="newTempData.describe.length" />
             </div>
+
             <p v-if="errors.describe" :class="errorTextClass">
               {{ errors.describe }}
             </p>
@@ -558,6 +491,8 @@ const reviewProjectId = (approve) => {
                 class="hidden"
                 :disabled="isDisable"
                 @change="uploadFile('cover')"
+                @focus="validateField('coverUrl', coverUpload)"
+                @input="validateField('coverUrl', coverUpload)"
               />
               <input
                 v-model="newTempData.coverUrl"
@@ -565,8 +500,6 @@ const reviewProjectId = (approve) => {
                 placeholder="或輸入圖片網址"
                 class="grow border-white focus-visible:outline-none"
                 :disabled="isDisable"
-                @focus="validateField('coverUrl')"
-                @input="validateField('coverUrl')"
               />
             </div>
             <p v-if="errors.coverUrl" :class="errorTextClass">
@@ -721,454 +654,6 @@ const reviewProjectId = (approve) => {
           </div>
         </div>
       </div>
-
-      <!-- <div>
-        <div class="mb-6">
-          html
-          <label for="teamName">
-            提案人姓名/團隊名稱
-            <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
-          </label>
-          <input
-            id="teamName"
-            v-model="newTempData.teamName"
-            type="text"
-            placeholder="請輸入提案人姓名/團隊名稱"
-            class="peer block w-full"
-            :class="{ 'border-warning-500': errors.teamName }"
-            :disabled="isDisable"
-            @focus="validateField('teamName')"
-            @input="validateField('teamName')"
-          />
-          <p
-            v-if="errors.teamName"
-            class="mt-2 text-sm text-warning-500 peer-invalid:visible dark:text-red-400"
-          >
-            {{ errors.teamName }}
-          </p>
-          <p class="mt-2 text-xs">
-            提案人必須要用真實姓名註冊會員，不接受匿名或使用他人名義的提案。
-          </p>
-        </div>
-        <div class="mb-6">
-          <label for="email">
-            聯絡信箱
-            <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
-          </label>
-          <input
-            id="email"
-            v-model="newTempData.email"
-            type="email"
-            placeholder="請輸入聯絡信箱"
-            class="block w-full"
-            :class="{ 'border-warning-500': errors.email }"
-            :disabled="isDisable"
-            @focus="validateField('email')"
-            @input="validateField('email')"
-          />
-
-          <p
-            v-if="errors.email"
-            class="mt-2 text-sm text-warning-500 peer-invalid:visible dark:text-red-400"
-          >
-            {{ errors.email }}
-          </p>
-        </div>
-        <UButton
-          v-if="!latestLog?.status && !inAdmin"
-          type="submit"
-          class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
-          :loading="requestLoading"
-          :disabled="!result.success"
-          @click="handleSubmit"
-        >
-          發起提案
-        </UButton>
-      </div> -->
-      <!-- <UForm
-        v-if="false"
-        :validate="validate"
-        :schema="schemaCreateProjectData"
-        :state="newTempData"
-        class="relative z-10 space-y-4"
-        @submit="emit('createProject', newTempData)"
-        @error="onError"
-      >
-        <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-x-12">
-          <div class="order-2 space-y-4 lg:order-1">
-            <h2 class="">提案人資料</h2>
-
-            <UFormGroup
-              :ui="formGroupConfig"
-              :required="!isDisable"
-              label="提案人姓名/團隊名稱"
-              name="teamName"
-            >
-              <UInput
-                v-model="newTempData.teamName"
-                placeholder="請輸入提案人姓名/團隊名稱"
-                :ui="inputConfig"
-                size="xl"
-                :disabled="isDisable"
-              />
-              <p class="mt-2 text-xs">
-                提案人必須要用真實姓名註冊會員，不接受匿名或使用他人名義的提案。
-              </p>
-            </UFormGroup>
-            <UFormGroup :ui="formGroupConfig" :required="!isDisable" label="聯絡信箱" name="email">
-              <UInput
-                v-model="newTempData.email"
-                placeholder="請輸入聯絡信箱"
-                :ui="inputConfig"
-                size="xl"
-                :disabled="isDisable"
-              />
-            </UFormGroup>
-            <UFormGroup :ui="formGroupConfig" :required="!isDisable" label="聯絡手機" name="phone">
-              <UInput
-                v-model="newTempData.phone"
-                placeholder="請輸入聯絡手機"
-                :ui="inputConfig"
-                size="xl"
-                :disabled="isDisable"
-              />
-            </UFormGroup>
-            <UFormGroup :ui="formGroupConfig" label="團隊介紹" name="introduce">
-              <UTextarea v-model="newTempData.introduce" />
-            </UFormGroup>
-
-            <div class="mb-6">
-              <label for="teamName">
-                提案人姓名/團隊名稱
-                <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
-              </label>
-              <input
-                id="teamName"
-                v-model="newTempData.teamName"
-                type="text"
-                placeholder="請輸入提案人姓名/團隊名稱"
-                class="peer block w-full"
-                :class="{ 'border-warning-500': errors.teamName }"
-                :disabled="isDisable"
-                @focus="validateField('teamName')"
-                @input="validateField('teamName')"
-              />
-              <p
-                v-if="errors.teamName"
-                class="mt-2 text-sm text-warning-500 peer-invalid:visible dark:text-red-400"
-              >
-                {{ errors.teamName }}
-              </p>
-              <p class="mt-2 text-xs">
-                提案人必須要用真實姓名註冊會員，不接受匿名或使用他人名義的提案。
-              </p>
-            </div>
-            <div v-if="!inAdmin">
-              <h2>專案卡預覽</h2>
-              <ProjectCard :project="tempData" class="pointer-events-none" />
-            </div>
-            <div v-if="inAdmin">
-              <h2>檢核紀錄</h2>
-              <ul class="space-y-2">
-                <li
-                  v-for="item in newTempData.reviewLog"
-                  :key="item"
-                  class="flex items-start space-x-1"
-                >
-                  <span class="min-w-[158px] flex-shrink-0">{{ timeFormat(item.timestamp) }}</span>
-                  <span class="w-6 flex-shrink-0 text-center">{{
-                    item?.status === 0 ? '➖' : item?.status === -1 ? '✖️' : '✔️'
-                  }}</span>
-                  <div>{{ item.content }}</div>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div class="order-1 col-span-2 lg:order-2">
-            <h2>提案詳情</h2>
-            <UFormGroup :ui="formGroupConfig" :required="!isDisable" label="提案標題" name="title">
-              <UInput
-                v-model="newTempData.title"
-                placeholder="請輸入提案標題"
-                :ui="inputConfig"
-                size="xl"
-                :disabled="isDisable"
-              />
-              <p class="mt-2 text-xs">
-                好的標題應該要好記、好搜尋、吸引人想點進去看，並讓瀏覽者能在最短的時間內瞭解專案的核心理念。
-              </p>
-            </UFormGroup>
-            <div class="mb-6 grid grid-cols-2 gap-3">
-              <div>
-                <UFormGroup
-                  :ui="formGroupConfig"
-                  :required="!isDisable"
-                  label="分類"
-                  name="categoryKey"
-                >
-                  <USelect
-                    v-model="newTempData.categoryKey"
-                    placeholder="請選擇分類"
-                    size="xl"
-                    :disabled="isDisable"
-                    :options="categoryKeys"
-                    option-attribute="name"
-                  />
-                </UFormGroup>
-              </div>
-              <UFormGroup
-                :ui="formGroupConfig"
-                :required="!isDisable"
-                label="提案目標"
-                name="targetMoney"
-              >
-                <UInput
-                  v-model.number="newTempData.targetMoney"
-                  placeholder="請輸入提案目標"
-                  :ui="inputConfig"
-                  size="xl"
-                  :disabled="isDisable"
-                />
-                <p class="mt-2 text-xs">請根據你計畫的需求，估算你所需要募集的金額</p>
-              </UFormGroup>
-            </div>
-            <div class="mb-6">
-              <label for="">
-                預計時間
-                <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
-              </label>
-              <div class="flex items-center space-x-2">
-                <input
-                  id="startDate"
-                  v-model="dateInput.startDate"
-                  type="date"
-                  class="grow"
-                  :disabled="isDisable"
-                  @change="changeDate('startDate')"
-                />
-                <span class="flex-shrink-0">→</span>
-                <input
-                  id="endDate"
-                  v-model="dateInput.endDate"
-                  type="date"
-                  class="grow"
-                  :disabled="isDisable"
-                  @change="changeDate('endDate')"
-                />
-              </div>
-              <p class="mt-2 text-xs">
-                專案提交後需要7-10個工作天進行內容檢視，所以開始時間至少為10天後。募資天數最短為7天，最長為60天。
-              </p>
-            </div>
-            <UFormGroup
-              :ui="formGroupConfig"
-              :required="!isDisable"
-              label="提案簡介"
-              name="describe"
-            >
-              <div class="relative">
-                <UTextarea
-                  v-model="newTempData.describe"
-                  placeholder="請簡短敘述提案內容, 最長不超過 80 字"
-                  size="xl"
-                  :disabled="isDisable"
-                  maxlength="80"
-                />
-                <TextCounter :count="newTempData.describe.length" :max-length="20" />
-              </div>
-            </UFormGroup>
-            <div class="flex items-stretch rounded border">
-              <label for="coverUpload" :disabled="isDisable" class="m-1">
-                <div
-                  class="flex h-full cursor-pointer items-center rounded bg-secondary-2 px-3 py-2 text-white hover:bg-secondary-1 disabled:bg-neutral-300"
-                >
-                  選擇檔案
-                </div>
-              </label>
-              <input
-                id="coverUpload"
-                ref="coverUpload"
-                type="file"
-                class="hidden"
-                :disabled="isDisable"
-                @change="uploadFile('cover')"
-                @blur="validateField('coverUrl')"
-              />
-              <input
-                v-model="newTempData.coverUrl"
-                type="text"
-                placeholder="或輸入圖片網址"
-                class="grow border-white"
-                :disabled="isDisable"
-              />
-              <p v-if="errors.coverUrl" class="error">{{ errors.coverUrl }}</p>
-            </div>
-            <div class="mb-6">
-              <label for="">
-                封面照片
-                <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
-              </label>
-              <div class="flex items-stretch rounded border">
-                <label for="coverUpload" :disabled="isDisable" class="m-1">
-                  <div
-                    class="flex h-full cursor-pointer items-center rounded bg-secondary-2 px-3 py-2 text-white hover:bg-secondary-1 disabled:bg-neutral-300"
-                  >
-                    選擇檔案
-                  </div>
-                </label>
-                <input
-                  id="coverUpload"
-                  ref="coverUpload"
-                  type="file"
-                  class="hidden"
-                  :disabled="isDisable"
-                  @change="uploadFile('cover')"
-                />
-                <input
-                  v-model="newTempData.coverUrl"
-                  type="text"
-                  placeholder="或輸入圖片網址"
-                  class="grow border-white"
-                  :disabled="isDisable"
-                />
-              </div>
-              <img :src="newTempData.coverUrl" class="mt-1" />
-            </div>
-            <UFormGroup
-              :ui="formGroupConfig"
-              :required="!isDisable"
-              label="提案說明"
-              name="content"
-            >
-              <div class="relative">
-                <UTextarea
-                  v-model="newTempData.content"
-                  placeholder="請輸入提案說明, 至少 350 字"
-                  size="xl"
-                  :disabled="isDisable"
-                  minlength="350"
-                />
-                <TextCounter :count="newTempData.content.length" />
-              </div>
-            </UFormGroup>
-            <UFormGroup
-              :ui="formGroupConfig"
-              :required="!isDisable"
-              label="影片網址"
-              name="videoUrl"
-            >
-              <UInput
-                v-model.number="newTempData.videoUrl"
-                placeholder="請輸入影片網址"
-                :ui="inputConfig"
-                size="xl"
-                :disabled="isDisable"
-              />
-              <iframe
-                v-if="newTempData.videoUrl"
-                class="mt-2 aspect-video w-full"
-                :src="`https://www.youtube.com/embed/${newTempData.videoUrl.split('&')[0].split('v=')[1]}`"
-              ></iframe>
-            </UFormGroup>
-            <UFormGroup :ui="formGroupConfig" label="相關網站" name="relatedUrl">
-              <UInput
-                v-model.number="newTempData.relatedUrl"
-                placeholder="請輸入相關網站"
-                :ui="inputConfig"
-                size="xl"
-                :disabled="isDisable"
-              />
-            </UFormGroup>
-            <h2>回饋方案</h2>
-            <div class="mb-6">
-              <label for="feedbackItem">回饋項目</label>
-              <input
-                id="feedbackItem"
-                v-model="newTempData.feedbackItem"
-                type="text"
-                placeholder="請輸入回饋項目"
-                class="block w-full"
-                :disabled="isDisable"
-              />
-            </div>
-            <div class="mb-6">
-              <label for="feedbackUrl">回饋品圖片</label>
-              <div class="flex items-center rounded border pl-1">
-                <label for="feedbackUpload" :disabled="isDisable" class="m-1">
-                  <div
-                    class="flex h-full cursor-pointer items-center rounded bg-secondary-2 px-3 py-2 text-white hover:bg-secondary-1 disabled:bg-neutral-300"
-                  >
-                    選擇檔案
-                  </div>
-                </label>
-                <input
-                  id="feedbackUpload"
-                  ref="feedbackUpload"
-                  type="file"
-                  class="hidden"
-                  :disabled="isDisable"
-                  @change="uploadFile('feedback')"
-                />
-                <input
-                  v-model="newTempData.feedbackUrl"
-                  type="text"
-                  placeholder="或輸入圖片網址"
-                  class="grow border-white"
-                  :disabled="isDisable"
-                />
-              </div>
-              <img :src="newTempData.feedbackUrl" class="mt-1" />
-            </div>
-            <div class="mb-6">
-              <label for="feedbackMoney">回饋門檻</label>
-              <div class="flex items-center space-x-2">
-                <input
-                  id="feedbackMoney"
-                  v-model="newTempData.feedbackMoney"
-                  type="text"
-                  placeholder="請輸入回饋門檻"
-                  class="block w-full"
-                  :disabled="isDisable"
-                />
-                <span>NTD</span>
-              </div>
-              <p class="mt-2 text-xs">單一募資滿門檻金額，將提供回饋</p>
-            </div>
-            <div class="">
-              <label for="feedbackDate">預計寄出日期</label>
-              <input
-                id="feedbackDate"
-                v-model="dateInput.feedbackDate"
-                type="date"
-                placeholder="請輸入寄出日期"
-                class="block w-full"
-                :disabled="isDisable"
-                @change="changeDate('feedbackDate')"
-              />
-            </div>
-          </div>
-        </div>
-        <UButton
-          v-if="!latestLog?.status && !inAdmin"
-          type="submit"
-          class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
-          :loading="requestLoading"
-        >
-          發起提案
-        </UButton>
-        <button
-          v-if="latestLog?.status === 1 && !inAdmin"
-          class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
-        >
-          結束提案
-        </button>
-        <button
-          v-if="latestLog?.status === -1 && !inAdmin"
-          class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
-        >
-          送出
-        </button>
-      </UForm> -->
       <div
         v-if="inAdmin && latestLog?.status === 0"
         class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10 sm:flex-row"

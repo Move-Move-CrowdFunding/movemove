@@ -18,7 +18,6 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@nuxt/ui',
     'dayjs-nuxt'
-    // '@samk-dev/nuxt-vcalendar'
   ],
   typescript: {
     typeCheck: true

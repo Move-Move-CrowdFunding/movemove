@@ -1,6 +1,7 @@
 <script setup>
 const router = useRouter()
 const isLogin = useIsLoginStore()
+const loading = useLoadingStore()
 const requestLoading = ref(false)
 
 const tempData = ref({
