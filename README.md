@@ -3,7 +3,7 @@
 > 募資平台的核心理念在於透過眾人的集體力量，在募資平台上支持以人為本，共同建立更美好社會互助。
 > 
 
-![Untitled](https://raw.githubusercontent.com/Move-Move-CrowdFunding/movemove/dev/public/readme/cover.jpg)
+![封面](https://github.com/Move-Move-CrowdFunding/movemove/blob/dev/public/readme/cover.jpgraw=true)
 
 - [線上觀看連結](https://movemove-web.onrender.com/)
 
@@ -18,7 +18,7 @@
 
 ## 畫面
 
-![Untitled](https://raw.githubusercontent.com/Move-Move-CrowdFunding/movemove/dev/public/readme/cover.jpg)
+![畫面](https://github.com/Move-Move-CrowdFunding/movemove/blob/dev/public/readme/cover.jpgraw=true)
 
 ## 安裝
 
