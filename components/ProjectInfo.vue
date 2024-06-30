@@ -446,7 +446,11 @@ const reviewProjectId = (approve) => {
         發起提案
       </button>
       <button
-        v-if="latestLog?.status === 1 && !inAdmin"
+        v-if="
+          latestLog?.status === 1 &&
+          newTempData.endDate > Math.ceil(new Date().getTime() / 1000) &&
+          !inAdmin
+        "
         class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
         @click="emit('endProject')"
       >
