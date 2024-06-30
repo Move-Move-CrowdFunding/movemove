@@ -1,5 +1,5 @@
 <script setup>
-// import dayjs from 'dayjs'
+import dayjs from 'dayjs'
 import { z } from 'zod'
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
 import { regPhone } from '~/utils/regex'
@@ -19,9 +19,18 @@ const props = defineProps({
 })
 const errors = ref([])
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024
+const MAX_FILE_SIZE = 5 * 1024 * 1024
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png']
-const schemaCreateProjectData = z.object({
+
+const fileSchema = z
+  .instanceof(File)
+  .refine((file) => file.size <= MAX_FILE_SIZE, '檔案大小不可大於5MB')
+  .refine(
+    (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+    '僅接受 .jpg, .jpeg, .png, gif 等圖片格式.'
+  )
+
+const createProjectDataSchema = z.object({
   teamName: z.string().min(1, '請填寫姓名或團隊名稱'),
   email: z.string().email('請輸入有效的 email'),
   phone: z
@@ -31,43 +40,32 @@ const schemaCreateProjectData = z.object({
       message: '請輸入正確手機號碼'
     }),
   title: z.string().min(1, '請輸入提案標題'),
-  categoryKey: z.number().refine(
-    (value) => {
-      // console.log('categoryKey', value)
-      return value > 0
-    },
-    {
-      message: '請選擇分類'
-    }
-  ),
+  categoryKey: z.number().refine((value) => value > 0, {
+    message: '請選擇分類'
+  }),
   targetMoney: z.coerce.number().min(1, '請輸入提案目標'),
   // .refine((value) => value >= 100, {
   //   message: '金額至少100'
   // }),
-  startDate: z.coerce.date().refine((value) => dateFormat(value) >= tenDaysLater, {
-    message: '開始時間至少為10天後'
-  }),
-  endDate: z.coerce.date().refine((value) => dateFormat(value) >= sevenDaysAfterTenDays, {
-    message: '募資天數最短為7天'
-  }),
+  startDate: z.coerce
+    .date()
+    .refine((value) => dayjs(value).valueOf() >= dayjs(tenDaysLater).valueOf() / 1000, {
+      message: '開始時間至少為10天後'
+    }),
+  endDate: z.coerce
+    .date()
+    .refine((value) => dayjs(value).valueOf() >= dayjs(sevenDaysAfterTenDays).valueOf() / 1000, {
+      message: '募資天數最短為7天'
+    }),
   describe: z.string().min(1, '請簡短敘述提案內容, 最長不超過 80 字'),
-
-  coverUrl: z
-    .any()
-    .refine(
-      (file) => {
-        // console.log('coverUrl filefile', file)
-        return ACCEPTED_IMAGE_TYPES.includes(file.type)
-      },
-      {
-        message: '僅接受 .jpg, .jpeg, .png, gif 等圖片格式.'
-      }
-    )
-    .refine((file) => file.size > MAX_FILE_SIZE, { message: '檔案大小不可大於1MB' }),
+  coverUrl: z.union([fileSchema, z.string().url('請輸入正確網址格式')]),
   content: z.string().min(350, '請輸入提案說明, 至少 350 字'),
   videoUrl: z.string().url('請輸入正確影片網址').optional().or(z.literal('')),
   relatedUrl: z.string().url('請輸入正確網址格式').optional().or(z.literal('')),
-  feedbackUrl: z.string().url('請輸入正確網址格式').optional().or(z.literal('')),
+  feedbackUrl: z.union([
+    fileSchema,
+    z.string().url('請輸入正確網址格式').optional().or(z.literal(''))
+  ]),
   feedbackMoney: z.coerce
     .number()
     // .refine((value) => value >= 100, {
@@ -92,31 +90,49 @@ const dateInput = computed(() => {
   return {
     startDate: inCreate ? tenDaysLater : dateFormat(newTempData.value.startDate),
     endDate: inCreate ? sevenDaysAfterTenDays : dateFormat(newTempData.value.endDate),
-    feedbackDate: dateFormat(newTempData.value.feedbackDate)
+    feedbackDate: dateFormat(newTempData.value.feedbackDate) || ''
   }
 })
 
-const result = computed(() => schemaCreateProjectData.safeParse(newTempData.value))
+// 審核說明驗證
+const reviewSchema = z.string().min(1, '請填寫審核說明')
+const reviewContent = ref('')
 
-const validateField = (field, file) => {
-  if (result.value.success) {
+// 是否在 admin，是 admin 就不用做這些驗證
+const validateIfNeeded = (schema, data) => {
+  if (inAdmin && latestLog.value?.status === 1) {
+    return { success: true, data }
+  }
+  return schema.safeParse(data)
+}
+const validateResult = computed(() => {
+  if (inAdmin) {
+    return (
+      reviewSchema.safeParse(reviewContent.value) ||
+      validateIfNeeded(createProjectDataSchema, newTempData.value)
+    )
+  } else {
+    return createProjectDataSchema.safeParse(newTempData.value)
+  }
+})
+
+// 驗證欄位
+const validateField = (field) => {
+  if (field === 'coverUrl') {
+    coverUpload.value = ''
+    errors.value.coverUpload = ''
+  }
+  if (field === 'feedbackUrl') {
+    feedbackUpload.value = ''
+    errors.value.feedbackUpload = ''
+  }
+  if (validateResult.value.success) {
     errors.value[field] = ''
   } else {
-    // console.dir(file)
-    const fieldError = result.value.error.errors.find((error) => {
-      // console.log('fieldError', error)
-      return error.path[0] === field
+    const fieldError = validateResult.value.error.errors.find((error) => {
+      return error.path.length > 0 ? error.path[0] === field : error.path.push(field)
     })
-    if (file) {
-      errors.value[field] = fieldError || { ...file }
-    } else {
-      errors.value[field] = fieldError ? fieldError.message : ''
-    }
-    // console.log('fieldError', errors.value[field])
-    // result.value.error.errors.forEach((error) => {
-    //   console.log('error', error)
-    //   errors.value[error.path[0]] = error.message
-    // })
+    errors.value[field] = fieldError ? fieldError.message : ''
   }
 }
 
@@ -125,54 +141,65 @@ const changeDate = (item) => {
   newTempData.value[item] = date.getTime() / 1000
   validateField(item)
 }
-changeDate('startDate')
-changeDate('endDate')
+if (!inAdmin) {
+  changeDate('startDate')
+  changeDate('endDate')
+}
 
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
 
+// 提交表單
 const handleSubmit = () => {
-  if (result.value.success) {
-    // 提交表單
+  if (validateResult.value.success) {
     emit('createProject', newTempData.value)
   } else {
-    // 顯示錯誤訊息
-    // console.log('event.errors', result.value.error.errors)
-    // const element = document.getElementById(event.errors[0].id)
-    // //   // console.log('element', element, event)
-    // //   element?.focus()
-    // //   element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    // const findErrorElement = result.value.error.errors.find((item) => {
-    //   console.log('findErrorElement', document.getElementById(item.path[0]))
-    // })
-    // console.log('errors', errors.value)
-
-    result.value.error.errors.forEach((error) => {
+    validateResult.value.error.errors.forEach((error) => {
       errors.value[error.path[0]] = error.message
     })
-    if (result.value.error.errors.length > 0) {
-      const element = document.getElementById(result.value.error.errors[0].path)
+    // 捲動到錯誤的欄位
+    if (validateResult.value.error.errors.length > 0) {
+      const element = document.getElementById(validateResult.value.error.errors[0].path)
       element.focus()
       element.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }
 }
-// const handleFileChange = (event) => {
-//   const file = event.target.files[0]
-//   // console.log('handleFileChange file', file)
-//   newTempData.value.coverUrl = file
-//   validateField('coverUrl', file)
-// }
+
 const errorTextClass = 'mt-2 text-sm text-warning-500 peer-invalid:visible'
 
-const uploadFile = async (item) => {
+const coverUploadLoading = ref(false)
+const feedbackUploadLoading = ref(false)
+
+// 驗證檔案上傳
+const uploadFile = async (item, file) => {
   const formData = new FormData()
   if (item === 'cover') {
-    formData.append('coverUpload', coverUpload.value.files[0])
-    validateField('coverUpload', coverUpload.value.files[0])
+    const coverFile = await fileSchema.safeParseAsync(file.target.files[0])
+    if (coverFile.success) {
+      errors.value.coverUpload = ''
+      errors.value.coverUrl = ''
+      coverUploadLoading.value = true
+      formData.append('coverUpload', file.target.files[0])
+    } else {
+      errors.value.coverUpload = coverFile.error?.errors[0].message
+      errors.value.coverUrl = ''
+      newTempData.value.coverUrl = ''
+      return
+    }
   } else {
-    formData.append('feedbackUpload', feedbackUpload.value.files[0])
-    // validateField('feedbackUrl')
+    const feedbackFile = await fileSchema.safeParseAsync(file.target.files[0])
+    if (feedbackFile.success) {
+      errors.value.feedbackUpload = ''
+      errors.value.feedbackUrl = ''
+      feedbackUploadLoading.value = true
+      formData.append('feedbackUpload', file.target.files[0])
+    } else {
+      errors.value.feedbackUpload = feedbackFile.error?.errors[0].message
+      errors.value.feedbackUrl = ''
+      newTempData.value.feedbackUrl = ''
+      return
+    }
   }
   await getFetchData({
     url: '/upload',
@@ -192,12 +219,21 @@ const uploadFile = async (item) => {
     .catch((err) => {
       console.log(err)
     })
+    .finally(() => {
+      feedbackUploadLoading.value = false
+      coverUploadLoading.value = false
+    })
 }
 
 const emit = defineEmits(['createProject'])
 
-const reviewContent = ref('')
+// 審核說明按鈕讀取狀態
+const reviewProjectRejectLoading = ref(false)
+const reviewProjectApproveLoading = ref(false)
+
 const reviewProjectId = (approve) => {
+  if (approve === -1) reviewProjectRejectLoading.value = true
+  if (approve === 1) reviewProjectApproveLoading.value = true
   getFetchData({
     url: `/admin/projects/${newTempData.value._id}`,
     method: 'POST',
@@ -212,6 +248,10 @@ const reviewProjectId = (approve) => {
     })
     .catch((err) => {
       console.log('err', err)
+    })
+    .finally(() => {
+      reviewProjectLoading.value = false
+      reviewProjectRejectLoading.value = false
     })
 }
 </script>
@@ -342,7 +382,6 @@ const reviewProjectId = (approve) => {
               placeholder="請輸入提案標題"
               class="peer block w-full"
               :class="{ 'border-warning-500': errors.title }"
-              :disabled="isDisable"
               @focus="validateField('title')"
               @input="validateField('title')"
             />
@@ -439,8 +478,7 @@ const reviewProjectId = (approve) => {
                 </p>
               </div>
             </div>
-
-            <p class="mt-2 text-xs">
+            <p v-if="!inAdmin" class="mt-2 text-xs">
               專案提交後需要7-10個工作天進行內容檢視，所以開始時間至少為10天後。募資天數最短為7天，最長為60天。
             </p>
           </div>
@@ -469,13 +507,14 @@ const reviewProjectId = (approve) => {
             </p>
           </div>
           <div class="mb-6">
-            <label for="">
+            <label for="coverUrl">
               封面照片
               <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
             </label>
             <div
+              v-if="!inAdmin"
               class="flex items-stretch rounded border"
-              :class="{ 'border-warning-500': errors.coverUrl }"
+              :class="{ 'border-warning-500': errors.coverUrl || errors.coverUpload }"
             >
               <label for="coverUpload" :disabled="isDisable" class="m-1">
                 <div
@@ -490,31 +529,38 @@ const reviewProjectId = (approve) => {
                 type="file"
                 class="hidden"
                 :disabled="isDisable"
-                @change="uploadFile('cover')"
-                @focus="validateField('coverUrl', coverUpload)"
-                @input="validateField('coverUrl', coverUpload)"
+                @change="uploadFile('cover', $event)"
               />
               <input
+                id="coverUrl"
                 v-model="newTempData.coverUrl"
                 type="text"
                 placeholder="或輸入圖片網址"
                 class="grow border-white focus-visible:outline-none"
                 :disabled="isDisable"
+                @focus="validateField('coverUrl')"
+                @input="validateField('coverUrl')"
               />
             </div>
-            <p v-if="errors.coverUrl" :class="errorTextClass">
-              {{ errors.coverUrl }}
+            <p v-if="errors.coverUrl" :class="errorTextClass">{{ errors.coverUrl }}</p>
+            <p v-else-if="errors.coverUpload" :class="errorTextClass">
+              {{ errors.coverUpload }}
             </p>
-            <img v-if="!errors.coverUrl" :src="newTempData.coverUrl" class="mt-1" />
+            <img
+              v-if="!coverUploadLoading && (!errors.coverUrl || !errors.coverUpload)"
+              :src="newTempData.coverUrl"
+              class="mt-1"
+            />
+            <LoadingDataState v-else :is-loading="coverUploadLoading" text="上傳中..." />
           </div>
           <div class="mb-6">
-            <label for="coverUrl">
+            <label for="content">
               提案說明
               <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
             </label>
             <div class="relative">
               <textarea
-                id="coverUrl"
+                id="content"
                 v-model="newTempData.content"
                 placeholder="請輸入提案說明, 至少 350 字"
                 class="peer block w-full"
@@ -528,7 +574,7 @@ const reviewProjectId = (approve) => {
             <p v-if="errors.content" :class="errorTextClass">
               {{ errors.content }}
             </p>
-            <p class="mt-2 text-xs">
+            <p v-if="!inAdmin" class="mt-2 text-xs">
               請告訴我們關於你計畫的故事、為什麼大家應該支持你的計畫。（最少 350 字）
               請注意：必須要有足夠的訊息才有辦法審核計畫，如果您所提供的資訊過少，或無法評估計畫的真實性、可行性，計畫就會無法上架。
             </p>
@@ -587,7 +633,11 @@ const reviewProjectId = (approve) => {
           </div>
           <div class="mb-6">
             <label for="feedbackUrl">回饋品圖片</label>
-            <div class="flex items-center rounded border pl-1">
+            <div
+              v-if="!inAdmin"
+              class="group flex items-center rounded border pl-1"
+              :class="{ 'border-warning-500': errors.feedbackUrl || errors.feedbackUpload }"
+            >
               <label for="feedbackUpload" :disabled="isDisable" class="m-1">
                 <div
                   class="flex h-full cursor-pointer items-center rounded bg-secondary-2 px-3 py-2 text-white hover:bg-secondary-1 disabled:bg-neutral-300"
@@ -601,23 +651,31 @@ const reviewProjectId = (approve) => {
                 type="file"
                 class="hidden"
                 :disabled="isDisable"
-                @change="uploadFile('feedback')"
+                @change="uploadFile('feedback', $event)"
               />
               <input
+                id="feedbackUrl"
                 v-model="newTempData.feedbackUrl"
                 type="text"
                 placeholder="或輸入圖片網址"
-                class="peer grow border-white"
-                :class="{ 'border-warning-500': errors.feedbackUrl }"
+                class="grow border-white focus-visible:outline-none"
                 :disabled="isDisable"
                 @focus="validateField('feedbackUrl')"
                 @input="validateField('feedbackUrl')"
               />
             </div>
             <p v-if="errors.feedbackUrl" :class="errorTextClass">
-              {{ errors.feedbackUrl }}
+              feedbackUrl {{ errors.feedbackUrl }}
             </p>
-            <img v-if="!errors.feedbackUrl" :src="newTempData.feedbackUrl" class="mt-1" />
+            <p v-else-if="errors.feedbackUpload" :class="errorTextClass">
+              feedbackUpload {{ errors.feedbackUpload }}
+            </p>
+            <img
+              v-if="!feedbackUploadLoading && (!errors.feedbackUrl || !errors.feedbackUpload)"
+              :src="newTempData.feedbackUrl"
+              class="mt-1"
+            />
+            <LoadingDataState v-else :is-loading="feedbackUploadLoading" text="上傳中..." />
           </div>
           <div class="mb-6">
             <label for="feedbackMoney">回饋門檻</label>
@@ -638,7 +696,7 @@ const reviewProjectId = (approve) => {
             <p v-if="errors.feedbackMoney" :class="errorTextClass">
               {{ errors.feedbackMoney }}
             </p>
-            <p class="mt-2 text-xs">單一募資滿門檻金額，將提供回饋</p>
+            <p v-if="!inAdmin" class="mt-2 text-xs">單一募資滿門檻金額，將提供回饋</p>
           </div>
           <div class="">
             <label for="feedbackDate">預計寄出日期</label>
@@ -656,26 +714,59 @@ const reviewProjectId = (approve) => {
       </div>
       <div
         v-if="inAdmin && latestLog?.status === 0"
-        class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10 sm:flex-row"
+        class="mt-10 flex flex-col gap-4 bg-secondary-5 px-3 py-10"
       >
-        <input v-model="reviewContent" type="text" class="w-full" />
-        <div class="flex shrink-0 gap-4 text-white">
-          <button class="ml-auto rounded-lg bg-warning-500 px-3 py-2" @click="reviewProjectId(-1)">
-            否準提案
-          </button>
-          <button class="rounded-lg bg-warning-700 px-3 py-2" @click="reviewProjectId(1)">
-            核准提案
-          </button>
+        <div
+          class="flex w-full flex-col space-y-3 sm:flex-row sm:items-start sm:space-x-3 sm:space-y-0"
+        >
+          <div class="flex w-full flex-col">
+            <input
+              id="reviewContent"
+              v-model="reviewContent"
+              type="text"
+              class="w-full"
+              placeholder="否准需填寫審核說明"
+              :class="{ 'border-warning-500': errors.reviewContent }"
+              @focus="validateField('reviewContent')"
+              @input="validateField('reviewContent')"
+            />
+            <p v-if="errors.reviewContent" :class="errorTextClass">
+              {{ errors.reviewContent }}
+            </p>
+          </div>
+
+          <div class="ml-auto flex shrink-0 space-x-4 text-white">
+            <button
+              class="ml-auto flex !min-h-[50px] items-center justify-center space-x-2.5 rounded-lg bg-warning-500 px-3 py-2 text-center"
+              :disabled="!validateResult.success"
+              @click="reviewProjectId(-1)"
+            >
+              <span
+                v-if="reviewProjectRejectLoading"
+                class="i-heroicons-arrow-path-20-solid h-5 w-5 flex-shrink-0 animate-spin"
+              ></span>
+              <span class="flex-shrink-0">否准提案</span>
+            </button>
+            <button
+              class="flex !min-h-[50px] items-center justify-center space-x-2.5 rounded-lg bg-warning-500 px-3 py-2 text-center"
+              @click="reviewProjectId(1)"
+            >
+              <span
+                v-if="reviewProjectApproveLoading"
+                class="i-heroicons-arrow-path-20-solid h-5 w-5 flex-shrink-0 animate-spin"
+              ></span>
+              <span class="flex-shrink-0">核准提案</span>
+            </button>
+          </div>
         </div>
       </div>
       <button
         v-if="!latestLog?.status && !inAdmin"
         class="mx-auto mt-10 flex w-full items-center space-x-2.5 rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
-        :disabled="!result.success"
         @click="handleSubmit"
       >
         <span
-          v-show="requestLoading"
+          v-if="requestLoading"
           class="i-heroicons-arrow-path-20-solid h-5 w-5 flex-shrink-0 animate-spin"
         ></span>
         <span>發起提案</span>
@@ -689,8 +780,13 @@ const reviewProjectId = (approve) => {
       <button
         v-if="latestLog?.status === -1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
+        @click="handleSubmit"
       >
-        送出
+        <span
+          v-show="requestLoading"
+          class="i-heroicons-arrow-path-20-solid h-5 w-5 flex-shrink-0 animate-spin"
+        ></span>
+        <span>送出</span>
       </button>
     </div>
   </div>
