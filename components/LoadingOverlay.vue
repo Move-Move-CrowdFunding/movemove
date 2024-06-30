@@ -29,7 +29,6 @@ const loading = useLoadingStore()
   </transition>
 </template>
 <style scoped>
-.fade-enter-active,
 .fade-leave-active {
   transition: all 1s ease;
 }
