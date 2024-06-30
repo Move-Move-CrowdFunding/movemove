@@ -141,7 +141,11 @@ const changeDate = (item) => {
   newTempData.value[item] = date.getTime() / 1000
   validateField(item)
 }
-if (!inAdmin) {
+if (
+  !latestLog?.status === 1 &&
+  newTempData.endDate > Math.ceil(new Date().getTime() / 1000) &&
+  !inAdmin
+) {
   changeDate('startDate')
   changeDate('endDate')
 }
@@ -152,7 +156,11 @@ const feedbackUpload = ref(null)
 // 提交表單
 const handleSubmit = () => {
   if (validateResult.value.success) {
-    emit('createProject', newTempData.value)
+    if (latestLog.value?.status === -1 && !inAdmin) {
+      emit('editProject')
+    } else if (inCreate) {
+      emit('createProject', newTempData.value)
+    }
   } else {
     validateResult.value.error.errors.forEach((error) => {
       errors.value[error.path[0]] = error.message
@@ -225,7 +233,7 @@ const uploadFile = async (item, file) => {
     })
 }
 
-const emit = defineEmits(['createProject'])
+const emit = defineEmits(['createProject', 'editProject', 'endProject'])
 
 // 審核說明按鈕讀取狀態
 const reviewProjectRejectLoading = ref(false)
@@ -585,7 +593,7 @@ const reviewProjectId = (approve) => {
               id="videoUrl"
               v-model="newTempData.videoUrl"
               type="text"
-              placeholder="請輸入影片網址"
+              placeholder="請輸入 YouTube影片網址"
               class="peer block w-full"
               :class="{ 'border-warning-500': errors.videoUrl }"
               :disabled="isDisable"
@@ -761,7 +769,7 @@ const reviewProjectId = (approve) => {
         </div>
       </div>
       <button
-        v-if="!latestLog?.status && !inAdmin"
+        v-if="inCreate"
         class="mx-auto mt-10 flex w-full items-center space-x-2.5 rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         @click="handleSubmit"
       >
@@ -772,10 +780,19 @@ const reviewProjectId = (approve) => {
         <span>發起提案</span>
       </button>
       <button
-        v-if="latestLog?.status === 1 && !inAdmin"
-        class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
+        v-if="
+          latestLog?.status === 1 &&
+          newTempData.endDate > Math.ceil(new Date().getTime() / 1000) &&
+          !inAdmin
+        "
+        class="mx-auto mt-10 flex w-full items-center space-x-2.5 rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
+        @click="emit('endProject')"
       >
-        結束提案
+        <span
+          v-show="requestLoading"
+          class="i-heroicons-arrow-path-20-solid h-5 w-5 flex-shrink-0 animate-spin"
+        ></span>
+        <span>結束提案</span>
       </button>
       <button
         v-if="latestLog?.status === -1 && !inAdmin"
