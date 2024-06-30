@@ -439,7 +439,7 @@ const reviewProjectId = (approve) => {
         </div>
       </div>
       <button
-        v-if="!latestLog?.status && !inAdmin"
+        v-if="inCreate"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
         @click="emit('createProject', newTempData)"
       >

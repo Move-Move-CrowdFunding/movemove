@@ -75,42 +75,43 @@ const editProject = async () => {
 }
 
 const endProject = async () => {
-  // loading.isGlobalLoading = true
-  // await getFetchData({
-  //   url: `/project/${route.params.id}`,
-  //   method: 'PATCH',
-  //   params: {
-  //     introduce: tempData.value.introduce,
-  //     teamName: tempData.value.teamName,
-  //     title: tempData.value.title,
-  //     email: tempData.value.email,
-  //     categoryKey: tempData.value.categoryKey,
-  //     phone: tempData.value.phone,
-  //     targetMoney: tempData.value.targetMoney,
-  //     content: tempData.value.content,
-  //     coverUrl: tempData.value.coverUrl,
-  //     describe: tempData.value.describe,
-  //     videoUrl: tempData.value.videoUrl,
-  //     startDate: tempData.value.startDate,
-  //     endDate: tempData.value.endDate,
-  //     relatedUrl: tempData.value.relatedUrl,
-  //     feedbackItem: tempData.value.feedbackItem,
-  //     feedbackUrl: tempData.value.feedbackUrl,
-  //     feedbackMoney: tempData.value.feedbackMoney,
-  //     feedbackDate: tempData.value.feedbackDate,
-  //     earlyEnd: true
-  //   }
-  // })
-  //   .then(async (res) => {
-  //     console.log(res)
-  //     // await getProject(route.params.id)
-  //     loading.isGlobalLoading = false
-  //   })
-  //   .catch((err) => {
-  //     console.log(err)
-  //     loading.isGlobalLoading = false
-  //   })
-  // loading.isGlobalLoading = false
+  loading.isGlobalLoading = true
+  await getFetchData({
+    url: `/project/${route.params.id}`,
+    method: 'PATCH',
+    params: {
+      introduce: tempData.value.introduce,
+      teamName: tempData.value.teamName,
+      title: tempData.value.title,
+      email: tempData.value.email,
+      categoryKey: tempData.value.categoryKey,
+      phone: tempData.value.phone,
+      targetMoney: tempData.value.targetMoney,
+      content: tempData.value.content,
+      coverUrl: tempData.value.coverUrl,
+      describe: tempData.value.describe,
+      videoUrl: tempData.value.videoUrl,
+      startDate: tempData.value.startDate,
+      endDate: Math.ceil(new Date().getTime() / 1000),
+      relatedUrl: tempData.value.relatedUrl,
+      feedbackItem: tempData.value.feedbackItem,
+      feedbackUrl: tempData.value.feedbackUrl,
+      feedbackMoney: tempData.value.feedbackMoney,
+      feedbackDate: tempData.value.feedbackDate,
+      earlyEnd: true
+    }
+  })
+    .then(async (res) => {
+      console.log(res)
+      await getProject(route.params.id)
+      loading.isGlobalLoading = false
+    })
+    .catch((err) => {
+      console.log(err)
+      loading.isGlobalLoading = false
+    })
+
+  loading.isGlobalLoading = false
 }
 
 onMounted(() => {
