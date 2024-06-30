@@ -65,7 +65,7 @@ const uploadFile = async (item) => {
     })
 }
 
-const emit = defineEmits(['createProject'])
+const emit = defineEmits(['createProject', 'editProject', 'endProject'])
 
 const reviewContent = ref('')
 const reviewProjectId = (approve) => {
@@ -448,12 +448,14 @@ const reviewProjectId = (approve) => {
       <button
         v-if="latestLog?.status === 1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-warning-500 py-2 text-lg font-bold text-white hover:bg-warning-300 lg:w-96"
+        @click="emit('endProject')"
       >
         結束提案
       </button>
       <button
         v-if="latestLog?.status === -1 && !inAdmin"
         class="mx-auto mt-10 block w-full rounded-lg bg-secondary-2 py-2 text-lg font-bold text-white hover:bg-primary-1 lg:w-96"
+        @click="emit('editProject')"
       >
         送出
       </button>
