@@ -57,12 +57,13 @@ const emit = defineEmits(['showSponsorList'])
         </div>
       </div>
       <div class="ml-auto shrink-0 text-right">
-        <button
+        <NuxtLink
           v-if="data.state === 'rejected'"
-          class="h-10 w-10 rounded-full bg-secondary-2 text-white duration-100 hover:bg-primary-1"
+          :to="`/member/my-projects/${data.id}`"
+          class="block flex h-10 w-10 items-center justify-center rounded-full bg-secondary-2 text-white duration-100 hover:bg-primary-1"
         >
-          <Icon name="mdi:edit" color="white" width="24" height="24" />
-        </button>
+          <Icon name="mdi:edit" color="white" width="24" height="24" class="" />
+        </NuxtLink>
         <div
           v-else-if="data.state === 'ongoing' && data.startDate * 1000 >= new Date().getTime()"
           class="text-primary-1"

@@ -96,7 +96,6 @@ const dateInput = computed(() => {
 
 // 審核說明驗證
 const reviewSchema = z.string().min(1, '請填寫審核說明')
-const reviewContent = ref('')
 
 // 是否在 admin，是 admin 就不用做這些驗證
 const validateIfNeeded = (schema, data) => {
@@ -142,7 +141,7 @@ const changeDate = (item) => {
   validateField(item)
 }
 if (
-  !latestLog?.status === 1 &&
+  !latestLog.value?.status === 1 &&
   newTempData.endDate > Math.ceil(new Date().getTime() / 1000) &&
   !inAdmin
 ) {
@@ -239,6 +238,7 @@ const emit = defineEmits(['createProject', 'editProject', 'endProject'])
 const reviewProjectRejectLoading = ref(false)
 const reviewProjectApproveLoading = ref(false)
 
+const reviewContent = ref('')
 const reviewProjectId = (approve) => {
   if (approve === -1) reviewProjectRejectLoading.value = true
   if (approve === 1) reviewProjectApproveLoading.value = true
@@ -507,7 +507,10 @@ const reviewProjectId = (approve) => {
                 @focus="validateField('describe')"
                 @input="validateField('describe')"
               ></textarea>
-              <TextCounter v-if="!inAdmin" :count="newTempData.describe.length" />
+              <TextCounter
+                v-if="latestLog.value?.status === -1 && !inAdmin"
+                :count="newTempData.describe.length"
+              />
             </div>
 
             <p v-if="errors.describe" :class="errorTextClass">
@@ -577,7 +580,10 @@ const reviewProjectId = (approve) => {
                 @focus="validateField('content')"
                 @input="validateField('content')"
               ></textarea>
-              <TextCounter v-if="!inAdmin" :count="newTempData.content.length" />
+              <TextCounter
+                v-if="latestLog.value?.status === -1 && !inAdmin"
+                :count="newTempData.content.length"
+              />
             </div>
             <p v-if="errors.content" :class="errorTextClass">
               {{ errors.content }}
