@@ -74,6 +74,8 @@ const toggleFollow = async (id) => {
 }
 
 onMounted(() => {
+  loading.isGlobalLoading = true
+
   nextTick(async () => {
     await getProjects()
   })
