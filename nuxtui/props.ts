@@ -6,6 +6,7 @@ export const formGroupConfig = {
     required: "after:content-['*'] !after:text-warning-500"
   },
   error: 'text-warning-500 peer-invalid:visible',
+  help: 'mt-2 !text-xs text-gray-500',
   default: {
     size: 'lg'
   }

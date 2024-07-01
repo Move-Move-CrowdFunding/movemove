@@ -39,7 +39,6 @@ const emit = defineEmits(['showSponsorList'])
           {{ dayjs(data.startDate * 1000).format('YYYY/MM/DD') }} -
           {{ dayjs(data.endDate * 1000).format('YYYY/MM/DD') }}
         </div>
-        <p class="leading-normal">回饋：$100 - 限量精美小熊維尼</p>
         <div class="flex flex-col items-center gap-x-4 gap-y-2 lg:flex-row">
           <div class="relative flex w-full rounded-full bg-neutral-100 text-xs lg:max-w-[400px]">
             <div
