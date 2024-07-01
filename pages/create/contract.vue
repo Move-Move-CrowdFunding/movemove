@@ -5,6 +5,8 @@ const contractOneChecked = ref(false)
 const contractTwoChecked = ref(false)
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
+  loading.isGlobalLoading = true
+
   if (!isLogin.isLogin) {
     await isLogin.checkLogin()
     if (!isLogin.isLogin) {

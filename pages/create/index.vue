@@ -10,7 +10,9 @@ import whyImage6 from '~/assets/images/projects/why6.png'
 const loading = useLoadingStore()
 
 onMounted(() => {
-  loading.isGlobalLoading = false
+  setTimeout(() => {
+    loading.isGlobalLoading = false
+  }, 300)
 })
 </script>
 

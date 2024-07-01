@@ -53,96 +53,87 @@ const changePage = (page) => {
 </script>
 <template>
   <div class="py-10 lg:py-20">
-    <pre>{{ newItems }}</pre>
     <h1 class="container mb-6 text-3xl sm:text-4xl lg:mb-10">贊助記錄</h1>
-    <UAccordion v-if="items?.length" multiple :items="items" class="accordionStyle container">
-      <template #default="{ item, open }">
-        <UButton color="gray" variant="ghost" class="mt-2 p-0">
-          <div
-            class="relative flex w-full flex-col-reverse items-stretch gap-2 bg-secondary-2 px-3 py-4 text-white sm:flex-row lg:gap-4"
-          >
-            <div class="mr-auto text-left">
-              <div class="items-center gap-2 sm:flex">
-                <NuxtLink
-                  :to="`/projects/${item.project._id}`"
-                  class="shrink text-lg font-bold hover:underline hover:underline-offset-2 sm:line-clamp-1 lg:text-xl"
-                >
-                  {{ item.project.title }}
-                </NuxtLink>
-              </div>
-              <div class="mt-2 flex items-center gap-3">
-                <span class="rounded-full bg-primary-1 px-2 py-0.5 text-xs">{{
-                  categoryKeys[item.project.categoryKey].name
-                }}</span>
-                <p v-if="item.project.feedbackItem && item.isNeedFeedback" class="text-sm sm:mt-0">
-                  回饋：{{ item.project.feedbackItem }}
-                </p>
-                <p v-else-if="!item.project.feedbackItem">無回饋品</p>
-                <p v-else>不寄送回饋品</p>
-              </div>
+    <div v-if="items?.length">
+      <div v-for="item in items" :key="item._id" class="container mb-3">
+        <div
+          class="divA relative flex w-full flex-col-reverse items-stretch gap-2 bg-secondary-2 px-3 py-4 text-white sm:flex-row lg:gap-4"
+        >
+          <div class="mr-auto text-left">
+            <div class="items-center gap-2 sm:flex">
+              <NuxtLink
+                :to="`/projects/${item.project._id}`"
+                class="shrink text-lg font-bold hover:underline hover:underline-offset-2 sm:line-clamp-1 lg:text-xl"
+              >
+                {{ item.project.title }}
+              </NuxtLink>
             </div>
-            <div
-              class="flex w-full shrink-0 items-center justify-between gap-4 sm:w-auto sm:flex-col sm:items-end sm:text-end"
-            >
-              <div class="text-xs">
-                {{ dayjs.unix(item.createTime).format('YYYY/MM/DD HH:mm:ss') }}
-              </div>
-              <div class="font-bold">NT$ {{ item.money }}</div>
-            </div>
-            <div class="absolute bottom-0 right-0 p-3 sm:relative">
-              <UIcon
-                name="i-heroicons-chevron-right-20-solid"
-                class="ms-auto h-5 w-5 transform transition-transform duration-200"
-                :class="[open && 'rotate-90']"
-              />
+            <div class="mt-2 flex items-center gap-3">
+              <span class="rounded-full bg-primary-1 px-2 py-0.5 text-xs">{{
+                categoryKeys[item.project.categoryKey].name
+              }}</span>
+              <p v-if="item.project.feedbackItem && item.isNeedFeedback" class="text-sm sm:mt-0">
+                回饋：{{ item.project.feedbackItem }}
+              </p>
+              <p v-else-if="!item.project.feedbackItem">無回饋品</p>
+              <p v-else>不寄送回饋品</p>
             </div>
           </div>
-        </UButton>
-      </template>
-      <template #item="{ item }">
-        <div
-          v-if="item.isNeedFeedback"
-          class="border-2 border-secondary-2 bg-white px-3 py-4 text-base"
-        >
-          <div>
-            <template v-if="item.isNeedFeedback">
-              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+          <div
+            class="flex w-full shrink-0 items-center justify-between gap-4 sm:w-auto sm:flex-col sm:items-end sm:text-end"
+          >
+            <div class="text-xs">
+              {{ dayjs.unix(item.createTime).format('YYYY/MM/DD HH:mm:ss') }}
+            </div>
+            <div class="font-bold">NT$ {{ item.money }}</div>
+          </div>
+          <input :id="`checkbox-${item._id}`" type="checkbox" class="hidden" />
+          <label
+            :for="`checkbox-${item._id}`"
+            class="cursor-pointer p-3 hover:text-primary-1 sm:relative"
+            :disabled="!item.isNeedFeedback"
+          >
+            <UIcon
+              name="i-heroicons-chevron-right-20-solid"
+              class="ms-auto h-8 w-8 transform transition-transform duration-200"
+              :class="{ 'text-secondary-2': !item.isNeedFeedback }"
+            />
+          </label>
+        </div>
+
+        <div v-if="item.isNeedFeedback" class="divB border-2 border-secondary-2 bg-white text-base">
+          <div class=" ">
+            <ul v-if="item.isNeedFeedback" class="px-4 py-3">
+              <li class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
                 <div class="font-bold">收件人</div>
                 <div class="sm:col-span-3 lg:col-span-5">{{ item.receiver }}</div>
-              </div>
-              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+              </li>
+              <li class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
                 <div class="font-bold">寄件地址</div>
                 <div class="sm:col-span-3 lg:col-span-5">{{ item.address }}</div>
-              </div>
-              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+              </li>
+              <li class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
                 <div class="font-bold">連絡電話</div>
                 <div class="sm:col-span-3 lg:col-span-5">{{ item.receiverPhone }}</div>
-              </div>
-              <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
+              </li>
+              <li class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
                 <div class="font-bold">電子郵件</div>
                 <div class="sm:col-span-3 lg:col-span-5">{{ item.email }}</div>
-              </div>
+              </li>
               <div class="mb-2 grid gap-x-4 sm:mb-3 sm:grid-cols-4 lg:grid-cols-6">
                 <div class="font-bold">預計寄送日期</div>
                 <div class="sm:col-span-3 lg:col-span-5">
                   {{ dayjs.unix(item.feedBackDate).format('YYYY/MM/DD') }}
                 </div>
               </div>
-            </template>
+            </ul>
           </div>
         </div>
-      </template>
-    </UAccordion>
+      </div>
+    </div>
+
     <EmptyState v-else />
-    <!-- <div v-if="items?.length" class="mt-5 flex items-center justify-center">
-      <UPagination
-        v-model="pn"
-        :page-count="pageSize"
-        :total="totalCount"
-        :model-value="pn"
-        @click="updateUrl"
-      />
-    </div> -->
+
     <Pagination
       v-if="items?.length"
       container-class="container flex items-center justify-center py-10 lg:py-20"
@@ -154,18 +145,21 @@ const changePage = (page) => {
 </template>
 
 <style scoped lang="scss">
-.quick-example {
+.divB {
   display: grid;
-  border-radius: 0.5rem;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 500ms;
+  transition: grid-template-rows 300ms;
 }
-.quick-example > table {
+.divB > div {
   overflow: hidden;
 }
-.quick-example-group:hover {
-  .quick-example {
-    grid-template-rows: 1fr;
-  }
+.divA input[type='checkbox'] + label {
+  transition: 300ms;
+}
+.divA input[type='checkbox']:checked + label {
+  transform: rotate(90deg);
+}
+.divA:has(input[type='checkbox']:checked) + .divB {
+  grid-template-rows: 1fr;
 }
 </style>
