@@ -15,6 +15,7 @@
   "dependencies": {
     "@nuxt/ui": "^2.16.0",
     "@pinia/nuxt": "^0.5.1",
+    "@popperjs/core": "^2.11.8",
     "@vueuse/components": "^10.9.0",
     "@vueuse/core": "^10.9.0",
     "@vueuse/nuxt": "^10.9.0",
