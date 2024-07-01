@@ -1,7 +1,7 @@
 export default defineNuxtRouteMiddleware(() => {
   const loading = useLoadingStore()
 
-  loading.isGlobalLoading = true
+  loading.isGlobalLoading = false
   // setTimeout(() => {
   //   loading.isGlobalLoading = false
   // }, 300)

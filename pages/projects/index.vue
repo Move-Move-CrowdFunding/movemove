@@ -44,13 +44,16 @@ const getProjects = async () => {
       apiProject.value = res.results
       pagination.value = res.pagination
       searching.searching = false
-      isLoading.value = false
-      loading.isGlobalLoading = false
+      // isLoading.value = false
+      // loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)
+      // isLoading.value = false
+      // loading.isGlobalLoading = false
+    })
+    .finally(() => {
       isLoading.value = false
-      loading.isGlobalLoading = false
     })
 }
 const changePage = (page) => {
@@ -74,7 +77,7 @@ const toggleFollow = async (id) => {
 }
 
 onMounted(() => {
-  loading.isGlobalLoading = true
+  loading.isGlobalLoading = false
 
   nextTick(async () => {
     await getProjects()
@@ -126,13 +129,18 @@ onMounted(() => {
       </select>
     </div>
     <LoadingDataState v-if="isLoading" :is-loading="isLoading" />
-    <ul v-else-if="apiProject?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <li v-for="project in apiProject" :key="project.id">
-        <ProjectCard :project="project" @follow="toggleFollow" />
-      </li>
-    </ul>
 
-    <EmptyState v-else />
+    <transition name="fade">
+      <ul
+        v-if="apiProject?.length > 0"
+        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        <li v-for="project in apiProject" :key="project.id">
+          <ProjectCard :project="project" @follow="toggleFollow" />
+        </li>
+      </ul>
+    </transition>
+    <EmptyState v-if="apiProject?.length === 0 && !isLoading" />
     <Pagination
       v-if="apiProject?.length && !isLoading"
       container-class="container flex items-center justify-center py-10 lg:py-20"
@@ -147,4 +155,12 @@ onMounted(() => {
 /* *{
   outline: 1px solid #A00
 } */
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
