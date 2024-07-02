@@ -127,7 +127,7 @@ onMounted(() => {
     <div class="container grid gap-6 pb-10 lg:grid-cols-12 lg:py-20 xl:grid-cols-3">
       <div class="lg:col-span-7 xl:col-span-2">
         <h3 class="mb-4 text-xl lg:text-2xl">提案介紹</h3>
-        <p class="mb-6">{{ project.content }}</p>
+        <div class="mb-6" v-html="project.content"></div>
         <img :src="project.coverUrl" alt="" />
         <iframe
           v-if="project.videoUrl"

@@ -1,6 +1,7 @@
 <script setup>
 import dayjs from 'dayjs'
 import { z } from 'zod'
+import TheCkeditor from '~/components/TheCkeditor.client.vue'
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
 import { regPhone } from '~/utils/regex'
 
@@ -570,7 +571,7 @@ const reviewProjectId = (approve) => {
               <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
             </label>
             <div class="relative">
-              <textarea
+              <!-- <textarea
                 id="content"
                 v-model="newTempData.content"
                 placeholder="請輸入提案說明, 至少 350 字"
@@ -579,7 +580,12 @@ const reviewProjectId = (approve) => {
                 :disabled="isDisable"
                 @focus="validateField('content')"
                 @input="validateField('content')"
-              ></textarea>
+              ></textarea> -->
+              <TheCkeditor
+                v-model="newTempData.content"
+                :disabled="isDisable"
+                :on-editor-blur="validateField('content')"
+              ></TheCkeditor>
               <TextCounter
                 v-if="latestLog.value?.status === -1 && !inAdmin"
                 :count="newTempData.content.length"

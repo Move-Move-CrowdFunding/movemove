@@ -13,6 +13,8 @@
     "*.{js,vue}": "eslint --cache --fix"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^42.0.0",
+    "@ckeditor/ckeditor5-vue": "^6.0.0",
     "@nuxt/ui": "^2.16.0",
     "@pinia/nuxt": "^0.5.1",
     "@popperjs/core": "^2.11.8",
