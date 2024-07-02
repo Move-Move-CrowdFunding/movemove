@@ -5,6 +5,8 @@ const contractOneChecked = ref(false)
 const contractTwoChecked = ref(false)
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
+  loading.isGlobalLoading = true
+
   if (!isLogin.isLogin) {
     await isLogin.checkLogin()
     if (!isLogin.isLogin) {
@@ -12,7 +14,13 @@ const checkPermission = async () => {
     }
   }
 }
+
+const platformUrl = ref('')
+
 onMounted(() => {
+  if (process.client) {
+    platformUrl.value = location.origin
+  }
   loading.isGlobalLoading = true
   nextTick(() => {
     checkPermission()
@@ -26,7 +34,7 @@ onMounted(() => {
     <div class="bg-secondary-5 py-10">
       <h1 class="text-center text-2xl font-bold">提案者合約</h1>
       <p class="container">
-        提案者為辦理群眾募資，向 本平台 租借 https://localhost.com
+        提案者為辦理群眾募資，向 本平台 租借 {{ platformUrl }}
         網域之群眾募資網頁空間，向第三人提出贊助要約，其雙方權利與義務等之相關事宜如下述，提案者完成提案、或勾選「同意提案契約書」時，即視為已閱讀、暸解、並同意以下所有約定條款的所有內容。
       </p>
     </div>
