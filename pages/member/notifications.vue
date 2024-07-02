@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
 const loading = useLoadingStore()
+const WS = useWSStore()
 
 interface NotificationItem {
   id: string
@@ -65,6 +66,15 @@ onMounted(() => {
     loading.isGlobalLoading = false
   })
 })
+
+watch(
+  () => WS.isChange,
+  () => {
+    if (WS.isChange) {
+      getNotifications()
+    }
+  }
+)
 </script>
 <template>
   <div class="py-10 lg:py-20">

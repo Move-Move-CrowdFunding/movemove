@@ -12,6 +12,8 @@ export const useIsLoginStore = defineStore('isLogin', () => {
         console.log(res.message)
         // alert((res as ResponseData).message)
         isLogin.value = true
+
+        await useWSStore().connection()
         await getUserData()
       })
       .catch((err) => {

@@ -8,6 +8,7 @@ definePageMeta({
 
 const isLogin = useIsLoginStore()
 const loading = useLoadingStore()
+const WS = useWSStore()
 
 const currentView = ref('login')
 const requestLoading = ref(false)
@@ -81,6 +82,8 @@ const submitLogin = async () => {
       const { token, auth } = (res as ResponseData).results
       useCookie('userToken').value = token
       isLogin.getUserData()
+      await WS.connection()
+      WS.socket.emit('getUnRead')
       alert((res as ResponseData).message)
       await navigateTo(auth ? '/admin' : '/')
       loading.isGlobalLoading = false

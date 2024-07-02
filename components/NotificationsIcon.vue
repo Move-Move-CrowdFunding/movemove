@@ -1,10 +1,17 @@
-<script setup lange="ts">
-defineProps({
-  count: {
-    type: Number,
-    default: 0
-  }
+<script setup lang="ts">
+const WS = useWSStore()
+
+onMounted(async () => {
+  await nextTick()
+  WS.getUnRead()
 })
+const count = computed(() => WS.count || 0)
+// defineProps({
+//   count: {
+//     type: Number,
+//     default: 0
+//   }
+// })
 </script>
 <template>
   <UButton

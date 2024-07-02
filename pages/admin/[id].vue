@@ -62,6 +62,8 @@ const getProjectItem = async (id: string) => {
 
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
+  console.log('確認登入', isLogin.userData.auth)
+
   if (!isLogin.isLogin) {
     await isLogin.checkLogin()
     if (!isLogin.isLogin) {

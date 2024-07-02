@@ -12,6 +12,7 @@ const checkPermission = async () => {
     if (!isLogin.isLogin) {
       await navigateTo('/login')
     }
+    loading.isGlobalLoading = false
   }
 }
 
