@@ -8,15 +8,20 @@ interface NotificationItem {
   id: string
   content: string
   createTime: number
+  isRead: boolean
   project: {
     id: string
     title: string
     coverUrl: string
+    userId: string
   }
 }
 
 const pageNo = ref(1)
-const pageSize = computed(() => route.query.pageSize * 1 || 10)
+const pageSize = computed(() => {
+  const size = Number(route.query.pageSize)
+  return isNaN(size) ? 10 : size
+})
 const responsePagination = ref({
   count: 0,
   hasNext: false,
@@ -30,7 +35,9 @@ const { $dateformat } = useNuxtApp()
 
 const isLogin = useIsLoginStore()
 
-const tempUser = ref({})
+const tempUser = ref({
+  id: null
+})
 
 const notificationsList: Ref<Partial<NotificationItem>[]> = ref([])
 
@@ -63,7 +70,7 @@ const getTempUser = (data: any) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
 }
 
-const changePage = (page) => {
+const changePage = (page: number) => {
   pageNo.value = page
   getNotifications()
 }
@@ -109,7 +116,7 @@ const renderContent = (content: string | undefined, projectTitle: string | undef
           class="relative top-0 flex-shrink-0 pb-6 [&:first-child>*>*:first-child]:top-[calc(50%_-_12px)] [&:last-child>*>*:first-child]:h-[calc(50%_-_12px)] [&:only-child>*>*:first-child]:hidden"
         >
           <NuxtLink
-            :to="`/${item.project.userId === tempUser.id ? 'member/my-' : ''}projects/${item?.project?.id}`"
+            :to="`/${item.project?.userId === tempUser?.id ? 'member/my-' : ''}projects/${item?.project?.id}`"
           >
             <div class="absolute left-1 hidden h-full border-l-2 border-neutral-200 md:block"></div>
             <div
