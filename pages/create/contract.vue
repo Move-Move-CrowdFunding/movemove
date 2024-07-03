@@ -5,28 +5,30 @@ const contractOneChecked = ref(false)
 const contractTwoChecked = ref(false)
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
-  loading.isGlobalLoading = true
+  // loading.isGlobalLoading = true
 
   if (!isLogin.isLogin) {
     await isLogin.checkLogin()
     if (!isLogin.isLogin) {
       await navigateTo('/login')
     }
-    loading.isGlobalLoading = false
+    // loading.isGlobalLoading = false
   }
 }
 
 const platformUrl = ref('')
 
 onMounted(() => {
+  // loading.isGlobalLoading = true
   if (process.client) {
     platformUrl.value = location.origin
   }
-  loading.isGlobalLoading = true
-  nextTick(() => {
-    checkPermission()
+  nextTick(async () => {
+    await checkPermission()
+    setTimeout(() => {
+      loading.isGlobalLoading = false
+    }, 300)
   })
-  loading.isGlobalLoading = false
 })
 </script>
 <template>

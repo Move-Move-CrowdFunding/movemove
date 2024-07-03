@@ -8,5 +8,6 @@
     "css",
     "scss",
     "vue"
-  ]
+  ],
+  "ssr":false
 }
