@@ -1,5 +1,4 @@
 <script setup>
-const isLogin = useIsLoginStore()
 const loading = useLoadingStore()
 const route = useRoute()
 const results = ref([])
@@ -31,11 +30,13 @@ const getFollowing = async () => {
     loading.isGlobalLoading = false
   } catch (error) {
     console.log(error)
-    loading.isGlobalLoading = false
   }
 }
 
 const toggleFollow = async (id) => {
+  loading.isGlobalLoading = true
+
+  console.log(id)
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
@@ -52,24 +53,6 @@ const changePage = (page) => {
   pageNo.value = page
   getFollowing()
 }
-
-const checkPermission = async () => {
-  if (!isLogin.isLogin) {
-    await isLogin.checkLogin()
-    if (!isLogin.isLogin) {
-      await navigateTo('/login')
-      return
-    }
-  }
-  getFollowing()
-  loading.isGlobalLoading = false
-}
-
-onMounted(() => {
-  nextTick(() => {
-    checkPermission()
-  })
-})
 </script>
 <template>
   <div class="container py-10 lg:py-20">

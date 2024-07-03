@@ -91,7 +91,7 @@ const dateInput = computed(() => {
   return {
     startDate: inCreate ? tenDaysLater : dateFormat(newTempData.value.startDate),
     endDate: inCreate ? sevenDaysAfterTenDays : dateFormat(newTempData.value.endDate),
-    feedbackDate: newTempData.value.feedbackDate ? dateFormat(newTempData.value.feedbackDate) : ''
+    feedbackDate: dateFormat(newTempData.value.feedbackDate) || ''
   }
 })
 
@@ -372,15 +372,7 @@ const reviewProjectId = (approve) => {
                 <span class="w-6 flex-shrink-0 text-center">{{
                   item?.status === 0 ? '➖' : item?.status === -1 ? '✖️' : '✔️'
                 }}</span>
-                <div>
-                  {{
-                    item?.status === 0
-                      ? '送出審核'
-                      : item?.status === -1
-                        ? item.content
-                        : '審核通過'
-                  }}
-                </div>
+                <div>{{ item.content }}</div>
               </li>
             </ul>
           </div>
