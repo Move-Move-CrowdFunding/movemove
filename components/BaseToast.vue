@@ -52,7 +52,7 @@ const emit = defineEmits(['confirm'])
     <footer class="flex-shrink-0">
       <slot name="footer">
         <button
-          class="mx-auto flex w-full cursor-pointer items-center justify-center rounded-lg bg-secondary-2 py-2 text-center text-lg font-bold text-white transition-all hover:bg-primary-2"
+          class="mx-auto flex w-full cursor-pointer items-center justify-center rounded-lg bg-secondary-2 py-2 text-center text-lg text-white transition-all hover:bg-primary-2"
           @click="emit('confirm')"
         >
           確定

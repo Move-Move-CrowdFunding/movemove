@@ -4,34 +4,73 @@ import { VueFinalModal } from 'vue-final-modal'
 defineProps({
   title: {
     type: String,
-    default: '標題'
+    default: ''
+  },
+  msg: {
+    type: String,
+    default: ''
+  },
+  confirmEvent: {
+    type: Function,
+    default: () => {}
+  },
+  cancelEvent: {
+    type: Function,
+    default: () => {}
   }
 })
 
-const emit = defineEmits(['confirm'])
+// const emit = defineEmits(['confirm'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', modelValue: boolean): void
+  (e: 'confirm'): void
+  (e: 'cancel'): void
+}>()
 </script>
 
 <template>
   <VueFinalModal
     class="flex items-center justify-center"
+    content-transition="vfm-fade"
     content-class="flex flex-col w-full max-w-[400px] mx-4 p-4 bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-lg space-y-2"
+    @update:model-value="(val) => emit('update:modelValue', val)"
   >
-    <slot name="header">
-      <div v-if="title" class="flex items-center justify-between">
-        <h2 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-          {{ title }}
-        </h2>
-        <div class="absolute right-0 flex items-center justify-end">
-          <div
-            class="h-6 w-6 flex-shrink-0 bg-neutral-900 [mask-image:url('~/assets/icons/close-line.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:contain]"
-          ></div>
+    <header class="flex-shrink-0">
+      <slot name="header">
+        <div class="relative flex w-full items-center justify-between text-center">
+          <h2
+            v-if="title"
+            class="w-full text-center text-base leading-6 text-neutral-900 dark:text-white"
+          >
+            {{ title }}
+          </h2>
+          <!-- <Icon class="mx-auto" :class="iconClass" :name="icon" width="60" height="60" /> -->
         </div>
-      </div>
-    </slot>
-    <slot />
-    <slot name="footer">
-      <button class="ml-auto mt-1 rounded-lg border px-2" @click="emit('confirm')">確定</button>
-    </slot>
+      </slot>
+    </header>
+    <div
+      class="flex flex-1 items-center justify-center overflow-y-auto py-4 text-center text-lg text-neutral-700"
+    >
+      <slot
+        ><p>{{ msg }}</p>
+      </slot>
+    </div>
+    <footer class="flex flex-shrink-0 space-x-4">
+      <slot name="footer">
+        <button
+          class="mx-auto flex w-full cursor-pointer items-center justify-center rounded-lg bg-secondary-2 py-2 text-center text-lg text-white transition-all hover:bg-primary-2"
+          @click="confirmEvent"
+        >
+          確定
+        </button>
+        <button
+          class="mx-auto flex w-full cursor-pointer items-center justify-center rounded-lg border border-secondary-2 bg-neutral-50 py-2 text-center text-lg text-secondary-2 transition-all hover:border-primary-2 hover:bg-primary-2 hover:text-neutral-50"
+          @click="emit('update:modelValue', false)"
+        >
+          取消
+        </button>
+      </slot>
+    </footer>
   </VueFinalModal>
 </template>
 
