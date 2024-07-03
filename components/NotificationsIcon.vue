@@ -1,9 +1,10 @@
 <script setup lang="ts">
 const WS = useWSStore()
 
-onMounted(async () => {
-  await nextTick()
-  WS.getUnRead()
+onMounted(() => {
+  nextTick(() => {
+    WS.unRead()
+  })
 })
 const count = computed(() => WS.count || 0)
 // defineProps({

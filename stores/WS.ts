@@ -15,15 +15,18 @@ export const useWSStore = defineStore('WS', () => {
   }
 
   function getUnRead() {
+    socket.value.emit('getUnRead')
+    unRead()
+  }
+
+  function unRead() {
     if (socket.value) {
       socket.value.on('unRead', (data: any) => {
-        console.log('WS', data)
-
         isChange.value = data.results.isChange || false
         count.value = data.results.count || 0
       })
     }
   }
 
-  return { socket, connection, getUnRead, count, isChange }
+  return { socket, connection, getUnRead, unRead, count, isChange }
 })
