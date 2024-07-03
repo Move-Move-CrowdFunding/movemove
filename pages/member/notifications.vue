@@ -72,18 +72,31 @@ onMounted(() => {
   nextTick(async () => {
     await checkPermission()
     await getNotifications()
+    WS.getUnRead()
     loading.isGlobalLoading = false
   })
 })
 
 watch(
   () => WS.isChange,
-  () => {
+  async () => {
     if (WS.isChange) {
-      getNotifications()
+      await getNotifications()
+      WS.getUnRead()
     }
   }
 )
+
+const renderContent = (content: string | undefined, projectTitle: string | undefined): string => {
+  if (!content || !projectTitle) return ''
+  return String(content).replace(
+    projectTitle,
+    `
+  <span class="text-secondary-2 underline md:no-underline md:hover:underline">
+    ${projectTitle}
+  </span>`
+  )
+}
 </script>
 <template>
   <div class="py-10 lg:py-20">
@@ -116,9 +129,10 @@ watch(
                 <p class="text-neutral-600">
                   {{ item?.createTime ? $dateformat(item?.createTime) : '' }}
                 </p>
-                <h3 class="line-clamp-4 sm:text-[18px] md:line-clamp-2">
-                  {{ item.content }}
-                </h3>
+                <h3
+                  class="line-clamp-4 sm:text-[18px] md:line-clamp-2"
+                  v-html="renderContent(item.content, item?.project?.title)"
+                />
               </div>
             </div>
           </NuxtLink>
