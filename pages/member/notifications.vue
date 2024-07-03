@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
+const route = useRoute()
 const loading = useLoadingStore()
 const WS = useWSStore()
 
@@ -14,6 +15,8 @@ interface NotificationItem {
   }
 }
 
+const pageNo = ref(1)
+const pageSize = computed(() => route.query.pageSize * 1 || 10)
 const responsePagination = ref({
   count: 0,
   hasNext: false,
@@ -44,9 +47,10 @@ const checkPermission = async () => {
 
 const getNotifications = async () => {
   await getFetchData({
-    url: '/member/notification',
+    url: `/member/notification?pageNo=${pageNo.value}&pageSize=${pageSize.value}`,
     method: 'GET'
   }).then((res) => {
+    console.log(res)
     notificationsList.value = (res as ResponseData).results
     responsePagination.value.count = (res as ResponseData).pagination.count
     responsePagination.value.hasNext = (res as ResponseData).pagination.hasNext
@@ -59,6 +63,12 @@ const getNotifications = async () => {
 const getTempUser = (data: any) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
 }
+
+const changePage = (page) => {
+  pageNo.value = page
+  getNotifications()
+}
+
 onMounted(() => {
   nextTick(async () => {
     await checkPermission()
@@ -90,9 +100,10 @@ watch(
             <div class="absolute left-1 hidden h-full border-l-2 border-neutral-200 md:block"></div>
             <div
               class="absolute -left-[1px] -top-6 bottom-0 my-auto hidden h-3 w-3 items-center justify-center rounded-full bg-neutral-200 md:flex"
+              :class="{ 'bg-primary-1': !item.isRead }"
             ></div>
             <div
-              class="group -top-[3px] ml-0 grid grid-cols-1 items-center overflow-hidden rounded-3xl border border-primary-1 md:ml-7 lg:grid-cols-4"
+              class="group -top-[3px] ml-0 grid grid-cols-1 items-center overflow-hidden rounded-3xl border border-primary-3 duration-300 hover:border-primary-1 hover:shadow md:ml-7 lg:grid-cols-4"
             >
               <div class="relative h-56 w-full overflow-hidden lg:h-full">
                 <div
@@ -105,10 +116,7 @@ watch(
                   {{ item?.createTime ? $dateformat(item?.createTime) : '' }}
                 </p>
                 <h3 class="line-clamp-4 sm:text-[18px] md:line-clamp-2">
-                  你發起的「<span
-                    class="text-secondary-2 underline md:no-underline md:hover:underline"
-                    >{{ item?.project?.title }}</span
-                  >」已通過審核開始募資！
+                  {{ item.content }}
                 </h3>
               </div>
             </div>
@@ -116,22 +124,13 @@ watch(
         </li>
       </ul>
       <EmptyState v-else />
-      <div
-        v-if="notificationsList && notificationsList.length > responsePagination.pageSize"
-        class="flex items-center justify-center pt-6"
-      >
-        <UPagination
-          v-model="responsePagination.pageNo"
-          :ui="{
-            base: 'min-w-[44px] justify-center',
-            rounded: 'rounded-md'
-          }"
-          size="xl"
-          class="space-x-4"
-          :page-count="responsePagination.pageSize"
-          :total="notificationsList.length"
-        />
-      </div>
+      <Pagination
+        v-if="notificationsList?.length"
+        container-class="container flex items-center justify-center py-10 lg:py-20"
+        size="xl"
+        :pagination="responsePagination"
+        @page="changePage"
+      />
     </div>
   </div>
 </template>
