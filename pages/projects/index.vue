@@ -1,4 +1,5 @@
 <script setup>
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 const route = useRoute()
 const router = useRouter()
 
@@ -7,9 +8,11 @@ const searching = useHeaderStore()
 
 const loading = useLoadingStore()
 const isLoading = ref(false) // 局部載入狀態
-const modal = ref(false)
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
 const confirm = () => {
-  modal.value = false
+  toggleToast.value = false
 }
 
 const pageNo = ref(1)
@@ -37,20 +40,6 @@ watch(
     await getProjects()
   }
 )
-const modalStatus = (icon, iconClass, msg) => {
-  return { icon, iconClass, msg }
-}
-const errorStatus = {
-  icon: 'simple-line-icons:close',
-  iconClass: 'text-warning-500',
-  msg: ''
-}
-const successStatus = {
-  icon: 'simple-line-icons:check',
-  iconClass: 'text-warning-700',
-  msg: ''
-}
-const modalStyle = ref({})
 
 const getProjects = async () => {
   isLoading.value = true
@@ -63,8 +52,12 @@ const getProjects = async () => {
       pagination.value = res.pagination
     })
     .catch((err) => {
-      modal.value = true
-      modalStyle.value = modalStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       isLoading.value = false
@@ -85,12 +78,16 @@ const toggleFollow = async (id) => {
   })
     .then((res) => {
       getProjects()
-      modal.value = true
-      modalStyle.value = modalStatus(successStatus.icon, successStatus.iconClass, res.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
     })
     .catch((err) => {
-      modal.value = true
-      modalStyle.value = modalStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       isLoading.value = false
@@ -165,10 +162,10 @@ onMounted(() => {
       @page="changePage"
     />
     <BaseToast
-      v-model="modal"
-      :msg="modalStyle.msg"
-      :icon-class="modalStyle.iconClass"
-      :icon="modalStyle.icon"
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
       @confirm="confirm"
     ></BaseToast>
   </div>

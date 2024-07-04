@@ -4,6 +4,7 @@ import { z } from 'zod'
 import TheCkeditor from '~/components/TheCkeditor.client.vue'
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
 import { regPhone } from '~/utils/regex'
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
@@ -188,6 +189,12 @@ const rejectModal = () => {
   toggleRejectModal.value = true
 }
 
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 // 驗證檔案上傳
 const uploadFile = async (item, file) => {
   const formData = new FormData()
@@ -234,7 +241,12 @@ const uploadFile = async (item, file) => {
       }
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       feedbackUploadLoading.value = false
@@ -265,7 +277,12 @@ const reviewProjectId = (approve) => {
       reloadNuxtApp()
     })
     .catch((err) => {
-      console.log('err', err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       reviewProjectLoading.value = false
@@ -845,6 +862,13 @@ const reviewProjectId = (approve) => {
       msg="否准此筆提案？"
       :confirm-event="() => reviewProjectId(-1)"
     ></BaseDialog>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

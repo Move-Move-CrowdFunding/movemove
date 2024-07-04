@@ -1,16 +1,23 @@
 <script setup>
 import { useDayjs } from '#dayjs'
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 const loading = useLoadingStore()
 
 const dayjs = useDayjs()
 const route = useRoute()
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 const getProject = async () => {
   await getFetchData({
     url: `/project/${route.params.id}`,
     method: 'GET'
   })
     .then((res) => {
-      console.log(res)
       project.value = res.results
       diffInSeconds.value = project.value.endDate - new Date() / 1000
       days.value = Math.floor(diffInSeconds.value / (24 * 3600))
@@ -18,7 +25,12 @@ const getProject = async () => {
       loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
       loading.isGlobalLoading = false
     })
 }
@@ -53,18 +65,25 @@ const project = ref({
 })
 
 const toggleFollow = async (id) => {
-  loading.isGlobalLoading = true
-
+  // loading.isGlobalLoading = true
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
     params: { projectId: id }
   })
     .then((res) => {
-      console.log(res)
       getProject()
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
+    })
 }
 
 const diffInSeconds = ref(0)
@@ -260,5 +279,12 @@ onMounted(() => {
         </button>
       </div>
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>

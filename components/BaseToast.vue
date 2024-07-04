@@ -12,11 +12,11 @@ defineProps({
   },
   icon: {
     type: String,
-    default: 'simple-line-icons:check'
+    default: 'simple-line-icons:close'
   },
   iconClass: {
     type: String,
-    default: ''
+    default: 'text-warning-500'
   }
 })
 
