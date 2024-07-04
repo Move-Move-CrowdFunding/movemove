@@ -41,8 +41,8 @@ const getProject = async () => {
     results.value = JSON.parse(JSON.stringify(res))
     loading.isGlobalLoading = false
   } catch (error) {
-    console.log(error)
-    loading.isGlobalLoading = false
+    alert(error.message)
+    await navigateTo('/projects')
   }
 }
 
@@ -132,8 +132,8 @@ const supportProject = async () => {
       loading.isGlobalLoading = false
     }
   } catch (error) {
-    console.log(error)
-    loading.isGlobalLoading = false
+    alert(error.message)
+    await navigateTo(`/projects/${id}`)
   }
 }
 
@@ -153,9 +153,21 @@ watch(isOverDonationTarget, (val) => {
   }
 })
 
+const checkPermission = async () => {
+  if (!userStore.isLogin) {
+    await userStore.checkLogin()
+    if (!userStore.isLogin) {
+      await navigateTo('/login')
+      return
+    }
+  }
+  await getProject()
+  loading.isGlobalLoading = false
+}
+
 onMounted(() => {
   nextTick(() => {
-    getProject()
+    checkPermission()
   })
 })
 </script>
