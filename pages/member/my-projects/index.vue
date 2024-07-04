@@ -1,5 +1,5 @@
 <script setup>
-// import { _10 } from '#tailwind-config/theme/aspectRatio';
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 const loading = useLoadingStore()
 
 const isLogin = useIsLoginStore()
@@ -52,6 +52,12 @@ const states = ref([
 
 const selectedState = ref('ongoing')
 
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
   loading.isGlobalLoading = true
 
@@ -70,7 +76,8 @@ const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
       loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
       loading.isGlobalLoading = false
     })
 }
@@ -85,14 +92,15 @@ const getSponsorList = async (project, page = 1, pageSize = 8) => {
     method: 'GET'
   })
     .then((res) => {
-      console.log(res)
+      // console.log(res)
       sponsorList.value = res.results
       sponsorPagination.value = res.pagination
 
       loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
       loading.isGlobalLoading = false
     })
 }
@@ -202,6 +210,13 @@ onMounted(() => {
       :pagination="pagination"
       @page="changePage"
     />
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

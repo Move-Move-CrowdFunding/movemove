@@ -46,6 +46,7 @@ const getProject = async () => {
     results.value = JSON.parse(JSON.stringify(res))
     loading.isGlobalLoading = false
   } catch (error) {
+    // alert(error.message)
     toggleToast.value = true
     toastStyle.value = toastStatus(
       errorStatus.icon,
@@ -53,6 +54,7 @@ const getProject = async () => {
       error?.msg || errorStatus.msg
     )
     loading.isGlobalLoading = false
+    await navigateTo('/projects')
   }
 }
 
@@ -145,6 +147,7 @@ const supportProject = async () => {
     toggleToast.value = true
     toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, error.message)
     loading.isGlobalLoading = false
+    await navigateTo(`/projects/${id}`)
   }
 }
 
@@ -164,9 +167,21 @@ watch(isOverDonationTarget, (val) => {
   }
 })
 
+const checkPermission = async () => {
+  if (!userStore.isLogin) {
+    await userStore.checkLogin()
+    if (!userStore.isLogin) {
+      await navigateTo('/login')
+      return
+    }
+  }
+  await getProject()
+  loading.isGlobalLoading = false
+}
+
 onMounted(() => {
   nextTick(() => {
-    getProject()
+    checkPermission()
   })
 })
 </script>

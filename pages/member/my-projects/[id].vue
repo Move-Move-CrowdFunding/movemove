@@ -1,4 +1,5 @@
 <script setup>
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 const route = useRoute()
 const loading = useLoadingStore()
 const tempData = ref()
@@ -15,26 +16,33 @@ const checkPermission = async () => {
   await getProject(route.params.id)
 }
 
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 const getProject = async (id) => {
   await getFetchData({
     url: `/member/project/${id}`,
     method: 'GET'
   })
     .then((res) => {
-      console.log(res)
+      // console.log(res)
       tempData.value = res.results
       loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
       loading.isGlobalLoading = false
     })
 }
 
 const editProject = async () => {
   loading.isGlobalLoading = true
-  console.log('editProject')
-  console.log(tempData)
+  // console.log('editProject')
+  // console.log(tempData)
   await getFetchData({
     url: `/project/${route.params.id}`,
     method: 'PATCH',
@@ -60,15 +68,18 @@ const editProject = async () => {
     }
   })
     .then(async (res) => {
-      console.log(res)
+      // console.log(res)
       // await getProject(route.params.id)
-      alert(res.message)
+      // alert(res.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       await navigateTo('/member/my-projects')
       loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
-      alert(err.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.message)
+      // alert(err.message)
       loading.isGlobalLoading = false
     })
   loading.isGlobalLoading = false
@@ -102,12 +113,14 @@ const endProject = async () => {
     }
   })
     .then(async (res) => {
-      console.log(res)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       await getProject(route.params.id)
       loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
       loading.isGlobalLoading = false
     })
 
@@ -130,6 +143,13 @@ onMounted(() => {
       @edit-project="editProject"
       @end-project="endProject"
     />
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
     <!-- <pre>{{tempData}}</pre> -->
   </div>
 </template>

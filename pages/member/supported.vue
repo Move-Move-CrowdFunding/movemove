@@ -2,6 +2,7 @@
 import { useDayjs } from '#dayjs'
 import { toastStatus, errorStatus } from '@/utils/modalSetting'
 const loading = useLoadingStore()
+const isLogin = useIsLoginStore()
 
 const dayjs = useDayjs()
 const route = useRoute()
@@ -57,6 +58,22 @@ watch(
 const changePage = (page) => {
   pageNo.value = page
 }
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
+  }
+  await getSupportData()
+  loading.isGlobalLoading = false
+}
+onMounted(() => {
+  nextTick(() => {
+    checkPermission()
+  })
+})
 </script>
 <template>
   <div class="py-10 lg:py-20">
