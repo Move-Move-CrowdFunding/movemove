@@ -24,7 +24,7 @@ const getProject = async () => {
       hours.value = Math.floor((diffInSeconds.value % (24 * 3600)) / 3600)
       loading.isGlobalLoading = false
     })
-    .catch((err) => {
+    .catch(async (err) => {
       toggleToast.value = true
       toastStyle.value = toastStatus(
         errorStatus.icon,
@@ -32,6 +32,7 @@ const getProject = async () => {
         err.msg || errorStatus.msg
       )
       loading.isGlobalLoading = false
+      await navigateTo('/projects')
     })
 }
 const project = ref({
