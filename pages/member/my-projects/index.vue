@@ -156,12 +156,6 @@ onMounted(() => {
       <div class="mb-6 flex items-start gap-4">
         <div>
           <h2 class="text-2xl font-bold text-white">{{ sponsorProject.title }}贊助名單</h2>
-          <button
-            v-if="sponsorList?.length"
-            class="shrink-0 self-center rounded bg-primary-1 px-2 py-0.5 text-white"
-          >
-            匯出
-          </button>
         </div>
         <button class="ml-auto text-white" @click="hideSponsorList">
           <Icon name="mdi:close" height="32" width="32" />
