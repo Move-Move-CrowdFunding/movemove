@@ -1,8 +1,15 @@
 <script setup>
 import { useDayjs } from '#dayjs'
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 const dayjs = useDayjs()
 const route = useRoute()
 const loading = useLoadingStore()
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
 
 const project = ref({
   teamName: '',
@@ -35,8 +42,8 @@ const getProject = async () => {
       loading.isGlobalLoading = false
     })
     .catch(async (err) => {
-      console.log(err)
-      alert(err.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
       await navigateTo('/index')
       loading.isGlobalLoading = false
     })
@@ -99,5 +106,12 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>

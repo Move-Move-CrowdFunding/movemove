@@ -1,5 +1,6 @@
 <script setup>
 import { useDayjs } from '#dayjs'
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 const loading = useLoadingStore()
 
 const dayjs = useDayjs()
@@ -17,13 +18,18 @@ const items = computed(() => {
   }
 })
 
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 const pageNo = ref(1)
 const pageSize = computed(() => route.query.pageSize * 1 || 10)
 
 const pagination = ref({})
 const getSupportData = async () => {
   loading.isGlobalLoading = true
-
   try {
     const results = await getFetchData({
       url: `/member/support?pageNo=${pageNo.value}&pageSize=${pageSize.value}`
@@ -31,8 +37,9 @@ const getSupportData = async () => {
     SupportData.value = results
     pagination.value = results.pagination
     loading.isGlobalLoading = false
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    toggleToast.value = true
+    toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
     loading.isGlobalLoading = false
   }
 }
@@ -141,6 +148,14 @@ const changePage = (page) => {
       :pagination="pagination"
       @page="changePage"
     />
+
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

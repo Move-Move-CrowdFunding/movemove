@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { z } from 'zod'
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 import { formGroupConfig, inputConfig } from '~/nuxtui/props'
 import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'custom-layout'
 })
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
 
 const isLogin = useIsLoginStore()
 const loading = useLoadingStore()
@@ -38,7 +45,9 @@ const submitSignUp = async () => {
   })
     .then((res) => {
       console.log('res', res)
-      alert((res as ResponseData).message)
+      // alert((res as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       currentView.value = 'login'
       registerForm.value = {
         nickName: '',
@@ -48,7 +57,9 @@ const submitSignUp = async () => {
     })
     .catch((err) => {
       console.log(err)
-      alert((err as ResponseData).message)
+      // alert((err as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
     })
     .finally(() => {
       requestLoading.value = false
@@ -84,13 +95,17 @@ const submitLogin = async () => {
       isLogin.getUserData()
       await WS.connection()
       WS.socket.emit('getUnRead')
-      alert((res as ResponseData).message)
+      // alert((res as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       await navigateTo(auth ? '/admin' : '/')
       loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)
-      alert((err as ResponseData).message)
+      // alert((err as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
       loading.isGlobalLoading = false
     })
     .finally(() => {
@@ -117,11 +132,15 @@ const forgotPassword = () => {
     }
   })
     .then((res) => {
-      alert((res as ResponseData).message)
+      // alert((res as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       forgotPasswordForm.value.email = ''
     })
     .catch((err) => {
-      alert((err as ResponseData).message)
+      // alert((err as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
     })
     .finally(() => {
       requestLoading.value = false
@@ -305,6 +324,13 @@ onMounted(() => {
         </div>
       </template>
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 <style lang="scss" scoped>
