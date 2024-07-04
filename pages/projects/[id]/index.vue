@@ -17,9 +17,9 @@ const getProject = async () => {
       hours.value = Math.floor((diffInSeconds.value % (24 * 3600)) / 3600)
       loading.isGlobalLoading = false
     })
-    .catch((err) => {
-      console.log(err)
-      loading.isGlobalLoading = false
+    .catch(async (err) => {
+      alert(err.message)
+      await navigateTo('/projects')
     })
 }
 const project = ref({

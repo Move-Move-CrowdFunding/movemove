@@ -30,7 +30,6 @@ const getHomeData = async () => {
 }
 
 const toggleFollow = async (id) => {
-  console.log(id)
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
@@ -38,9 +37,13 @@ const toggleFollow = async (id) => {
   })
     .then((res) => {
       console.log(res)
+      alert(res.message)
       getHomeData()
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      console.log(err)
+      alert(err.message)
+    })
 }
 
 onMounted(() => {
