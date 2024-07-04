@@ -2,7 +2,7 @@ import { useModal } from 'vue-final-modal'
 import { BaseToast } from '#components'
 
 export default () => {
-  const { open, patchOptions } = useModal({
+  const { open, close, patchOptions } = useModal({
     component: BaseToast
   })
 
@@ -10,5 +10,10 @@ export default () => {
     patchOptions({ attrs })
     open()
   }
-  return { show }
+
+  const hide = (attrs: any) => {
+    patchOptions({ attrs })
+    close()
+  }
+  return { show, hide }
 }
