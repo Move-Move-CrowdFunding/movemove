@@ -150,6 +150,10 @@ if (
   changeDate('startDate')
   changeDate('endDate')
 }
+if (inCreate) {
+  changeDate('startDate')
+  changeDate('endDate')
+}
 
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
@@ -293,6 +297,7 @@ const reviewProjectId = (approve) => {
 <template>
   <div>
     <div class="container py-10">
+      <pre>{{ newTempData }}</pre>
       <div v-if="latestLog?.status === -1" class="border-2 border-secondary-2">
         <div class="flex justify-between bg-secondary-2 p-3 font-bold text-white">
           <span>審核失敗</span>
