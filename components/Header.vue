@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { menuMapList } from '@/utils/menuMaps'
-import { getMemberNotificationUnread } from '@/apis/member'
+// import { getMemberNotificationUnread } from '@/apis/member'
 
 interface DropdownMenu {
   label: string
@@ -63,13 +63,24 @@ const searchJumpTo = () => {
   })
 }
 
+// watch(
+//   () => WS.socket,
+//   () => {
+//     // if (WS.socket && WS.socket.connected) {
+//     //   WS.socket.on('unRead', (data: any) => {
+//     //     notificationsCount.value = data.results.count
+//     //   })
+//     // }
+//   }
+// )
+
 onMounted(() => {
   nextTick(async () => {
-    if (isLogin.isLogin) {
-      const { data } = await getMemberNotificationUnread()
-      const { count } = data.value?.results
-      notificationsCount.value = count
-    }
+    // if (isLogin.isLogin) {
+    //   const { data } = await getMemberNotificationUnread()
+    //   const { count } = data.value?.results
+    //   notificationsCount.value = count
+    // }
   })
 })
 </script>

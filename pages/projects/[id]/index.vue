@@ -1,16 +1,24 @@
 <script setup>
 import { useDayjs } from '#dayjs'
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 const loading = useLoadingStore()
 
 const dayjs = useDayjs()
 const route = useRoute()
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = async () => {
+  toggleToast.value = false
+  await navigateTo('/projects')
+}
+
 const getProject = async () => {
   await getFetchData({
     url: `/project/${route.params.id}`,
     method: 'GET'
   })
     .then((res) => {
-      console.log(res)
       project.value = res.results
       diffInSeconds.value = project.value.endDate - new Date() / 1000
       days.value = Math.floor(diffInSeconds.value / (24 * 3600))
@@ -18,7 +26,13 @@ const getProject = async () => {
       loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
+      // alert(err.msg)
       loading.isGlobalLoading = false
     })
 }
@@ -53,18 +67,25 @@ const project = ref({
 })
 
 const toggleFollow = async (id) => {
-  loading.isGlobalLoading = true
-
+  // loading.isGlobalLoading = true
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
     params: { projectId: id }
   })
     .then((res) => {
-      console.log(res)
       getProject()
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
+    })
 }
 
 const diffInSeconds = ref(0)
@@ -127,7 +148,7 @@ onMounted(() => {
     <div class="container grid gap-6 pb-10 lg:grid-cols-12 lg:py-20 xl:grid-cols-3">
       <div class="lg:col-span-7 xl:col-span-2">
         <h3 class="mb-4 text-xl lg:text-2xl">提案介紹</h3>
-        <p class="mb-6">{{ project.content }}</p>
+        <div class="mb-6" v-html="project.content"></div>
         <img :src="project.coverUrl" alt="" />
         <iframe
           v-if="project.videoUrl"
@@ -260,5 +281,12 @@ onMounted(() => {
         </button>
       </div>
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>

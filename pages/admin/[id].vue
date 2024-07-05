@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ResponseData } from '~/types/response'
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 const loading = useLoadingStore()
 
 definePageMeta({
@@ -44,6 +45,12 @@ const pageTitle = usePageTitleStore()
 const route = useRoute()
 const { id } = route.params
 
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 const getProjectItem = async (id: string) => {
   await getFetchData({
     url: `/admin/projects/${id}`,
@@ -55,7 +62,12 @@ const getProjectItem = async (id: string) => {
       loading.isGlobalLoading = false
     })
     .catch((err: any) => {
-      console.log('err', err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || err.message
+      )
       loading.isGlobalLoading = false
     })
 }
@@ -91,6 +103,13 @@ onMounted(() => {
       </h2>
       <ProjectInfo :temp-data="projectItem" />
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 <style lang="scss" scoped>

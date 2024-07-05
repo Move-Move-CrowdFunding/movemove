@@ -1,6 +1,6 @@
 <script setup>
 import { z } from 'zod'
-
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 const route = useRoute()
 const id = computed(() => route.params.id) // project id
 const userStore = useIsLoginStore() // 會員資料
@@ -30,18 +30,30 @@ watch(
 
 const results = ref({}) // 專案完整資料
 const projectItem = computed(() => results.value.results || {}) // 專案資料
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = async () => {
+  toggleToast.value = false
+  await navigateTo(`/projects/${id.value}`)
+}
+
 // 取得專案資料
 const getProject = async () => {
   try {
     const res = await getFetchData({
       url: `/project/${id.value}`
     })
-    console.log(res)
-
     results.value = JSON.parse(JSON.stringify(res))
     loading.isGlobalLoading = false
   } catch (error) {
-    console.log(error)
+    // alert(error.message)
+    toggleToast.value = true
+    toastStyle.value = toastStatus(
+      errorStatus.icon,
+      errorStatus.iconClass,
+      error?.msg || errorStatus.msg
+    )
     loading.isGlobalLoading = false
   }
 }
@@ -109,8 +121,8 @@ const loading = useLoadingStore()
 const supportProject = async () => {
   try {
     // console.log(event.data)
-    console.log('loading:', loading)
-    loading.isGlobalLoading = true
+    // console.log('loading:', loading)
+    // loading.isGlobalLoading = true
     const res = await getFetchData({
       url: `/payment/support`,
       method: 'POST',
@@ -133,6 +145,8 @@ const supportProject = async () => {
     }
   } catch (error) {
     console.log(error)
+    toggleToast.value = true
+    toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, error.msg)
     loading.isGlobalLoading = false
   }
 }
@@ -153,9 +167,21 @@ watch(isOverDonationTarget, (val) => {
   }
 })
 
+const checkPermission = async () => {
+  if (!userStore.isLogin) {
+    await userStore.checkLogin()
+    if (!userStore.isLogin) {
+      await navigateTo('/login')
+      return
+    }
+  }
+  await getProject()
+  loading.isGlobalLoading = false
+}
+
 onMounted(() => {
   nextTick(() => {
-    getProject()
+    checkPermission()
   })
 })
 </script>
@@ -351,6 +377,13 @@ onMounted(() => {
         <input :value="supportResults.ItemDesc" type="hidden" name="ItemDesc" />
       </form>
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

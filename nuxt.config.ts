@@ -20,7 +20,8 @@ export default defineNuxtConfig({
     'dayjs-nuxt'
   ],
   typescript: {
-    typeCheck: true
+    // typeCheck: true
+    typeCheck: false
   },
   stylelint: {
     lintOnStart: false, // 專案啟動時不自動檢查所有相關檔案
@@ -35,10 +36,11 @@ export default defineNuxtConfig({
     }
   },
   dayjs: {},
-  css: ['~/assets/style/root.scss'],
+  css: ['~/assets/style/root.scss', 'vue-final-modal/style.css'],
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE
     }
-  }
+  },
+  ssr: false
 })

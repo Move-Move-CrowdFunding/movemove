@@ -1,8 +1,10 @@
 <script setup>
 import dayjs from 'dayjs'
 import { z } from 'zod'
+import TheCkeditor from '~/components/TheCkeditor.client.vue'
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
 import { regPhone } from '~/utils/regex'
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
@@ -90,7 +92,7 @@ const dateInput = computed(() => {
   return {
     startDate: inCreate ? tenDaysLater : dateFormat(newTempData.value.startDate),
     endDate: inCreate ? sevenDaysAfterTenDays : dateFormat(newTempData.value.endDate),
-    feedbackDate: dateFormat(newTempData.value.feedbackDate) || ''
+    feedbackDate: newTempData.value.feedbackDate ? dateFormat(newTempData.value.feedbackDate) : ''
   }
 })
 
@@ -148,6 +150,10 @@ if (
   changeDate('startDate')
   changeDate('endDate')
 }
+if (inCreate) {
+  changeDate('startDate')
+  changeDate('endDate')
+}
 
 const coverUpload = ref(null)
 const feedbackUpload = ref(null)
@@ -177,6 +183,21 @@ const errorTextClass = 'mt-2 text-sm text-warning-500 peer-invalid:visible'
 
 const coverUploadLoading = ref(false)
 const feedbackUploadLoading = ref(false)
+
+const toggleApproveModal = ref(false)
+const toggleRejectModal = ref(false)
+const approveModal = () => {
+  toggleApproveModal.value = true
+}
+const rejectModal = () => {
+  toggleRejectModal.value = true
+}
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
 
 // 驗證檔案上傳
 const uploadFile = async (item, file) => {
@@ -224,7 +245,12 @@ const uploadFile = async (item, file) => {
       }
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       feedbackUploadLoading.value = false
@@ -255,7 +281,12 @@ const reviewProjectId = (approve) => {
       reloadNuxtApp()
     })
     .catch((err) => {
-      console.log('err', err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       reviewProjectLoading.value = false
@@ -371,7 +402,15 @@ const reviewProjectId = (approve) => {
                 <span class="w-6 flex-shrink-0 text-center">{{
                   item?.status === 0 ? '➖' : item?.status === -1 ? '✖️' : '✔️'
                 }}</span>
-                <div>{{ item.content }}</div>
+                <div>
+                  {{
+                    item?.status === 0
+                      ? '送出審核'
+                      : item?.status === -1
+                        ? item.content
+                        : '審核通過'
+                  }}
+                </div>
               </li>
             </ul>
           </div>
@@ -570,7 +609,7 @@ const reviewProjectId = (approve) => {
               <span class="text-red-700" :class="{ hidden: isDisable }">*</span>
             </label>
             <div class="relative">
-              <textarea
+              <!-- <textarea
                 id="content"
                 v-model="newTempData.content"
                 placeholder="請輸入提案說明, 至少 350 字"
@@ -579,7 +618,12 @@ const reviewProjectId = (approve) => {
                 :disabled="isDisable"
                 @focus="validateField('content')"
                 @input="validateField('content')"
-              ></textarea>
+              ></textarea> -->
+              <TheCkeditor
+                v-model="newTempData.content"
+                :disabled="isDisable"
+                :on-editor-blur="validateField('content')"
+              ></TheCkeditor>
               <TextCounter
                 v-if="latestLog.value?.status === -1 && !inAdmin"
                 :count="newTempData.content.length"
@@ -753,7 +797,7 @@ const reviewProjectId = (approve) => {
             <button
               class="ml-auto flex !min-h-[50px] items-center justify-center space-x-2.5 rounded-lg bg-warning-500 px-3 py-2 text-center"
               :disabled="!validateResult.success"
-              @click="reviewProjectId(-1)"
+              @click="rejectModal"
             >
               <span
                 v-if="reviewProjectRejectLoading"
@@ -763,7 +807,7 @@ const reviewProjectId = (approve) => {
             </button>
             <button
               class="flex !min-h-[50px] items-center justify-center space-x-2.5 rounded-lg bg-warning-500 px-3 py-2 text-center"
-              @click="reviewProjectId(1)"
+              @click="approveModal"
             >
               <span
                 v-if="reviewProjectApproveLoading"
@@ -812,6 +856,23 @@ const reviewProjectId = (approve) => {
         <span>送出</span>
       </button>
     </div>
+    <BaseDialog
+      v-model="toggleApproveModal"
+      msg="核准此筆提案？"
+      :confirm-event="() => reviewProjectId(1)"
+    ></BaseDialog>
+    <BaseDialog
+      v-model="toggleRejectModal"
+      msg="否准此筆提案？"
+      :confirm-event="() => reviewProjectId(-1)"
+    ></BaseDialog>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

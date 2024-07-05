@@ -1,8 +1,17 @@
 <script setup>
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
+
+const isLogin = useIsLoginStore()
 const loading = useLoadingStore()
 const route = useRoute()
 const results = ref([])
 const followingList = computed(() => results.value.results || [])
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
 
 const pageNo = ref(1)
 const pageSize = computed(() => route.query.pageSize * 1 || 6)
@@ -28,15 +37,14 @@ const getFollowing = async () => {
     })
     pagination.value = results.value.pagination
     loading.isGlobalLoading = false
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    toggleToast.value = true
+    toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+    loading.isGlobalLoading = false
   }
 }
 
 const toggleFollow = async (id) => {
-  loading.isGlobalLoading = true
-
-  console.log(id)
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
@@ -46,13 +54,34 @@ const toggleFollow = async (id) => {
       console.log(res)
       getFollowing()
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+    })
 }
 
 const changePage = (page) => {
   pageNo.value = page
   getFollowing()
 }
+
+const checkPermission = async () => {
+  if (!isLogin.isLogin) {
+    await isLogin.checkLogin()
+    if (!isLogin.isLogin) {
+      await navigateTo('/login')
+      return
+    }
+  }
+  getFollowing()
+  loading.isGlobalLoading = false
+}
+
+onMounted(() => {
+  nextTick(() => {
+    checkPermission()
+  })
+})
 </script>
 <template>
   <div class="container py-10 lg:py-20">
@@ -79,5 +108,12 @@ const changePage = (page) => {
       :pagination="pagination"
       @page="changePage"
     />
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>

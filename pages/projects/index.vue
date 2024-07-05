@@ -1,4 +1,5 @@
 <script setup>
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 const route = useRoute()
 const router = useRouter()
 
@@ -6,7 +7,13 @@ const searchKeyword = useHeaderStore()
 const searching = useHeaderStore()
 
 const loading = useLoadingStore()
-const isLoading = ref(false)
+const isLoading = ref(false) // 局部載入狀態
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
 
 const pageNo = ref(1)
 const pagination = ref({})
@@ -43,14 +50,14 @@ const getProjects = async () => {
     .then((res) => {
       apiProject.value = res.results
       pagination.value = res.pagination
-      searching.searching = false
-      // isLoading.value = false
-      // loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
-      // isLoading.value = false
-      // loading.isGlobalLoading = false
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       isLoading.value = false
@@ -62,18 +69,28 @@ const changePage = (page) => {
 }
 
 const toggleFollow = async (id) => {
-  loading.isGlobalLoading = true
-
+  isLoading.value = true
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
     params: { projectId: id }
   })
     .then((res) => {
-      console.log(res)
       getProjects()
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
     })
-    .catch((err) => console.log(err))
+    .catch((err) => {
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
+    })
+    .finally(() => {
+      isLoading.value = false
+    })
 }
 
 onMounted(() => {
@@ -148,6 +165,13 @@ onMounted(() => {
       :pagination="pagination"
       @page="changePage"
     />
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 
