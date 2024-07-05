@@ -4,6 +4,7 @@ import { z } from 'zod'
 import TheCkeditor from '~/components/TheCkeditor.client.vue'
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
 import { regPhone } from '~/utils/regex'
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
@@ -179,6 +180,21 @@ const errorTextClass = 'mt-2 text-sm text-warning-500 peer-invalid:visible'
 const coverUploadLoading = ref(false)
 const feedbackUploadLoading = ref(false)
 
+const toggleApproveModal = ref(false)
+const toggleRejectModal = ref(false)
+const approveModal = () => {
+  toggleApproveModal.value = true
+}
+const rejectModal = () => {
+  toggleRejectModal.value = true
+}
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 // 驗證檔案上傳
 const uploadFile = async (item, file) => {
   const formData = new FormData()
@@ -225,7 +241,12 @@ const uploadFile = async (item, file) => {
       }
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       feedbackUploadLoading.value = false
@@ -256,7 +277,12 @@ const reviewProjectId = (approve) => {
       reloadNuxtApp()
     })
     .catch((err) => {
-      console.log('err', err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
     })
     .finally(() => {
       reviewProjectLoading.value = false
@@ -767,7 +793,7 @@ const reviewProjectId = (approve) => {
             <button
               class="ml-auto flex !min-h-[50px] items-center justify-center space-x-2.5 rounded-lg bg-warning-500 px-3 py-2 text-center"
               :disabled="!validateResult.success"
-              @click="reviewProjectId(-1)"
+              @click="rejectModal"
             >
               <span
                 v-if="reviewProjectRejectLoading"
@@ -777,7 +803,7 @@ const reviewProjectId = (approve) => {
             </button>
             <button
               class="flex !min-h-[50px] items-center justify-center space-x-2.5 rounded-lg bg-warning-500 px-3 py-2 text-center"
-              @click="reviewProjectId(1)"
+              @click="approveModal"
             >
               <span
                 v-if="reviewProjectApproveLoading"
@@ -826,6 +852,23 @@ const reviewProjectId = (approve) => {
         <span>送出</span>
       </button>
     </div>
+    <BaseDialog
+      v-model="toggleApproveModal"
+      msg="核准此筆提案？"
+      :confirm-event="() => reviewProjectId(1)"
+    ></BaseDialog>
+    <BaseDialog
+      v-model="toggleRejectModal"
+      msg="否准此筆提案？"
+      :confirm-event="() => reviewProjectId(-1)"
+    ></BaseDialog>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

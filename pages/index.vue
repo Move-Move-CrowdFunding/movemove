@@ -1,4 +1,5 @@
 <script setup>
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 const isLogin = useIsLoginStore()
 const loading = useLoadingStore()
 
@@ -13,6 +14,12 @@ const hotNavigation = {
 
 const homeData = ref({})
 
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 // 取得提案列表
 const getHomeData = async () => {
   await getFetchData({
@@ -24,7 +31,8 @@ const getHomeData = async () => {
       loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
       loading.isGlobalLoading = false
     })
 }
@@ -36,13 +44,13 @@ const toggleFollow = async (id) => {
     params: { projectId: id }
   })
     .then((res) => {
-      console.log(res)
-      alert(res.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       getHomeData()
     })
     .catch((err) => {
-      console.log(err)
-      alert(err.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
     })
 }
 
@@ -353,6 +361,13 @@ onMounted(() => {
         </ul>
       </section>
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

@@ -1,8 +1,15 @@
 <script setup>
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 const router = useRouter()
 const isLogin = useIsLoginStore()
 const loading = useLoadingStore()
 const requestLoading = ref(false)
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
 
 const tempData = ref({
   introduce: '',
@@ -38,6 +45,8 @@ const createProject = async (tempData) => {
     })
     .catch((err) => {
       console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
     })
     .finally(() => {
       requestLoading.value = false
@@ -69,6 +78,13 @@ onMounted(() => {
       :request-loading="requestLoading"
       @create-project="createProject"
     />
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

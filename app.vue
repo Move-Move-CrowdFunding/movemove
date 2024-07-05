@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const modal = useModal()
+import { ModalsContainer } from 'vue-final-modal'
 
 // MobileMenu 打開時 body 加上 overflow-hidden
 const mobileState = useHeaderStore()
@@ -14,6 +14,6 @@ useHead({
   <LoadingOverlay />
   <NuxtLayout>
     <NuxtPage />
-    <UModals @close="modal.close()" />
+    <ModalsContainer />
   </NuxtLayout>
 </template>

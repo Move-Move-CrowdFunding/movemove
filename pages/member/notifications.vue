@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
 import type { ResponseData } from '~/types/response'
 const route = useRoute()
 const loading = useLoadingStore()
@@ -15,6 +16,12 @@ interface NotificationItem {
     coverUrl: string
     userId: string
   }
+}
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
 }
 
 const pageNo = ref(1)
@@ -56,15 +63,20 @@ const getNotifications = async () => {
   await getFetchData({
     url: `/member/notification?pageNo=${pageNo.value}&pageSize=${pageSize.value}`,
     method: 'GET'
-  }).then((res) => {
-    notificationsList.value = (res as ResponseData).results
-    responsePagination.value.count = (res as ResponseData).pagination.count
-    responsePagination.value.hasNext = (res as ResponseData).pagination.hasNext
-    responsePagination.value.hasPre = (res as ResponseData).pagination.hasPre
-    responsePagination.value.pageNo = (res as ResponseData).pagination.pageNo
-    responsePagination.value.pageSize = (res as ResponseData).pagination.pageSize
-    responsePagination.value.totalPage = (res as ResponseData).pagination.totalPage
   })
+    .then((res) => {
+      notificationsList.value = (res as ResponseData).results
+      responsePagination.value.count = (res as ResponseData).pagination.count
+      responsePagination.value.hasNext = (res as ResponseData).pagination.hasNext
+      responsePagination.value.hasPre = (res as ResponseData).pagination.hasPre
+      responsePagination.value.pageNo = (res as ResponseData).pagination.pageNo
+      responsePagination.value.pageSize = (res as ResponseData).pagination.pageSize
+      responsePagination.value.totalPage = (res as ResponseData).pagination.totalPage
+    })
+    .catch((err) => {
+      toggleToast.value = true
+      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+    })
 }
 const getTempUser = (data: any) => {
   tempUser.value = JSON.parse(JSON.stringify(data))
@@ -154,5 +166,13 @@ const renderContent = (content: string | undefined, projectTitle: string | undef
         @page="changePage"
       />
     </div>
+
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>

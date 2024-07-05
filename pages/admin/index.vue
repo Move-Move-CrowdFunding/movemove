@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { getAdminProjects } from '@/apis/admin'
+import { toastStatus, errorStatus } from '@/utils/modalSetting'
+import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'admin-layout'
 })
@@ -149,24 +150,42 @@ const formData = ref({
 
 const pending = ref(true)
 
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
+
 const getProjects = async (query: any) => {
   pending.value = true
+  await getFetchData({
+    url: '/admin/projects',
+    method: 'GET',
+    ...query
+  })
+    .then((res) => {
+      projectList.value = (res as ResponseData).results
 
-  const { data, error } = await getAdminProjects(query.value)
-  if (error.value) return
-
-  projectList.value = data.value?.results
-
-  pending.value = false
-
-  responsePagination.value.pageNo = parseInt(data.value?.pagination.pageNo)
-  responsePagination.value.pageSize = parseInt(data.value?.pagination.pageSize)
-  responsePagination.value.totalPage = parseInt(data.value?.pagination.totalPage)
-  responsePagination.value.count = parseInt(data.value?.pagination.count)
-  responsePagination.value.sortDesc = data.value?.pagination.sortDesc
-  responsePagination.value.search = data.value?.pagination.search
-
-  loading.isGlobalLoading = false
+      responsePagination.value.pageNo = parseInt((res as ResponseData).pagination.pageNo)
+      responsePagination.value.pageSize = parseInt((res as ResponseData).pagination.pageSize)
+      responsePagination.value.totalPage = parseInt((res as ResponseData).pagination.totalPage)
+      responsePagination.value.count = parseInt((res as ResponseData).pagination.count)
+      responsePagination.value.sortDesc = (res as ResponseData).pagination.sortDesc
+      responsePagination.value.search = (res as ResponseData).pagination.search
+    })
+    .catch((err) => {
+      console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.message || err.msg
+      )
+    })
+    .finally(() => {
+      pending.value = false
+      loading.isGlobalLoading = false
+    })
 }
 
 const changePage = (page: number) => {
@@ -394,6 +413,13 @@ onMounted(() => {
         @page="changePage"
       />
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle?.msg"
+      :icon-class="toastStyle?.iconClass"
+      :icon="toastStyle?.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 <style lang="scss">

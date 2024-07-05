@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { z } from 'zod'
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 import { formGroupConfig, inputConfig } from '~/nuxtui/props'
 import type { ResponseData } from '~/types/response'
 definePageMeta({
   layout: 'custom-layout'
 })
+
+const navigate = ref('')
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = async () => {
+  toggleToast.value = false
+  if (navigate.value) {
+    await navigateTo(navigate.value)
+  }
+}
 
 const isLogin = useIsLoginStore()
 const loading = useLoadingStore()
@@ -37,8 +48,9 @@ const submitSignUp = async () => {
     }
   })
     .then((res) => {
-      console.log('res', res)
-      alert((res as ResponseData).message)
+      // alert((res as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       currentView.value = 'login'
       registerForm.value = {
         nickName: '',
@@ -47,8 +59,13 @@ const submitSignUp = async () => {
       }
     })
     .catch((err) => {
-      console.log(err)
-      alert((err as ResponseData).message)
+      // alert((err as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || err.message
+      )
     })
     .finally(() => {
       requestLoading.value = false
@@ -67,8 +84,6 @@ const schemaLogin = z.object({
 const loginResult = computed(() => schemaLogin.safeParse(loginForm.value))
 
 const submitLogin = async () => {
-  loading.isGlobalLoading = true
-
   requestLoading.value = true
   await getFetchData({
     url: '/user/login',
@@ -84,14 +99,18 @@ const submitLogin = async () => {
       isLogin.getUserData()
       await WS.connection()
       WS.socket.emit('getUnRead')
-      alert((res as ResponseData).message)
-      await navigateTo(auth ? '/admin' : '/')
-      loading.isGlobalLoading = false
+
+      navigate.value = auth ? '/admin' : '/'
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
     })
     .catch((err) => {
-      console.log(err)
-      alert((err as ResponseData).message)
-      loading.isGlobalLoading = false
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || err.message
+      )
     })
     .finally(() => {
       requestLoading.value = false
@@ -117,11 +136,19 @@ const forgotPassword = () => {
     }
   })
     .then((res) => {
-      alert((res as ResponseData).message)
+      // alert((res as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       forgotPasswordForm.value.email = ''
     })
     .catch((err) => {
-      alert((err as ResponseData).message)
+      // alert((err as ResponseData).message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || err.message
+      )
     })
     .finally(() => {
       requestLoading.value = false
@@ -305,6 +332,13 @@ onMounted(() => {
         </div>
       </template>
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 <style lang="scss" scoped>
