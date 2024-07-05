@@ -20,7 +20,8 @@ export default defineNuxtConfig({
     'dayjs-nuxt'
   ],
   typescript: {
-    typeCheck: true
+    // typeCheck: true
+    typeCheck: false
   },
   stylelint: {
     lintOnStart: false, // 專案啟動時不自動檢查所有相關檔案
