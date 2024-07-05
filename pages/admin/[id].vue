@@ -63,7 +63,11 @@ const getProjectItem = async (id: string) => {
     })
     .catch((err: any) => {
       toggleToast.value = true
-      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || err.message
+      )
       loading.isGlobalLoading = false
     })
 }

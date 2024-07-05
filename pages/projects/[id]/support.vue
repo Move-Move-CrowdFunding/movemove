@@ -33,8 +33,9 @@ const projectItem = computed(() => results.value.results || {}) // 專案資料
 
 const toastStyle = ref({})
 const toggleToast = ref(false)
-const confirm = () => {
+const confirm = async () => {
   toggleToast.value = false
+  await navigateTo(`/projects/${id.value}`)
 }
 
 // 取得專案資料
@@ -54,7 +55,6 @@ const getProject = async () => {
       error?.msg || errorStatus.msg
     )
     loading.isGlobalLoading = false
-    await navigateTo('/projects')
   }
 }
 
@@ -144,10 +144,10 @@ const supportProject = async () => {
       loading.isGlobalLoading = false
     }
   } catch (error) {
+    console.log(error)
     toggleToast.value = true
-    toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, error.message)
+    toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, error.msg)
     loading.isGlobalLoading = false
-    await navigateTo(`/projects/${id}`)
   }
 }
 

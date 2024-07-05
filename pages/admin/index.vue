@@ -174,8 +174,13 @@ const getProjects = async (query: any) => {
       responsePagination.value.search = (res as ResponseData).pagination.search
     })
     .catch((err) => {
+      console.log(err)
       toggleToast.value = true
-      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.message)
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.message || err.msg
+      )
     })
     .finally(() => {
       pending.value = false

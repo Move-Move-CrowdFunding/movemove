@@ -7,10 +7,14 @@ definePageMeta({
   layout: 'custom-layout'
 })
 
+const navigate = ref('')
 const toastStyle = ref({})
 const toggleToast = ref(false)
-const confirm = () => {
+const confirm = async () => {
   toggleToast.value = false
+  if (navigate.value) {
+    await navigateTo(navigate.value)
+  }
 }
 
 const isLogin = useIsLoginStore()
@@ -44,7 +48,6 @@ const submitSignUp = async () => {
     }
   })
     .then((res) => {
-      console.log('res', res)
       // alert((res as ResponseData).message)
       toggleToast.value = true
       toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
@@ -56,10 +59,13 @@ const submitSignUp = async () => {
       }
     })
     .catch((err) => {
-      console.log(err)
       // alert((err as ResponseData).message)
       toggleToast.value = true
-      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || err.message
+      )
     })
     .finally(() => {
       requestLoading.value = false
@@ -78,8 +84,6 @@ const schemaLogin = z.object({
 const loginResult = computed(() => schemaLogin.safeParse(loginForm.value))
 
 const submitLogin = async () => {
-  loading.isGlobalLoading = true
-
   requestLoading.value = true
   await getFetchData({
     url: '/user/login',
@@ -95,18 +99,18 @@ const submitLogin = async () => {
       isLogin.getUserData()
       await WS.connection()
       WS.socket.emit('getUnRead')
-      // alert((res as ResponseData).message)
+
+      navigate.value = auth ? '/admin' : '/'
       toggleToast.value = true
       toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
-      await navigateTo(auth ? '/admin' : '/')
-      loading.isGlobalLoading = false
     })
     .catch((err) => {
-      console.log(err)
-      // alert((err as ResponseData).message)
       toggleToast.value = true
-      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
-      loading.isGlobalLoading = false
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || err.message
+      )
     })
     .finally(() => {
       requestLoading.value = false
@@ -140,7 +144,11 @@ const forgotPassword = () => {
     .catch((err) => {
       // alert((err as ResponseData).message)
       toggleToast.value = true
-      toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || err.message
+      )
     })
     .finally(() => {
       requestLoading.value = false

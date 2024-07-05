@@ -47,7 +47,6 @@ const createProject = async (tempData) => {
       console.log(err)
       toggleToast.value = true
       toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
-      router.push({ path: `/create/edit` })
     })
     .finally(() => {
       requestLoading.value = false

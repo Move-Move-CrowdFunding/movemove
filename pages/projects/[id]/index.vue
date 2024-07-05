@@ -8,8 +8,9 @@ const route = useRoute()
 
 const toastStyle = ref({})
 const toggleToast = ref(false)
-const confirm = () => {
+const confirm = async () => {
   toggleToast.value = false
+  await navigateTo('/projects')
 }
 
 const getProject = async () => {
@@ -24,15 +25,15 @@ const getProject = async () => {
       hours.value = Math.floor((diffInSeconds.value % (24 * 3600)) / 3600)
       loading.isGlobalLoading = false
     })
-    .catch(async (err) => {
+    .catch((err) => {
       toggleToast.value = true
       toastStyle.value = toastStatus(
         errorStatus.icon,
         errorStatus.iconClass,
         err.msg || errorStatus.msg
       )
+      // alert(err.msg)
       loading.isGlobalLoading = false
-      await navigateTo('/projects')
     })
 }
 const project = ref({

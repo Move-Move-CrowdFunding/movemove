@@ -1,9 +1,16 @@
 <script setup>
 import { z } from 'zod'
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 
 const tab = ref(1)
 const isLogin = useIsLoginStore()
 const loading = useLoadingStore()
+
+const toastStyle = ref({})
+const toggleToast = ref(false)
+const confirm = () => {
+  toggleToast.value = false
+}
 
 const tempUser = ref({})
 
@@ -24,7 +31,6 @@ const getTempUser = (data) => {
 const editUser = async () => {
   loading.isGlobalLoading = true
 
-  console.log('editUser')
   await getFetchData({
     url: '/user',
     method: 'PATCH',
@@ -32,12 +38,20 @@ const editUser = async () => {
   })
     .then((res) => {
       getTempUser(res.results)
-      alert(res.message)
+      // alert(res.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       isLogin.getUserData()
       loading.isGlobalLoading = false
     })
     .catch((err) => {
       console.log(err)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
       loading.isGlobalLoading = false
     })
 }
@@ -60,7 +74,8 @@ const changePassword = async () => {
   })
     .then((res) => {
       console.log(res)
-      alert(res.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
       tempPassword.value = {
         old: '',
         new: '',
@@ -70,7 +85,12 @@ const changePassword = async () => {
     })
     .catch((err) => {
       console.log(err)
-      alert(err.message)
+      toggleToast.value = true
+      toastStyle.value = toastStatus(
+        errorStatus.icon,
+        errorStatus.iconClass,
+        err.msg || errorStatus.msg
+      )
       loading.isGlobalLoading = false
     })
 }
@@ -486,6 +506,13 @@ onMounted(() => {
         </div>
       </div>
     </div>
+    <BaseToast
+      v-model="toggleToast"
+      :msg="toastStyle.msg"
+      :icon-class="toastStyle.iconClass"
+      :icon="toastStyle.icon"
+      @confirm="confirm"
+    ></BaseToast>
   </div>
 </template>
 

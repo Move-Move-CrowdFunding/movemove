@@ -42,6 +42,7 @@ const getProject = async () => {
       loading.isGlobalLoading = false
     })
     .catch(async (err) => {
+      console.log(err)
       toggleToast.value = true
       toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
       await navigateTo('/index')

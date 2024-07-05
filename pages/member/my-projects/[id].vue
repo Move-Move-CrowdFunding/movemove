@@ -18,8 +18,9 @@ const checkPermission = async () => {
 
 const toastStyle = ref({})
 const toggleToast = ref(false)
-const confirm = () => {
+const confirm = async () => {
   toggleToast.value = false
+  await navigateTo('/member/my-projects')
 }
 
 const getProject = async (id) => {
@@ -67,13 +68,12 @@ const editProject = async () => {
       feedbackDate: tempData.value.feedbackDate
     }
   })
-    .then(async (res) => {
+    .then((res) => {
       // console.log(res)
       // await getProject(route.params.id)
       // alert(res.message)
       toggleToast.value = true
       toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
-      await navigateTo('/member/my-projects')
       loading.isGlobalLoading = false
     })
     .catch((err) => {
