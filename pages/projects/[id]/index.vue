@@ -68,6 +68,7 @@ const project = ref({
 
 const toggleFollow = async (id) => {
   // loading.isGlobalLoading = true
+  loading.isLoadingOverlayData = true
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
@@ -85,6 +86,9 @@ const toggleFollow = async (id) => {
         errorStatus.iconClass,
         err.msg || errorStatus.msg
       )
+    })
+    .finally(() => {
+      loading.isLoadingOverlayData = false
     })
 }
 
@@ -123,7 +127,7 @@ onMounted(() => {
           <div class="space-y-2">
             <div>目標 {{ priceFormat(project.targetMoney) }}</div>
             <h2 class="text-4xl font-bold">{{ priceFormat(project.achievedMoney) }}</h2>
-            <div class="relative rounded-full bg-neutral-300">
+            <div class="relative overflow-hidden rounded-full bg-neutral-300">
               <div
                 class="h-5 max-w-full rounded-full bg-primary-2"
                 :style="{ width: `${(project.achievedMoney * 100) / project.targetMoney}%` }"

@@ -61,7 +61,6 @@ const getProjects = async () => {
     })
     .finally(() => {
       isLoading.value = false
-      loading.isGlobalLoading = false
     })
 }
 const changePage = (page) => {
@@ -70,7 +69,7 @@ const changePage = (page) => {
 }
 
 const toggleFollow = async (id) => {
-  isLoading.value = true
+  loading.isLoadingOverlayData = true
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
@@ -91,11 +90,12 @@ const toggleFollow = async (id) => {
     })
     .finally(() => {
       isLoading.value = false
+      loading.isLoadingOverlayData = false
     })
 }
 
 onMounted(() => {
-  loading.isGlobalLoading = true
+  loading.isGlobalLoading = false
 
   nextTick(async () => {
     await getProjects()
@@ -104,12 +104,12 @@ onMounted(() => {
 </script>
 <template>
   <div class="container py-10 lg:py-20">
-    <div class="mb-10 flex flex-wrap justify-center gap-4">
+    <div class="mb-10 flex flex-wrap justify-center space-x-6 lg:space-x-10">
       <button
         type="button"
-        class="border-b-2"
+        class="min-h-[42px] whitespace-nowrap border-b-2 transition-all hover:border-primary-1 hover:text-primary-1"
         :class="{
-          'border-primary-1': !selectedCategory,
+          'border-primary-1 text-primary-1': !selectedCategory,
           'border-transparent': selectedCategory
         }"
         @click="selectCategory(0)"
@@ -120,9 +120,9 @@ onMounted(() => {
         v-for="item in categoryKeys"
         :key="item"
         type="button"
-        class="border-b-2"
+        class="min-h-[42px] whitespace-nowrap border-b-2 transition-all hover:border-primary-1 hover:text-primary-1"
         :class="{
-          'border-primary-1': item.key == selectedCategory,
+          'border-primary-1 text-primary-1': item.key == selectedCategory,
           'border-transparent': item.key !== selectedCategory
         }"
         @click="selectCategory(item.key)"
@@ -146,16 +146,18 @@ onMounted(() => {
         <option value="2">由舊到新</option>
       </select>
     </div>
-    <LoadingDataState v-if="isLoading" :is-loading="isLoading" />
-    <ul v-else-if="apiProject?.length" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <LoadingDataState v-if="isLoading" text="資料載入中..." :is-loading="isLoading" />
+    <EmptyState v-else-if="!isLoading && apiProject?.length === 0" />
+    <ul
+      v-else-if="!isLoading && apiProject?.length > 0"
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+    >
       <li v-for="project in apiProject" :key="project.id">
         <ProjectCard :project="project" @follow="toggleFollow" />
       </li>
     </ul>
-
-    <EmptyState v-else />
     <Pagination
-      v-if="apiProject?.length && !isLoading"
+      v-if="pagination?.totalPage > 1"
       container-class="container flex items-center justify-center py-10 lg:py-20"
       size="xl"
       :pagination="pagination"
@@ -175,4 +177,12 @@ onMounted(() => {
 /* *{
   outline: 1px solid #A00
 } */
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

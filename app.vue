@@ -12,6 +12,7 @@ useHead({
 </script>
 <template>
   <LoadingOverlay />
+  <LoadingOverlayDataState />
   <NuxtLayout>
     <NuxtPage />
     <ModalsContainer />

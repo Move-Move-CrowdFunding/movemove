@@ -31,12 +31,22 @@ onMounted(() => {
     <div class="flex flex-1 flex-col">
       <slot />
     </div>
-    <GoTop v-if="showToTop" />
+    <transition name="fade">
+      <GoTop v-if="showToTop" />
+    </transition>
     <Footer />
   </div>
 </template>
 <style lang="scss" scope>
 #__nuxt {
   @apply min-h-dvh;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.1s ease-out;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

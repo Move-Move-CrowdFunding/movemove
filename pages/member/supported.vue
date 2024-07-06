@@ -3,6 +3,7 @@ import { useDayjs } from '#dayjs'
 import { toastStatus, errorStatus } from '@/utils/modalSetting'
 const loading = useLoadingStore()
 const isLogin = useIsLoginStore()
+const isLoading = ref(false)
 
 const dayjs = useDayjs()
 const route = useRoute()
@@ -30,18 +31,21 @@ const pageSize = computed(() => route.query.pageSize * 1 || 10)
 
 const pagination = ref({})
 const getSupportData = async () => {
-  loading.isGlobalLoading = true
+  // loading.isGlobalLoading = true
+  isLoading.value = true
   try {
     const results = await getFetchData({
       url: `/member/support?pageNo=${pageNo.value}&pageSize=${pageSize.value}`
     })
     SupportData.value = results
     pagination.value = results.pagination
-    loading.isGlobalLoading = false
+    // loading.isGlobalLoading = false
+    isLoading.value = false
   } catch (err) {
     toggleToast.value = true
     toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
-    loading.isGlobalLoading = false
+    // loading.isGlobalLoading = false
+    isLoading.value = false
   }
 }
 
@@ -78,7 +82,9 @@ onMounted(() => {
 <template>
   <div class="py-10 lg:py-20">
     <h1 class="container mb-6 text-3xl sm:text-4xl lg:mb-10">贊助記錄</h1>
-    <div v-if="items?.length">
+    <LoadingDataState v-if="isLoading" text="資料載入中..." :is-loading="isLoading" />
+    <EmptyState v-else-if="!isLoading && items?.length === 0" />
+    <div v-else-if="!isLoading && items?.length > 0">
       <div v-for="item in items" :key="item._id" class="container mb-3">
         <div
           class="divA relative flex w-full flex-col-reverse items-stretch gap-2 bg-secondary-2 px-3 py-4 text-white sm:flex-row lg:gap-4"
@@ -156,10 +162,8 @@ onMounted(() => {
       </div>
     </div>
 
-    <EmptyState v-else />
-
     <Pagination
-      v-if="items?.length"
+      v-if="pagination.totalPage > 1"
       container-class="container flex items-center justify-center py-10 lg:py-20"
       size="xl"
       :pagination="pagination"
