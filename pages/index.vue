@@ -38,6 +38,7 @@ const getHomeData = async () => {
 }
 
 const toggleFollow = async (id) => {
+  loading.isLoadingOverlayData = true
   await getFetchData({
     url: `/member/collection`,
     method: 'POST',
@@ -51,6 +52,9 @@ const toggleFollow = async (id) => {
     .catch((err) => {
       toggleToast.value = true
       toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+    })
+    .finally(() => {
+      loading.isLoadingOverlayData = false
     })
 }
 

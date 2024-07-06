@@ -5,7 +5,8 @@ const page = ref(1)
 
 const props = defineProps({
   pagination: {
-    type: Object
+    type: Object,
+    default: () => {}
   },
   size: {
     type: String,
@@ -16,7 +17,8 @@ const props = defineProps({
     default: 5
   },
   containerClass: {
-    type: String
+    type: String,
+    default: ''
   },
   paginationClass: {
     type: String,
@@ -61,7 +63,7 @@ watch(page, () => {
     @apply bg-primary-1 text-white ring-primary-1;
   }
   .bg-white:disabled {
-    @apply text-gray-900 ring-gray-300;
+    @apply text-neutral-300 opacity-30 ring-gray-300;
 
     background-color: white;
   }

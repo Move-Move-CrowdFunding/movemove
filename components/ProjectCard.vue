@@ -62,9 +62,9 @@ const emit = defineEmits(['follow'])
         class="inline-block rounded-full border border-primary-1 px-2 py-1 text-xs text-primary-1 sm:text-base"
         >{{ categoryKeys[project.categoryKey - 1]?.name || '類別' }}</span
       >
-      <div class="h-2 rounded-full bg-[#D9D9D9]">
+      <div class="h-2 overflow-hidden rounded-full bg-[#D9D9D9]">
         <div
-          class="h-2 max-w-full rounded-full bg-primary-1"
+          class="h-2 max-w-full overflow-hidden rounded-full bg-primary-1"
           :style="{ width: `${(100 * project.achievedMoney || 0) / project.targetMoney}%` }"
         ></div>
       </div>

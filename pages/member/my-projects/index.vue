@@ -1,7 +1,8 @@
 <script setup>
 import { toastStatus, errorStatus } from '@/utils/modalSetting'
-const loading = useLoadingStore()
-
+// const loading = useLoadingStore()
+const isLoading = ref(false)
+const sponsorIsLoading = ref(false)
 const isLogin = useIsLoginStore()
 const checkPermission = async () => {
   if (!isLogin.isLogin) {
@@ -59,7 +60,8 @@ const confirm = () => {
 }
 
 const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
-  loading.isGlobalLoading = true
+  // loading.isGlobalLoading = true
+  isLoading.value = true
 
   selectedState.value = state
   const index = states.value.filter((item) => item.state === state)[0].index
@@ -73,20 +75,23 @@ const getMyProjects = async (pageNo = 1, pageSize = 10, state = 'ongoing') => {
         result.state = state
       })
       pagination.value = res.pagination
-      loading.isGlobalLoading = false
+      // loading.isGlobalLoading = false
     })
     .catch((err) => {
       toggleToast.value = true
       toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
-      loading.isGlobalLoading = false
+      // loading.isGlobalLoading = false
+    })
+    .finally(() => {
+      isLoading.value = false
     })
 }
 
 const sponsorProject = ref({})
 const sponsorListShown = ref(false)
 const getSponsorList = async (project, page = 1, pageSize = 8) => {
-  loading.isGlobalLoading = true
-
+  // loading.isGlobalLoading = true
+  sponsorIsLoading.value = true
   await getFetchData({
     url: `/member/support/${project.id}?pageNo=${page}&pageSize=${pageSize}`,
     method: 'GET'
@@ -96,12 +101,15 @@ const getSponsorList = async (project, page = 1, pageSize = 8) => {
       sponsorList.value = res.results
       sponsorPagination.value = res.pagination
 
-      loading.isGlobalLoading = false
+      // loading.isGlobalLoading = false
     })
     .catch((err) => {
       toggleToast.value = true
       toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
-      loading.isGlobalLoading = false
+      // loading.isGlobalLoading = false
+    })
+    .finally(() => {
+      sponsorIsLoading.value = false
     })
 }
 const showSponsorList = async (project, page) => {
@@ -135,8 +143,8 @@ onMounted(() => {
 <template>
   <div class="container py-10 lg:py-20">
     <h1 class="mb-6 text-center text-3xl font-bold lg:mb-10">提案紀錄</h1>
-    <ul class="mb-6 flex justify-center lg:mb-10 lg:gap-10">
-      <li v-for="item in states" :key="item.state" class="w-1/4 max-w-40">
+    <ul class="mb-6 flex flex-wrap justify-center space-x-6 lg:mb-10 lg:space-x-10">
+      <li v-for="item in states" :key="item.state">
         <button
           class="stateTab"
           :class="{ active: item.state === selectedState }"
@@ -149,17 +157,18 @@ onMounted(() => {
         </button>
       </li>
     </ul>
-    <ul v-if="results.list.length" class="flex flex-col gap-6 lg:gap-10">
+    <LoadingDataState v-if="isLoading" text="資料載入中..." :is-loading="isLoading" />
+    <EmptyState v-else-if="!isLoading && results.list.length === 0" />
+    <ul v-else-if="!isLoading && results.list.length > 0" class="flex flex-col gap-6 lg:gap-10">
       <li v-for="item in results.list" :key="item.id">
         <MyProjectCard :data="item" @show-sponsor-list="showSponsorList" />
       </li>
     </ul>
-    <EmptyState v-else />
     <!-- 贊助名單 Modal -->
     <div
       v-if="sponsorListShown"
       id="sponsorListModal"
-      class="fixed left-1/2 top-1/2 z-[70] flex max-h-dvh max-w-full -translate-x-1/2 -translate-y-1/2 flex-col bg-secondary-1 px-6 py-10 shadow-2xl"
+      class="fixed left-1/2 top-1/2 z-[70] flex max-h-dvh max-w-full -translate-x-1/2 -translate-y-1/2 flex-col rounded-xl bg-secondary-1 px-6 py-10 shadow-2xl"
     >
       <div class="mb-6 flex items-start gap-4">
         <div>
@@ -170,8 +179,16 @@ onMounted(() => {
         </button>
       </div>
       <div class="grow overflow-auto bg-white">
+        <LoadingDataState
+          v-if="sponsorIsLoading"
+          text="資料載入中..."
+          :is-loading="sponsorIsLoading"
+        />
+        <div v-else-if="!sponsorIsLoading && sponsorList.length === 0" class="p-6 text-center">
+          還沒有贊助紀錄
+        </div>
         <UTable
-          v-if="sponsorList.length"
+          v-if="!sponsorIsLoading && sponsorList.length > 0"
           :rows="sponsorList"
           :columns="columns"
           class="overflow-visible"
@@ -193,10 +210,9 @@ onMounted(() => {
             </div>
           </template>
         </UTable>
-        <div v-else class="p-6 text-center">還沒有贊助紀錄</div>
       </div>
       <Pagination
-        v-if="sponsorPagination.totalPage"
+        v-if="sponsorPagination.totalPage > 1"
         container-class="container flex items-center justify-center pt-6"
         size="md"
         :pagination="sponsorPagination"
@@ -204,7 +220,7 @@ onMounted(() => {
       />
     </div>
     <Pagination
-      v-if="results.list.length"
+      v-if="results.list.length > 0"
       container-class="container flex items-center justify-center py-10 lg:py-20"
       size="xl"
       :pagination="pagination"
@@ -222,9 +238,9 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .stateTab {
-  @apply h-full w-full border-b-2 border-white py-2 hover:border-primary-3;
+  @apply h-full min-h-[42px] w-full whitespace-nowrap border-b-2 border-white py-2 transition-all hover:border-primary-1 hover:text-primary-1;
 }
 .stateTab.active {
-  @apply border-primary-1 font-bold;
+  @apply border-primary-1 text-primary-1;
 }
 </style>

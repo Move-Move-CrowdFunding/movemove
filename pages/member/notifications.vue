@@ -3,6 +3,7 @@ import { toastStatus, errorStatus } from '@/utils/modalSetting'
 import type { ResponseData } from '~/types/response'
 const route = useRoute()
 const loading = useLoadingStore()
+const isLoading = ref(false)
 const WS = useWSStore()
 
 interface NotificationItem {
@@ -60,6 +61,7 @@ const checkPermission = async () => {
 }
 
 const getNotifications = async () => {
+  isLoading.value = true
   await getFetchData({
     url: `/member/notification?pageNo=${pageNo.value}&pageSize=${pageSize.value}`,
     method: 'GET'
@@ -76,6 +78,9 @@ const getNotifications = async () => {
     .catch((err) => {
       toggleToast.value = true
       toastStyle.value = toastStatus(errorStatus.icon, errorStatus.iconClass, err.msg)
+    })
+    .finally(() => {
+      isLoading.value = false
     })
 }
 const getTempUser = (data: any) => {
@@ -121,7 +126,10 @@ const renderContent = (content: string | undefined, projectTitle: string | undef
   <div class="py-10 lg:py-20">
     <div class="sm:px-auto container">
       <h1 class="mb-6 text-3xl sm:text-4xl lg:mb-10">最新通知</h1>
-      <ul v-if="notificationsList && notificationsList.length > 0" class="flex flex-col">
+
+      <LoadingDataState v-if="isLoading" text="資料載入中..." :is-loading="isLoading" />
+      <EmptyState v-else-if="!isLoading && notificationsList.length === 0" />
+      <ul v-else-if="!isLoading && notificationsList.length > 0" class="flex flex-col">
         <li
           v-for="item in notificationsList"
           :key="item.id"
@@ -157,9 +165,8 @@ const renderContent = (content: string | undefined, projectTitle: string | undef
           </NuxtLink>
         </li>
       </ul>
-      <EmptyState v-else />
       <Pagination
-        v-if="notificationsList?.length"
+        v-if="responsePagination.totalPage > 1"
         container-class="container flex items-center justify-center py-10 lg:py-20"
         size="xl"
         :pagination="responsePagination"
