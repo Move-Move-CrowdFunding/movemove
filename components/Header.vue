@@ -15,7 +15,7 @@ const searchIsShow = ref(false)
 
 const mobileState = useHeaderStore()
 const searchKeyword = useHeaderStore()
-const searching = useHeaderStore()
+// const searching = useHeaderStore()
 
 const mobileMenuToggle = () => {
   mobileState.mobileMenuShow = !mobileState.mobileMenuShow
@@ -49,7 +49,6 @@ const clearSearchKeyword = () => {
   searchKeyword.searchKeyword = ''
 }
 const searchJumpTo = () => {
-  searching.searching = true
   navigateTo({
     path: `/projects`,
     query: {

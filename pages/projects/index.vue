@@ -4,7 +4,7 @@ const route = useRoute()
 const router = useRouter()
 
 const searchKeyword = useHeaderStore()
-const searching = useHeaderStore()
+// const searching = useHeaderStore()
 
 const loading = useLoadingStore()
 const isLoading = ref(false) // 局部載入狀態
@@ -17,40 +17,55 @@ const confirm = () => {
 
 const pageNo = ref(1)
 const pagination = ref({})
-const selectedCategory = ref(Number(route.query.category))
-const selectCategory = (key) => {
+const selectedCategory = ref(route.query.category || 0)
+
+const selectCategory = (key = 0) => {
+  // console.log('route.query', route.query)
   pageNo.value = 1
   selectedCategory.value = key
   router.push({
     query: {
-      ...route.query,
-      category: key
+      isExpired: showExpired.value || 'true',
+      category: selectedCategory.value || 0,
+      sort: sort.value || 1,
+      pageNo: pageNo.value || 1,
+      pageSize: 1,
+      keyword: searchKeyword.searchKeyword
     }
   })
-  searchKeyword.searchKeyword = ''
   getProjects()
 }
 const sort = ref(1)
 const showExpired = ref(route.query.isExpired || 'false')
 const apiProject = ref([])
 
-watch(
-  () => searching.searching,
-  async () => {
-    await getProjects()
-  }
-)
+// watch(
+//   () => searching.searching,
+//   async (val) => {
+//     if (val) {
+//       await getProjects()
+//     }
+//   }
+// )
+
+// watch(
+//   () => searchKeyword.searchKeyword,
+//   (val) => {
+//     console.log('val', val)
+//   }
+// )
 
 watch(
-  () => Number(route.query.category),
+  () => Number(route.query.category) || 0,
   (val) => {
+    console.log('val', val)
     selectCategory(val)
   }
 )
 const getProjects = async () => {
   isLoading.value = true
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpired=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=12&keyword=${searchKeyword.searchKeyword}`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpired=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=1&keyword=${searchKeyword.searchKeyword}`,
     method: 'GET'
   })
     .then((res) => {
@@ -152,6 +167,8 @@ onMounted(() => {
         <option value="2">由舊到新</option>
       </select>
     </div>
+    <pre>selectedCategory: {{ selectedCategory }}</pre>
+    <pre>searchKeyword: {{ searchKeyword.searchKeyword }}</pre>
     <LoadingDataState v-if="isLoading" text="資料載入中..." :is-loading="isLoading" />
     <EmptyState v-else-if="!isLoading && apiProject?.length === 0" />
     <ul
