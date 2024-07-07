@@ -8,9 +8,12 @@ const route = useRoute()
 
 const toastStyle = ref({})
 const toggleToast = ref(false)
+const navigate = ref('')
 const confirm = async () => {
   toggleToast.value = false
-  await navigateTo('/projects')
+  if (navigate.value) {
+    await navigateTo(navigate.value)
+  }
 }
 
 const getProject = async () => {
@@ -26,6 +29,7 @@ const getProject = async () => {
       loading.isGlobalLoading = false
     })
     .catch((err) => {
+      navigate.value = '/projects'
       toggleToast.value = true
       toastStyle.value = toastStatus(
         errorStatus.icon,
