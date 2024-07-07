@@ -157,11 +157,14 @@ const confirm = () => {
 }
 
 const getProjects = async (query: any) => {
+  const mapQuery = Object.keys(query.value)
+    .map((key) => `${key}=${query.value[key]}`)
+    .join('&')
+  loading.isGlobalLoading = true
   pending.value = true
   await getFetchData({
-    url: '/admin/projects',
-    method: 'GET',
-    ...query
+    url: `/admin/projects?${mapQuery}`,
+    method: 'GET'
   })
     .then((res) => {
       projectList.value = (res as ResponseData).results
@@ -174,7 +177,6 @@ const getProjects = async (query: any) => {
       responsePagination.value.search = (res as ResponseData).pagination.search
     })
     .catch((err) => {
-      console.log(err)
       toggleToast.value = true
       toastStyle.value = toastStatus(
         errorStatus.icon,
@@ -356,7 +358,7 @@ onMounted(() => {
         <div
           class="flex flex-wrap overflow-hidden whitespace-nowrap font-semibold text-neutral-700 [word-break:break-word]"
         >
-          <p>${{ row.feedbackMoney }}</p>
+          <p>${{ row.achievedMoney }}</p>
           <div class="mx-1">/</div>
           <p>${{ row.targetMoney }}</p>
         </div>
