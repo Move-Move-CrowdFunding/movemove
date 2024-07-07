@@ -4,7 +4,7 @@ import { z } from 'zod'
 import TheCkeditor from '~/components/TheCkeditor.client.vue'
 import { dateFormat, timeFormat, tenDaysLater, sevenDaysAfterTenDays } from '@/utils/date'
 import { regPhone } from '~/utils/regex'
-import { toastStatus, errorStatus } from '@/utils/modalSetting'
+import { toastStatus, errorStatus, successStatus } from '@/utils/modalSetting'
 
 const route = useRoute()
 const inAdmin = route.fullPath.includes('admin')
@@ -193,10 +193,14 @@ const rejectModal = () => {
   toggleRejectModal.value = true
 }
 
+const navigate = ref('')
 const toastStyle = ref({})
 const toggleToast = ref(false)
 const confirm = () => {
   toggleToast.value = false
+  if (navigate.value === 'reload') {
+    reloadNuxtApp()
+  }
 }
 
 // 驗證檔案上傳
@@ -277,8 +281,11 @@ const reviewProjectId = (approve) => {
     }
   })
     .then((res) => {
-      alert(res.message)
-      reloadNuxtApp()
+      // alert(res.message)
+      navigate.value = 'reload'
+      toggleToast.value = true
+      toastStyle.value = toastStatus(successStatus.icon, successStatus.iconClass, res.message)
+      // reloadNuxtApp()
     })
     .catch((err) => {
       toggleToast.value = true
