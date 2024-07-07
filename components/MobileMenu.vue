@@ -7,7 +7,7 @@ const categoryMenuList = ref(
   categoryKeys.map((item: CategoryKeys) => {
     return {
       name: item.name,
-      url: `/projects?categoryKey=${item.key}`
+      url: `/projects?category=${item.key}`
     }
   })
 )

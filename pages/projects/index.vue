@@ -41,6 +41,12 @@ watch(
   }
 )
 
+watch(
+  () => Number(route.query.category),
+  (val) => {
+    selectCategory(val)
+  }
+)
 const getProjects = async () => {
   isLoading.value = true
   await getFetchData({
