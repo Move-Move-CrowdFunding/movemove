@@ -97,7 +97,7 @@ const getSponsorList = async (project, page = 1, pageSize = 8) => {
     method: 'GET'
   })
     .then((res) => {
-      // console.log(res)
+      console.log(res.results)
       sponsorList.value = res.results
       sponsorPagination.value = res.pagination
 
@@ -200,9 +200,9 @@ onMounted(() => {
           </template>
           <template #info-data="{ row }">
             <div v-if="row.isNeedFeedback">
-              <p>{{ row.name }}</p>
+              <p>{{ row.receiver }}</p>
               <p>{{ row.address }}</p>
-              <p>{{ row.phone }}</p>
+              <p>{{ row.receiverPhone }}</p>
             </div>
             <div v-else>
               <p v-if="row.money >= row.feedbackMoney">不須回饋品</p>
