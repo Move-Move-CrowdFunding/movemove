@@ -11,11 +11,15 @@ export const useWSStore = defineStore('WS', () => {
     socket.value = io(apiBase, {
       transports: ['websocket']
     })
-    socket.value.emit('getUnRead')
+    socket.value.emit('getUnRead', {
+      token: useCookie('userToken').value || ''
+    })
   }
 
   function getUnRead() {
-    socket.value.emit('getUnRead')
+    socket.value.emit('getUnRead', {
+      token: useCookie('userToken').value || ''
+    })
     unRead()
   }
 
