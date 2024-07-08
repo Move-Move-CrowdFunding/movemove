@@ -50,7 +50,7 @@ const editUser = async () => {
       toastStyle.value = toastStatus(
         errorStatus.icon,
         errorStatus.iconClass,
-        err.msg || errorStatus.msg
+        err.message || err.msg || errorStatus.msg
       )
       loading.isGlobalLoading = false
     })
@@ -89,7 +89,7 @@ const changePassword = async () => {
       toastStyle.value = toastStatus(
         errorStatus.icon,
         errorStatus.iconClass,
-        err.msg || errorStatus.msg
+        err.message || err.msg || errorStatus.msg
       )
       loading.isGlobalLoading = false
     })

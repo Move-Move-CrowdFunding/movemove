@@ -636,7 +636,7 @@ const reviewProjectId = (approve) => {
                 :count="newTempData.content.length"
               />
             </div>
-            <p v-if="errors.content" :class="errorTextClass">
+            <p v-if="errors.content && !inAdmin" :class="errorTextClass">
               {{ errors.content }}
             </p>
             <p v-if="!inAdmin" class="mt-2 text-xs">
