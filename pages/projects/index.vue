@@ -17,17 +17,20 @@ const confirm = () => {
 
 const pageNo = ref(1)
 const pagination = ref({})
-const selectedCategory = ref(Number(route.query.category))
+const selectedCategory = ref(route.query.category || '0')
 const selectCategory = (key) => {
   pageNo.value = 1
-  selectedCategory.value = key
+  selectedCategory.value = key || '0'
   router.push({
     query: {
-      ...route.query,
-      category: key
+      isExpired: showExpired.value || 'true',
+      category: selectedCategory.value || '0',
+      sort: sort.value || 1,
+      pageNo: pageNo.value || 1,
+      pageSize: 10,
+      keyword: searchKeyword.searchKeyword
     }
   })
-  searchKeyword.searchKeyword = ''
   getProjects()
 }
 const sort = ref(1)
@@ -42,7 +45,7 @@ watch(
 )
 
 watch(
-  () => Number(route.query.category),
+  () => route.query.category || 0,
   (val) => {
     selectCategory(val)
   }
@@ -50,7 +53,7 @@ watch(
 const getProjects = async () => {
   isLoading.value = true
   await getFetchData({
-    url: `/project/?categoryKey=${selectedCategory.value}&isExpired=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=12&keyword=${searchKeyword.searchKeyword}`,
+    url: `/project/?categoryKey=${selectedCategory.value}&isExpired=${showExpired.value}&sort=${sort.value}&pageNo=${pageNo.value}&pageSize=10&keyword=${searchKeyword.searchKeyword}`,
     method: 'GET'
   })
     .then((res) => {
@@ -67,6 +70,7 @@ const getProjects = async () => {
     })
     .finally(() => {
       isLoading.value = false
+      searching.searching = false
     })
 }
 const changePage = (page) => {
@@ -115,10 +119,10 @@ onMounted(() => {
         type="button"
         class="min-h-[42px] whitespace-nowrap border-b-2 transition-all hover:border-primary-1 hover:text-primary-1"
         :class="{
-          'border-primary-1 text-primary-1': !selectedCategory,
-          'border-transparent': selectedCategory
+          'border-transparent': selectedCategory !== '0',
+          'border-primary-1 text-primary-1': selectedCategory === '0'
         }"
-        @click="selectCategory(0)"
+        @click="selectCategory('0')"
       >
         全部
       </button>
@@ -128,10 +132,10 @@ onMounted(() => {
         type="button"
         class="min-h-[42px] whitespace-nowrap border-b-2 transition-all hover:border-primary-1 hover:text-primary-1"
         :class="{
-          'border-primary-1 text-primary-1': item.key == selectedCategory,
-          'border-transparent': item.key !== selectedCategory
+          'border-primary-1 text-primary-1': item.key.toString() === selectedCategory,
+          'border-transparent': item.key.toString() !== selectedCategory
         }"
-        @click="selectCategory(item.key)"
+        @click="selectCategory(item.key.toString())"
       >
         {{ item.name }}
       </button>
@@ -180,9 +184,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* *{
-  outline: 1px solid #A00
-} */
 .fade-enter-active,
 .fade-leave-active {
   transition: all 0.5s ease;

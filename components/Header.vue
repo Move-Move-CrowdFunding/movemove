@@ -41,6 +41,18 @@ const dropdownMenuList = computed<DropdownMenu[][]>(() => {
   return [mapMenuList]
 })
 
+const queryString = {
+  path: `/projects`,
+  query: {
+    pageNo: 1,
+    pageSize: 10,
+    categoryKey: '0',
+    isExpired: 'true',
+    sort: '1',
+    keyword: searchKeyword.searchKeyword.trim()
+  }
+}
+
 // 是否顯示 input 清除按鈕
 const isSearchDeleteBtnShow = computed(() => {
   return searchKeyword.searchKeyword.length > 0
@@ -49,20 +61,17 @@ const clearSearchKeyword = () => {
   searchKeyword.searchKeyword = ''
 }
 const searchJumpTo = () => {
-  searching.searching = true
-  navigateTo({
-    path: `/projects`,
-    query: {
-      pageNo: 1,
-      pageSize: 10,
-      categoryKey: 0,
-      isExpired: 'true',
-      sort: 1,
-      keyword: searchKeyword.searchKeyword.trim()
-    }
-  })
+  if (searchKeyword.searchKeyword) {
+    searching.searching = true
+    navigateTo(queryString)
+  }
 }
 
+watch(searchIsShow, (val) => {
+  if (!val) {
+    searchKeyword.searchKeyword = ''
+  }
+})
 // watch(
 //   () => WS.socket,
 //   () => {
@@ -128,7 +137,11 @@ onMounted(() => {
             </div>
             <div class="flex space-x-4">
               <div class="flex space-x-4">
-                <NuxtLink to="/projects" class="block p-2 hover:text-secondary-2">探索</NuxtLink>
+                <NuxtLink
+                  :to="{ path: '/projects', query: { ...queryString.query } }"
+                  class="block p-2 hover:text-secondary-2"
+                  >探索</NuxtLink
+                >
                 <NuxtLink to="/create" class="block p-2 hover:text-secondary-2">提案</NuxtLink>
               </div>
               <NotificationsIcon
@@ -167,7 +180,7 @@ onMounted(() => {
           </div>
           <div class="flex flex-row">
             <div class="flex flex-row bg-neutral-50">
-              <div v-if="searchIsShow" class="absolute inset-0 z-10 flex flex-row">
+              <div v-if="searchIsShow" class="absolute inset-0 z-10 flex flex-row md:hidden">
                 <div
                   class="flex flex-1 items-center overflow-hidden rounded-lg border border-neutral-400 bg-neutral-50 pl-2"
                 >
@@ -175,7 +188,6 @@ onMounted(() => {
                     class="bg-neutral-2 h-6 w-6 flex-shrink-0 bg-neutral-600 [mask-image:url('~/assets/icons/search.svg')] [mask-position:center] [mask-repeat:no-repeat] [mask-size:w-4]"
                   ></div>
                   <input
-                    id=""
                     v-model="searchKeyword.searchKeyword"
                     class="text-netural-600 placeholder:text-netural-50 peer w-full py-2 pl-1 pr-2 outline-none transition-all"
                     type="text"
@@ -194,7 +206,7 @@ onMounted(() => {
                   </UButton>
                 </div>
                 <UButton
-                  class="-mr-1 ml-2 flex h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2 shadow-none"
+                  class="-mr-1 ml-2 flex h-full flex-shrink-0 items-center justify-center bg-neutral-50 p-2 shadow-none hover:bg-neutral-50"
                   @click="searchIsShow = false"
                 >
                   <div
