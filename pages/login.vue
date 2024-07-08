@@ -96,9 +96,8 @@ const submitLogin = async () => {
     .then(async (res) => {
       const { token, auth } = (res as ResponseData).results
       useCookie('userToken').value = token
-      isLogin.getUserData()
       await WS.connection()
-      WS.socket.emit('getUnRead')
+      isLogin.getUserData()
 
       navigate.value = auth ? '/admin' : '/'
       toggleToast.value = true
